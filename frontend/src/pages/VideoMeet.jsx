@@ -64,9 +64,9 @@ export default function VideoMeetComponent() {
 
     // }
 
-    useEffect(() => {
+    useEffect(() => { // phase 1.1
         console.log("HELLO")
-        getPermissions();
+        getPermissions(); // get audio and video pwrmission to user
 
     })
 
@@ -112,7 +112,7 @@ export default function VideoMeetComponent() {
                 if (userMediaStream) {
                     window.localStream = userMediaStream;
                     if (localVideoref.current) {
-                        localVideoref.current.srcObject = userMediaStream;
+                        localVideoref.current.srcObject = userMediaStream; // matalab hamne is varibale me usermdeia strema daal rahehe to kiya abye directly video tag me jaati rahehi contineusly useref ke kaarnaa aur hamko apna video dikhta rahega iam i right ?
                     }
                 }
             }
@@ -130,10 +130,10 @@ export default function VideoMeetComponent() {
 
 
     }, [video, audio])
-    let getMedia = () => {
+    let getMedia = () => { // phase 2.2 
         setVideo(videoAvailable);
         setAudio(audioAvailable);
-        connectToSocketServer();
+        connectToSocketServer(); // phase 3.1  to communicate with server
 
     }
 
@@ -248,7 +248,7 @@ export default function VideoMeetComponent() {
         })
     }
 
-    let gotMessageFromServer = (fromId, message) => {
+    let gotMessageFromServer = (fromId, message) => { //Phase 4: Signal Exchange (Handshake)
         var signal = JSON.parse(message)
 
         if (fromId !== socketIdRef.current) {
@@ -273,22 +273,27 @@ export default function VideoMeetComponent() {
 
 
 
-    let connectToSocketServer = () => {
+    let connectToSocketServer = () => { // phase 3.1
         socketRef.current = io.connect(server_url, { secure: false })
 
         socketRef.current.on('signal', gotMessageFromServer)
 
         socketRef.current.on('connect', () => {
+
+
             socketRef.current.emit('join-call', window.location.href)
             socketIdRef.current = socketRef.current.id
 
-            socketRef.current.on('chat-message', addMessage)
+            socketRef.current.on('chat-message', addMessage)  // listener for chat message
 
             socketRef.current.on('user-left', (id) => {
                 setVideos((videos) => videos.filter((video) => video.socketId !== id))
             })
 
-            socketRef.current.on('user-joined', (id, clients) => {
+
+
+            socketRef.current.on('user-joined', (id, clients) => { // tell new user is comming (iam connected to you)
+                
                 clients.forEach((socketListId) => {
 
                     connections[socketListId] = new RTCPeerConnection(peerConfigConnections)
@@ -381,7 +386,8 @@ export default function VideoMeetComponent() {
         let stream = canvas.captureStream()
         return Object.assign(stream.getVideoTracks()[0], { enabled: false })
     }
-
+   
+    // Phase 5: Features (Butttons Logic)
     let handleVideo = () => {
         setVideo(!video);
         // getUserMedia();
@@ -400,6 +406,7 @@ export default function VideoMeetComponent() {
         setScreen(!screen);
     }
 
+    //Phase 6: Exit (Call Khatam)
     let handleEndCall = () => {
         try {
             let tracks = localVideoref.current.srcObject.getTracks()
@@ -440,9 +447,9 @@ export default function VideoMeetComponent() {
     }
 
     
-    let connect = () => {
+    let connect = () => { // phase 2.1 after user click on connect button 
         setAskForUsername(false);
-        getMedia();
+        getMedia(); // phase 2.2 
     }
 
 

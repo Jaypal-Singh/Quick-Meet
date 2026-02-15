@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+motor
+beanie
+python-socketio
+python-dotenv
+bcrypt
+passlib[bcrypt]
+pyjwt
+pydantic-settings
