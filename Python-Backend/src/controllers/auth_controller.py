@@ -54,11 +54,8 @@ async def add_to_activity(user_data: AddToActivityRequest):
     token = user_data.token
     meeting_code = user_data.meeting_code
     
-    print(f"Received token: {token}, meeting_code: {meeting_code}")
-    
     user = await User.find_one(User.token == token)
     if not user:
-        print("User not found for token")
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
         
     new_meeting = Meeting(user_id=user.username, meetingCode=meeting_code)
