@@ -12,8 +12,11 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { AuthContext } from '../contexts/AuthContext';
 import { Snackbar } from '@mui/material';
+import axios from 'axios';
+import httpStatus from 'http-status';
+import { useNavigate } from 'react-router-dom';
+import server from '../environment';
 
 
 
@@ -23,7 +26,7 @@ const defaultTheme = createTheme();
 
 export default function Authentication() {
 
-    
+
 
     const [username, setUsername] = React.useState();
     const [password, setPassword] = React.useState();
@@ -37,15 +40,48 @@ export default function Authentication() {
     const [open, setOpen] = React.useState(false)
 
 
-    const { handleRegister, handleLogin } = React.useContext(AuthContext);
+    const router = useNavigate();
+
+    const client = axios.create({
+        baseURL: `${server}/api/v1/users`
+    });
+
+    const handleRegister = async (name, username, password) => {
+        try {
+            let request = await client.post("/register", {
+                name: name,
+                username: username,
+                password: password
+            });
+
+            if (request.status === httpStatus.CREATED) {
+                return request.data.message;
+            }
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    const handleLogin = async (username, password) => {
+        try {
+            let request = await client.post("/login", {
+                username: username,
+                password: password
+            });
+
+            if (request.status === httpStatus.OK) {
+                localStorage.setItem("token", request.data.token);
+                router("/dashboard");
+            }
+        } catch (err) {
+            throw err;
+        }
+    }
 
     let handleAuth = async () => {
         try {
             if (formState === 0) {
-
-                let result = await handleLogin(username, password)
-
-
+                await handleLogin(username, password);
             }
             if (formState === 1) {
                 let result = await handleRegister(name, username, password);
@@ -53,14 +89,13 @@ export default function Authentication() {
                 setUsername("");
                 setMessage(result);
                 setOpen(true);
-                setError("")
-                setFormState(0)
-                setPassword("")
+                setError("");
+                setFormState(0);
+                setPassword("");
             }
         } catch (err) {
-
             console.log(err);
-            let message = (err.response.data.message);
+            let message = err?.response?.data?.message || "An error occurred during authentication. Please try again.";
             setError(message);
         }
     }
