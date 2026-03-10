@@ -22,7 +22,18 @@ import server from '../environment';
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
-const defaultTheme = createTheme();
+const defaultTheme = createTheme({
+    palette: {
+        mode: 'dark',
+        primary: {
+            main: '#6366F1',
+        },
+        background: {
+            default: '#0B0F19',
+            paper: '#171C28',
+        },
+    },
+});
 
 export default function Authentication() {
 

@@ -5,7 +5,7 @@ import SideBar from '../../components/sideBar/SideBar';
 
 export default function Root() {
     return (
-        <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#040F0F' }}>
+        <Box sx={{ display: 'flex', height: '100vh', bgcolor: '#0B0F19', overflow: 'hidden' }}>
             <SideBar />
             <Box sx={{ flexGrow: 1, p: 4, ml: 0, overflowY: 'auto' }}>
                 <Outlet />

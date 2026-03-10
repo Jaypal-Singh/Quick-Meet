@@ -8,7 +8,7 @@ import VideoMeetComponent from '../VideoMeet';
 import Root from '../root/Root';
 import Dashboard from '../dashboard/Dashboard';
 import Meetings from '../meeting/Meetings';
-import Summarize from '../summerize/summerize';
+import Summarise from '../summarise/summarise';
 import Reports from '../reports/Reports';
 import Settings from '../settings/settings';
 
@@ -24,7 +24,7 @@ export default function AllRoutes() {
             <Route element={<Root />}>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/meetings" element={<Meetings />} />
-                <Route path="/summaries" element={<Summarize />} />
+                <Route path="/summaries" element={<Summarise />} />
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/settings" element={<Settings />} />
             </Route>
