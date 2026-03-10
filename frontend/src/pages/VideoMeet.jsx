@@ -4,7 +4,7 @@ import { Badge, IconButton, TextField } from '@mui/material';
 import { Button } from '@mui/material';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import VideocamOffIcon from '@mui/icons-material/VideocamOff'
-import styles from "../styles/videoComponent.module.css";
+// import styles from "../styles/videoComponent.module.css";
 import CallEndIcon from '@mui/icons-material/CallEnd'
 import MicIcon from '@mui/icons-material/Mic'
 import MicOffIcon from '@mui/icons-material/MicOff'
@@ -293,7 +293,7 @@ export default function VideoMeetComponent() {
 
 
             socketRef.current.on('user-joined', (id, clients) => { // tell new user is comming (iam connected to you)
-                
+
                 clients.forEach((socketListId) => {
 
                     connections[socketListId] = new RTCPeerConnection(peerConfigConnections)
@@ -386,7 +386,7 @@ export default function VideoMeetComponent() {
         let stream = canvas.captureStream()
         return Object.assign(stream.getVideoTracks()[0], { enabled: false })
     }
-   
+
     // Phase 5: Features (Butttons Logic)
     let handleVideo = () => {
         setVideo(!video);
@@ -446,7 +446,7 @@ export default function VideoMeetComponent() {
         // this.setState({ message: "", sender: username })
     }
 
-    
+
     let connect = () => { // phase 2.1 after user click on connect button 
         setAskForUsername(false);
         getMedia(); // phase 2.2 
@@ -511,7 +511,7 @@ export default function VideoMeetComponent() {
                             {(video === true) ? <VideocamIcon /> : <VideocamOffIcon />}
                         </IconButton>
                         <IconButton onClick={handleEndCall} style={{ color: "red" }}>
-                            <CallEndIcon  />
+                            <CallEndIcon />
                         </IconButton>
                         <IconButton onClick={handleAudio} style={{ color: "white" }}>
                             {audio === true ? <MicIcon /> : <MicOffIcon />}
