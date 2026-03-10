@@ -9,6 +9,7 @@ import Root from '../root/Root';
 import Dashboard from '../dashboard/Dashboard';
 import Meetings from '../meeting/Meetings';
 import Summarise from '../summarise/summarise';
+import Transcripts from '../transcripts/transcripts';
 import Reports from '../reports/Reports';
 import Settings from '../settings/settings';
 
@@ -25,6 +26,7 @@ export default function AllRoutes() {
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/meetings" element={<Meetings />} />
                 <Route path="/summaries" element={<Summarise />} />
+                <Route path="/transcripts" element={<Transcripts />} />
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/settings" element={<Settings />} />
             </Route>
