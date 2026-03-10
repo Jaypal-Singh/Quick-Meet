@@ -9,7 +9,7 @@ const InsightsSidebar = () => {
 
     return (
         <div style={{
-            backgroundColor: '#0d1e21', border: '1px solid #1a3335',
+            backgroundColor: '#1C2230', border: '1px solid rgba(255, 255, 255, 0.05)',
             borderRadius: '16px', padding: '24px',
             display: 'flex', flexDirection: 'column', gap: '20px'
         }}>
@@ -18,13 +18,13 @@ const InsightsSidebar = () => {
 
             {/* Total Meeting Hours */}
             <div style={{
-                backgroundColor: '#091517', border: '1px solid #1a3335',
+                backgroundColor: '#131722', border: '1px solid rgba(255, 255, 255, 0.05)',
                 borderRadius: '14px', padding: '20px'
             }}>
                 <p style={{ color: '#9CA3AF', fontSize: '12px', fontWeight: 500, margin: '0 0 4px 0' }}>Total Meeting Hours</p>
                 <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px' }}>
                     <span style={{ color: 'white', fontSize: '36px', fontWeight: 900, letterSpacing: '-1px', lineHeight: 1 }}>18.5</span>
-                    <span style={{ color: '#34D399', fontSize: '14px', fontWeight: 700, paddingBottom: '4px', display: 'flex', alignItems: 'center', gap: '2px' }}>
+                    <span style={{ color: '#8B5CF6', fontSize: '14px', fontWeight: 700, paddingBottom: '4px', display: 'flex', alignItems: 'center', gap: '2px' }}>
                         <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                         </svg>
@@ -36,7 +36,7 @@ const InsightsSidebar = () => {
 
             {/* Average Attendance */}
             <div style={{
-                backgroundColor: '#091517', border: '1px solid #1a3335',
+                backgroundColor: '#131722', border: '1px solid rgba(255, 255, 255, 0.05)',
                 borderRadius: '14px', padding: '20px'
             }}>
                 <p style={{ color: '#9CA3AF', fontSize: '12px', fontWeight: 500, margin: '0 0 4px 0' }}>Average Attendance</p>
@@ -45,10 +45,10 @@ const InsightsSidebar = () => {
                     <span style={{ color: '#9CA3AF', fontSize: '14px', fontWeight: 500, paddingBottom: '4px' }}>Stable</span>
                 </div>
                 {/* Progress Bar */}
-                <div style={{ height: '6px', width: '100%', backgroundColor: '#1a3335', borderRadius: '999px', overflow: 'hidden' }}>
+                <div style={{ height: '6px', width: '100%', backgroundColor: 'rgba(255, 255, 255, 0.05)', borderRadius: '999px', overflow: 'hidden' }}>
                     <div style={{
                         height: '100%', width: '94%', borderRadius: '999px',
-                        background: 'linear-gradient(to right, #6366f1, #2CD4CB)'
+                        background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)'
                     }}></div>
                 </div>
             </div>

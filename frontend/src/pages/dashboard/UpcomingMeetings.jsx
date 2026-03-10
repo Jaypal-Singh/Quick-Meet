@@ -13,10 +13,10 @@ const UpcomingMeetings = () => {
             {/* Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                 <h2 style={{ fontSize: '18px', fontWeight: 700, color: 'white', display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
-                    <CalendarMonthIcon style={{ color: '#22d3ee', fontSize: '20px' }} />
+                    <CalendarMonthIcon style={{ color: '#6366F1', fontSize: '20px' }} />
                     Upcoming Meetings
                 </h2>
-                <button style={{ color: '#2CD4CB', fontSize: '14px', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer' }}>
+                <button style={{ color: '#8B5CF6', fontSize: '14px', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer' }}>
                     View Schedule
                 </button>
             </div>
@@ -25,13 +25,13 @@ const UpcomingMeetings = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {meetings.map((meeting, idx) => (
                     <div key={idx} style={{
-                        display: 'flex', alignItems: 'center', backgroundColor: '#0d1e21',
-                        border: '1px solid #1a3335', borderRadius: '14px', padding: '16px'
+                        display: 'flex', alignItems: 'center', backgroundColor: '#1C2230',
+                        border: '1px solid rgba(255, 255, 255, 0.05)', borderRadius: '14px', padding: '16px'
                     }}>
                         {/* Date Badge */}
                         <div style={{
                             width: '56px', height: '56px', borderRadius: '14px',
-                            backgroundColor: '#122427', border: '1px solid #1f3d40',
+                            backgroundColor: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.05)',
                             display: 'flex', flexDirection: 'column', alignItems: 'center',
                             justifyContent: 'center', marginRight: '16px', flexShrink: 0
                         }}>
@@ -53,18 +53,18 @@ const UpcomingMeetings = () => {
                             {[...Array(Math.min(meeting.attendees, 3))].map((_, i) => (
                                 <img
                                     key={i}
-                                    src={`https://ui-avatars.com/api/?name=U${i + 1}&background=${['2CD4CB', '6366f1', 'f59e0b'][i]}&color=fff&size=28&bold=true`}
+                                    src={`https://ui-avatars.com/api/?name=U${i + 1}&background=${['8B5CF6', '6366F1', '4F46E5'][i]}&color=fff&size=28&bold=true`}
                                     alt=""
                                     style={{
                                         width: '28px', height: '28px', borderRadius: '50%',
-                                        border: '2px solid #0d1e21', marginLeft: i > 0 ? '-8px' : '0'
+                                        border: '2px solid #1C2230', marginLeft: i > 0 ? '-8px' : '0'
                                     }}
                                 />
                             ))}
                             {meeting.attendees > 3 && (
                                 <span style={{
                                     width: '28px', height: '28px', borderRadius: '50%',
-                                    backgroundColor: '#1f3d40', border: '2px solid #0d1e21',
+                                    backgroundColor: 'rgba(255, 255, 255, 0.1)', border: '2px solid #1C2230',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                                     fontSize: '10px', color: '#D1D5DB', fontWeight: 600, marginLeft: '-8px'
                                 }}>

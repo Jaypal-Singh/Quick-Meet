@@ -25,14 +25,14 @@ const RecentSummaries = () => {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
                 {summaries.map((summary, idx) => (
                     <div key={idx} style={{
-                        backgroundColor: '#0d1e21', border: '1px solid #1a3335',
+                        backgroundColor: '#1C2230', border: '1px solid rgba(255, 255, 255, 0.05)',
                         borderRadius: '14px', padding: '16px'
                     }}>
                         {/* Top Row */}
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                 <span style={{
-                                    backgroundColor: 'rgba(52,211,153,0.15)', color: '#34D399',
+                                    backgroundColor: 'rgba(139, 92, 246, 0.15)', color: '#8B5CF6',
                                     fontSize: '10px', fontWeight: 700, padding: '2px 8px', borderRadius: '4px'
                                 }}>
                                     {summary.badge}
@@ -46,9 +46,9 @@ const RecentSummaries = () => {
 
                         {/* Preview area */}
                         <div style={{
-                            height: '80px', backgroundColor: '#091517',
+                            height: '80px', backgroundColor: '#131722',
                             borderRadius: '10px', marginBottom: '12px',
-                            border: '1px solid #1a3335'
+                            border: '1px solid rgba(255, 255, 255, 0.05)'
                         }}></div>
 
                         {/* Title */}
