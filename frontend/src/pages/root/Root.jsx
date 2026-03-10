@@ -4,7 +4,7 @@ import SideBar from '../../components/sideBar/SideBar';
 
 export default function Root() {
     return (
-        <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#040F0F' }}>
+        <Box sx={{ display: 'flex', height: '100vh', bgcolor: '#0B0F19', overflow: 'hidden' }}>
             <SideBar />
             <main style={{ flex: 1, padding: '28px 32px', overflowY: 'auto' }}>
                 <Outlet />
