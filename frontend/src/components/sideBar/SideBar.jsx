@@ -1,6 +1,5 @@
 import React from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
-import { Box, Typography, LinearProgress } from '@mui/material';
+import { NavLink } from 'react-router-dom';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
@@ -8,103 +7,70 @@ import AssessmentIcon from '@mui/icons-material/Assessment';
 import SettingsIcon from '@mui/icons-material/Settings';
 
 const NAV_ITEMS = [
-    { path: '/dashboard', label: 'Dashboard', icon: <DashboardIcon /> },
-    { path: '/meetings', label: 'Meetings', icon: <VideocamIcon /> },
-    { path: '/summaries', label: 'Summaries', icon: <AutoAwesomeIcon /> },
-    { path: '/reports', label: 'Reports', icon: <AssessmentIcon /> },
-    { path: '/settings', label: 'Settings', icon: <SettingsIcon /> },
+    { path: '/dashboard', label: 'Dashboard', icon: <DashboardIcon fontSize="small" /> },
+    { path: '/meetings', label: 'Meetings', icon: <VideocamIcon fontSize="small" /> },
+    { path: '/summaries', label: 'Summaries', icon: <AutoAwesomeIcon fontSize="small" /> },
+    { path: '/reports', label: 'Reports', icon: <AssessmentIcon fontSize="small" /> },
+    { path: '/settings', label: 'Settings', icon: <SettingsIcon fontSize="small" /> },
 ];
 
 export default function SideBar() {
     return (
-        <Box
-            sx={{
-                width: 260,
-                bgcolor: '#0B1B1B',
-                color: 'white',
-                display: 'flex',
-                flexDirection: 'column',
-                height: '100vh',
-                p: 3,
-                boxSizing: 'border-box',
-            }}
+        <aside
+            style={{ width: '220px', minWidth: '220px' }}
+            className="bg-[#0B1B1B] text-white flex flex-col h-screen sticky top-0"
         >
-            {/* User / Logo Section */}
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 5 }}>
-                <Box
-                    sx={{
-                        width: 32,
-                        height: 32,
-                        bgcolor: '#2CD4CB',
-                        borderRadius: '8px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        mr: 2,
-                        color: '#0B1B1B',
-                        fontWeight: 'bold',
-                    }}
-                >
-                    <VideocamIcon fontSize="small" />
-                </Box>
-                <Box>
-                    <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 700, lineHeight: 1.2 }}>
-                        MeetNext
-                    </Typography>
-                    <Typography variant="caption" sx={{ color: '#2CD4CB', letterSpacing: 1, fontSize: '0.65rem' }}>
-                        PRO SUITE
-                    </Typography>
-                </Box>
-            </Box>
-
-            {/* Navigation */}
-            <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
-                {NAV_ITEMS.map((item) => (
-                    <NavLink
-                        key={item.path}
-                        to={item.path}
-                        style={({ isActive }) => ({
-                            display: 'flex',
-                            alignItems: 'center',
-                            textDecoration: 'none',
-                            color: isActive ? '#2CD4CB' : '#A0B3B3',
-                            backgroundColor: isActive ? '#0C2D2D' : 'transparent',
-                            padding: '12px 16px',
-                            borderRadius: '8px',
-                            transition: 'all 0.2s',
-                            fontWeight: isActive ? 600 : 400,
-                        })}
+            {/* Inner padding container */}
+            <div className="flex flex-col h-full p-6">
+                {/* Logo */}
+                <div className="flex items-center gap-3 mb-10">
+                    <div
+                        style={{ width: '36px', height: '36px' }}
+                        className="bg-[#2CD4CB] rounded-lg flex items-center justify-center text-[#0B1B1B]"
                     >
-                        <Box sx={{ mr: 2, display: 'flex', alignItems: 'center' }}>{item.icon}</Box>
-                        <Typography variant="body2" sx={{ fontSize: '0.9rem' }}>
-                            {item.label}
-                        </Typography>
-                    </NavLink>
-                ))}
-            </Box>
+                        <VideocamIcon fontSize="small" />
+                    </div>
+                    <div>
+                        <p className="text-base font-bold" style={{ lineHeight: '1.2' }}>MeetNext</p>
+                        <p className="text-[#2CD4CB] font-semibold" style={{ fontSize: '10px', letterSpacing: '2px' }}>PRO SUITE</p>
+                    </div>
+                </div>
 
-            {/* Storage Widget */}
-            <Box sx={{ mt: 'auto', p: 2, bgcolor: '#0C2D2D', borderRadius: '8px' }}>
-                <Typography variant="caption" sx={{ color: '#A0B3B3', display: 'block', mb: 1 }}>
-                    Storage Usage
-                </Typography>
-                <LinearProgress
-                    variant="determinate"
-                    value={60}
-                    sx={{
-                        height: 6,
-                        borderRadius: 3,
-                        bgcolor: '#1A3F3F',
-                        '& .MuiLinearProgress-bar': {
-                            bgcolor: '#2CD4CB',
-                        },
-                        mb: 1
-                    }}
-                />
-                <Typography variant="caption" sx={{ color: '#6A8080', fontSize: '0.7rem' }}>
-                    12.4 GB of 20 GB used
-                </Typography>
-            </Box>
-        </Box>
+                {/* Navigation */}
+                <nav className="flex-1 flex flex-col gap-1">
+                    {NAV_ITEMS.map((item) => (
+                        <NavLink
+                            key={item.path}
+                            to={item.path}
+                            style={({ isActive }) => ({
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '12px',
+                                padding: '10px 14px',
+                                borderRadius: '10px',
+                                fontSize: '14px',
+                                textDecoration: 'none',
+                                transition: 'all 0.2s',
+                                color: isActive ? '#2CD4CB' : '#A0B3B3',
+                                backgroundColor: isActive ? '#0C2D2D' : 'transparent',
+                                fontWeight: isActive ? 600 : 400,
+                            })}
+                        >
+                            <span style={{ display: 'flex', alignItems: 'center' }}>{item.icon}</span>
+                            <span>{item.label}</span>
+                        </NavLink>
+                    ))}
+                </nav>
+
+                {/* Storage Widget */}
+                <div style={{ padding: '14px', backgroundColor: '#0C2D2D', borderRadius: '10px' }}>
+                    <p style={{ color: '#A0B3B3', fontSize: '12px', marginBottom: '8px' }}>Storage Usage</p>
+                    <div style={{ height: '6px', width: '100%', backgroundColor: '#1A3F3F', borderRadius: '999px', overflow: 'hidden', marginBottom: '8px' }}>
+                        <div style={{ height: '100%', width: '62%', backgroundColor: '#2CD4CB', borderRadius: '999px' }}></div>
+                    </div>
+                    <p style={{ color: '#6A8080', fontSize: '11px' }}>12.4 GB of 20 GB used</p>
+                </div>
+            </div>
+        </aside>
     );
 }
