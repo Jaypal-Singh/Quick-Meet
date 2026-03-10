@@ -1,6 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import SideBar from '../../components/sideBar/SideBar';
+import { Box } from '@mui/material';
 
 export default function Root() {
     return (
@@ -9,6 +10,6 @@ export default function Root() {
             <main style={{ flex: 1, padding: '28px 32px', overflowY: 'auto' }}>
                 <Outlet />
             </main>
-        </div>
+        </Box>
     );
 }

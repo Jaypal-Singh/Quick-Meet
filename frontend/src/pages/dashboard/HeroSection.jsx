@@ -6,7 +6,7 @@ const HeroSection = () => {
     return (
         <div style={{
             position: 'relative', overflow: 'hidden', borderRadius: '16px',
-            backgroundColor: '#0d1e21', border: '1px solid #1a3335',
+            background: 'linear-gradient(180deg, #1C2230 0%, #131722 100%)', border: '1px solid rgba(255, 255, 255, 0.05)',
             minHeight: '260px', display: 'flex'
         }}>
             {/* Left Content */}
@@ -20,8 +20,11 @@ const HeroSection = () => {
                 }}>
                     Connect{' '}
                     <span style={{
-                        background: 'linear-gradient(to right, #22d3ee, #2dd4bf, #34d399)',
-                        WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'
+                        background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)',
+                        WebkitBackgroundClip: 'text',
+                        backgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        color: 'transparent'
                     }}>instantly</span>
                     <br />from anywhere.
                 </h1>
@@ -36,8 +39,8 @@ const HeroSection = () => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
                     {/* Enter meet link */}
                     <div style={{
-                        display: 'flex', alignItems: 'center', backgroundColor: '#122427',
-                        border: '1px solid #1f3d40', borderRadius: '999px',
+                        display: 'flex', alignItems: 'center', backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                        border: '1px solid rgba(255, 255, 255, 0.05)', borderRadius: '999px',
                         padding: '0 16px', height: '44px', gap: '8px'
                     }}>
                         <LinkIcon fontSize="small" style={{ color: '#6B7280' }} />
@@ -53,9 +56,9 @@ const HeroSection = () => {
 
                     {/* Join Call */}
                     <button style={{
-                        backgroundColor: '#2CD4CB', color: '#0B1B1B', fontWeight: 700,
+                        background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)', color: '#FFFFFF', fontWeight: 700,
                         padding: '0 24px', height: '44px', borderRadius: '999px',
-                        fontSize: '14px', border: 'none', cursor: 'pointer'
+                        fontSize: '14px', border: 'none', cursor: 'pointer', boxShadow: '0 4px 14px 0 rgba(99, 102, 241, 0.4)'
                     }}>
                         Join Call
                     </button>
@@ -63,7 +66,7 @@ const HeroSection = () => {
                     {/* New Meeting */}
                     <button style={{
                         display: 'flex', alignItems: 'center', gap: '6px',
-                        backgroundColor: 'transparent', border: '1px solid #2a4548',
+                        backgroundColor: 'transparent', border: '1px solid rgba(255, 255, 255, 0.1)',
                         color: 'white', fontWeight: 600, padding: '0 20px',
                         height: '44px', borderRadius: '999px', fontSize: '14px', cursor: 'pointer'
                     }}>
