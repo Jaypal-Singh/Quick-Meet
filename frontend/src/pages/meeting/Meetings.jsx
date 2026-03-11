@@ -10,8 +10,9 @@ export default function Meetings() {
         <Box
             sx={{
                 display: 'flex',
-                height: 'calc(100vh - 64px)', // Account for Root.jsx padding (32px top + 32px bottom)
-                gap: 4 // Space between the left content and right sidebar
+                flexDirection: { xs: 'column', md: 'row' },
+                height: { xs: 'auto', md: 'calc(100vh - 64px)' }, // Account for Root.jsx padding (32px top + 32px bottom)
+                gap: { xs: 3, md: 4 } // Space between the left content and right sidebar
             }}
         >
             {/* Main Content Area (Left side) */}
@@ -20,8 +21,8 @@ export default function Meetings() {
                     flexGrow: 1,
                     display: 'flex',
                     flexDirection: 'column',
-                    overflowY: 'auto',
-                    pr: 1, // Padding right for scrollbar
+                    overflowY: { xs: 'visible', md: 'auto' }, // Allow native scroll on mobile
+                    pr: { xs: 0, md: 1 }, // Padding right for scrollbar
                     '&::-webkit-scrollbar': { width: '4px' },
                     '&::-webkit-scrollbar-track': { background: 'transparent' },
                     '&::-webkit-scrollbar-thumb': { background: 'rgba(255,255,255,0.1)', borderRadius: '4px' },
@@ -35,9 +36,9 @@ export default function Meetings() {
             {/* Sidebar Details Area (Right side) */}
             <Box
                 sx={{
-                    width: 350,
+                    width: { xs: '100%', md: 350 },
                     flexShrink: 0,
-                    height: '100%',
+                    height: { xs: 'auto', md: '100%' },
                 }}
             >
                 <ScheduleSidebar />

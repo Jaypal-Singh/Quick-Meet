@@ -39,14 +39,21 @@ export default function RecentMeetings() {
 
     return (
         <Box sx={{ mb: 4 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Box sx={{ 
+                display: 'flex', 
+                flexDirection: { xs: 'column', sm: 'row' },
+                justifyContent: 'space-between', 
+                alignItems: { xs: 'flex-start', sm: 'center' }, 
+                mb: 2,
+                gap: { xs: 1, sm: 2 }
+            }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <DashboardCustomizeOutlinedIcon sx={{ color: '#E2E8F0', fontSize: 18 }} />
-                    <Typography variant="h6" sx={{ color: '#F8FAFC', fontWeight: 700 }}>
+                    <Typography variant="h6" sx={{ color: '#F8FAFC', fontWeight: 700, whiteSpace: 'nowrap' }}>
                         Recent Meetings
                     </Typography>
                 </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: { xs: '100%', sm: 'auto' }, justifyContent: { xs: 'space-between', sm: 'flex-start' } }}>
                     <Typography variant="caption" sx={{ color: '#94A3B8' }}>
                         Showing 24 meetings
                     </Typography>
@@ -56,7 +63,11 @@ export default function RecentMeetings() {
                 </Box>
             </Box>
 
-            <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 3 }}>
+            <Box sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' },
+                gap: 3
+            }}>
                 {meetings.map((meet) => (
                     <Card key={meet.id} sx={{
                         bgcolor: 'rgba(34, 43, 61, 0.4)',
@@ -70,7 +81,7 @@ export default function RecentMeetings() {
                             borderColor: 'rgba(99, 102, 241, 0.3)'
                         }
                     }}>
-                        <CardContent sx={{ p: 2.5, display: 'flex', flexDirection: 'column', height: '100%' }}>
+                        <CardContent sx={{ p: { xs: 2, md: 2.5 }, display: 'flex', flexDirection: 'column', height: '100%' }}>
                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
                                 <Chip
                                     label={meet.category}

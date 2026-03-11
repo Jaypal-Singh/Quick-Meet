@@ -23,10 +23,17 @@ export default function TranscriptCard({ title, badge, badgeColor, date, duratio
                 }
             }}
         >
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                <Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
-                        <Typography variant="h6" sx={{ color: 'white', fontWeight: 700, fontSize: '1.1rem' }}>
+            <Box sx={{ 
+                display: 'flex', 
+                flexDirection: { xs: 'column', md: 'row' }, 
+                justifyContent: 'space-between', 
+                alignItems: { xs: 'flex-start', md: 'flex-start' }, 
+                mb: 2,
+                gap: 2
+            }}>
+                <Box sx={{ width: '100%' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1, flexWrap: 'wrap' }}>
+                        <Typography variant="h6" sx={{ color: 'white', fontWeight: 700, fontSize: { xs: '1rem', md: '1.1rem' } }}>
                             {title}
                         </Typography>
                         <Chip
@@ -43,7 +50,13 @@ export default function TranscriptCard({ title, badge, badgeColor, date, duratio
                         />
                     </Box>
 
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, color: '#94A3B8' }}>
+                    <Box sx={{ 
+                        display: 'flex', 
+                        flexDirection: { xs: 'column', sm: 'row' },
+                        alignItems: { xs: 'flex-start', sm: 'center' }, 
+                        gap: { xs: 1, sm: 3 }, 
+                        color: '#94A3B8' 
+                    }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
                             <CalendarTodayOutlinedIcon sx={{ fontSize: 16, color: '#6366F1' }} />
                             <Typography variant="caption">{date}</Typography>
@@ -59,11 +72,17 @@ export default function TranscriptCard({ title, badge, badgeColor, date, duratio
                     </Box>
                 </Box>
 
-                <Box sx={{ display: 'flex', gap: 1 }}>
+                <Box sx={{ 
+                    display: 'flex', 
+                    gap: 1, 
+                    width: { xs: '100%', md: 'auto' }, 
+                    justifyContent: { xs: 'flex-end', md: 'flex-start' } 
+                }}>
                     <IconButton
                         sx={{
                             bgcolor: 'rgba(34, 43, 61, 0.6)',
                             color: '#94A3B8',
+                            p: { xs: 0.8, md: 1 },
                             '&:hover': { color: '#6366F1', bgcolor: 'rgba(99, 102, 241, 0.1)' }
                         }}
                     >
@@ -73,6 +92,7 @@ export default function TranscriptCard({ title, badge, badgeColor, date, duratio
                         sx={{
                             bgcolor: 'rgba(34, 43, 61, 0.6)',
                             color: '#94A3B8',
+                            p: { xs: 0.8, md: 1 },
                             '&:hover': { color: '#6366F1', bgcolor: 'rgba(99, 102, 241, 0.1)' }
                         }}
                     >
