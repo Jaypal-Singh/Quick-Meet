@@ -1,9 +1,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import LandingPage from '../landing';
-import Authentication from '../authentication';
-// import HomeComponent from '../home';
-// import History from '../history';
+import Signup from '../SignupAndLogin/Signup';
+import Login from '../SignupAndLogin/Login';
 import VideoMeetComponent from '../videoMeet/VideoMeet';
 import Root from '../root/Root';
 import Dashboard from '../dashboard/Dashboard';
@@ -16,10 +14,9 @@ import Settings from '../settings/settings';
 export default function AllRoutes() {
     return (
         <Routes>
-            {/* <Route path='/' element={<LandingPage />} /> */}
-            <Route path='/' element={<Authentication />} />
-            {/* <Route path='/home' element={<HomeComponent />} />
-            <Route path='/history' element={<History />} /> */}
+            {/* Auth Routes */}
+            <Route path='/' element={<Signup />} />
+            <Route path='/login' element={<Login />} />
 
             {/* Pages with Sidebar Layout */}
             <Route element={<Root />}>

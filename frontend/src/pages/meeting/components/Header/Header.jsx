@@ -6,7 +6,7 @@ import AddIcon from '@mui/icons-material/Add';
 
 export default function Header() {
     return (
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 4 }}>
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { xs: 'stretch', md: 'center' }, gap: 2, justifyContent: 'space-between', mb: { xs: 3, md: 4 } }}>
             {/* Search Bar */}
             <Box
                 sx={{
@@ -16,9 +16,10 @@ export default function Header() {
                     borderRadius: '12px',
                     px: 2,
                     py: 1,
-                    width: '400px',
+                    width: { xs: '100%', md: '400px' },
                     border: '1px solid rgba(255, 255, 255, 0.05)',
                     transition: 'all 0.3s ease',
+                    flexGrow: { xs: 1, md: 0 },
                     '&:focus-within': {
                         bgcolor: 'rgba(34, 43, 61, 0.8)',
                         borderColor: 'rgba(99, 102, 241, 0.5)',
@@ -60,8 +61,9 @@ export default function Header() {
                         borderRadius: '12px',
                         textTransform: 'none',
                         fontWeight: 600,
-                        px: 3,
+                        px: { xs: 2.5, sm: 3 },
                         py: 1,
+                        flexGrow: { xs: 1, sm: 0 },
                         boxShadow: '0 4px 14px 0 rgba(99, 102, 241, 0.3)',
                         transition: 'all 0.3s ease',
                         '&:hover': {

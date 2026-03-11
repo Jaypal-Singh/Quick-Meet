@@ -17,8 +17,8 @@ export default function FilterBar() {
                     alignItems: 'center',
                     bgcolor: 'rgba(34, 43, 61, 0.4)',
                     borderRadius: '16px',
-                    px: 3,
-                    py: 1.5,
+                    px: { xs: 2, md: 3 },
+                    py: { xs: 1.2, md: 1.5 },
                     border: '1px solid rgba(255, 255, 255, 0.05)',
                     transition: 'all 0.3s ease',
                     '&:focus-within': {
@@ -28,45 +28,45 @@ export default function FilterBar() {
                     }
                 }}
             >
-                <SearchIcon sx={{ color: '#6366F1', mr: 2, fontSize: 22 }} />
+                <SearchIcon sx={{ color: '#6366F1', mr: { xs: 1.5, md: 2 }, fontSize: { xs: 20, md: 22 } }} />
                 <InputBase
-                    placeholder="Search through meeting content, speakers, or topics..."
-                    sx={{ color: '#E2E8F0', width: '100%', fontSize: '1rem' }}
+                    placeholder="Search through meeting content..."
+                    sx={{ color: '#E2E8F0', width: '100%', fontSize: { xs: '0.9rem', md: '1rem' } }}
                 />
             </Box>
 
             {/* Filter Chips */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
                 <Chip
-                    icon={<CalendarTodayOutlinedIcon sx={{ fontSize: '18px !important' }} />}
+                    icon={<CalendarTodayOutlinedIcon sx={{ fontSize: '16px !important' }} />}
                     label="All Dates"
                     onDelete={() => { }}
                     deleteIcon={<KeyboardArrowDownIcon />}
                     sx={chipStyle}
                 />
                 <Chip
-                    icon={<AccessTimeOutlinedIcon sx={{ fontSize: '18px !important' }} />}
+                    icon={<AccessTimeOutlinedIcon sx={{ fontSize: '16px !important' }} />}
                     label="Duration"
                     onDelete={() => { }}
                     deleteIcon={<KeyboardArrowDownIcon />}
                     sx={chipStyle}
                 />
                 <Chip
-                    icon={<PeopleOutlinedIcon sx={{ fontSize: '18px !important' }} />}
+                    icon={<PeopleOutlinedIcon sx={{ fontSize: '16px !important' }} />}
                     label="Participants"
                     onDelete={() => { }}
                     deleteIcon={<KeyboardArrowDownIcon />}
                     sx={chipStyle}
                 />
                 <Chip
-                    icon={<TagOutlinedIcon sx={{ fontSize: '18px !important' }} />}
+                    icon={<TagOutlinedIcon sx={{ fontSize: '16px !important' }} />}
                     label="Keywords"
                     onDelete={() => { }}
                     deleteIcon={<KeyboardArrowDownIcon />}
                     sx={chipStyle}
                 />
 
-                <Box sx={{ height: '24px', width: '1px', bgcolor: 'rgba(255,255,255,0.1)', mx: 1 }} />
+                <Box sx={{ height: { xs: '0px', sm: '24px' }, width: { xs: '0px', sm: '1px' }, bgcolor: 'rgba(255,255,255,0.1)', mx: 1 }} />
 
                 <Button
                     sx={{
@@ -74,7 +74,8 @@ export default function FilterBar() {
                         textTransform: 'none',
                         fontWeight: 600,
                         fontSize: '0.875rem',
-                        '&:hover': { bgcolor: 'rgba(99, 102, 241, 0.08)' }
+                        '&:hover': { bgcolor: 'rgba(99, 102, 241, 0.08)' },
+                        ml: { xs: 'auto', sm: 0 }
                     }}
                 >
                     Clear Filters

@@ -11,11 +11,32 @@ export default function Settings() {
     return (
         <div style={{ color: 'white', maxWidth: '900px', width: '100%', paddingBottom: '40px' }}>
             {/* Header */}
-            <h1 style={{ fontSize: '36px', fontWeight: 800, margin: '0 0 12px 0', letterSpacing: '-0.5px' }}>Settings</h1>
-            <p style={{ color: '#9CA3AF', fontSize: '15px', margin: '0 0 40px 0' }}>Manage your account, preferences, and meeting experience.</p>
+            <h1 style={{ 
+                fontSize: window.innerWidth < 600 ? '28px' : '36px', 
+                fontWeight: 800, 
+                margin: '0 0 8px 0', 
+                letterSpacing: '-0.5px' 
+            }}>Settings</h1>
+            <p style={{ color: '#9CA3AF', fontSize: '14px', margin: '0 0 32px 0' }}>Manage your account, preferences, and meeting experience.</p>
 
             {/* Tabs */}
-            <div style={{ display: 'flex', borderBottom: '1px solid rgba(255, 255, 255, 0.05)', marginBottom: '32px' }}>
+            <div style={{ 
+                display: 'flex', 
+                borderBottom: '1px solid rgba(255, 255, 255, 0.05)', 
+                marginBottom: '32px',
+                overflowX: 'auto',
+                whiteSpace: 'nowrap',
+                msOverflowStyle: 'none',
+                scrollbarWidth: 'none',
+                WebkitOverflowScrolling: 'touch'
+            }}>
+                <style>
+                    {`
+                        div::-webkit-scrollbar {
+                            display: none;
+                        }
+                    `}
+                </style>
                 {tabs.map((tab) => (
                     <div
                         key={tab}
@@ -27,6 +48,7 @@ export default function Settings() {
                             fontWeight: activeTab === tab ? 600 : 500,
                             position: 'relative',
                             transition: 'color 0.2s',
+                            flexShrink: 0
                         }}
                     >
                         {tab}

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Box, Typography, Button } from '@mui/material';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
@@ -9,73 +10,77 @@ const UpcomingMeetings = () => {
     ];
 
     return (
-        <div>
+        <Box>
             {/* Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <h2 style={{ fontSize: '18px', fontWeight: 700, color: 'white', display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
-                    <CalendarMonthIcon style={{ color: '#6366F1', fontSize: '20px' }} />
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <Typography component="h2" sx={{ fontSize: { xs: '16px', md: '18px' }, fontWeight: 700, color: 'white', display: 'flex', alignItems: 'center', gap: 1, m: 0 }}>
+                    <CalendarMonthIcon sx={{ color: '#6366F1', fontSize: '20px' }} />
                     Upcoming Meetings
-                </h2>
-                <button style={{ color: '#8B5CF6', fontSize: '14px', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer' }}>
+                </Typography>
+                <Button sx={{ color: '#8B5CF6', fontSize: { xs: '12px', md: '14px' }, fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', textTransform: 'none', p: 0, minWidth: 'auto', '&:hover': { background: 'none', textDecoration: 'underline' } }}>
                     View Schedule
-                </button>
-            </div>
+                </Button>
+            </Box>
 
             {/* Meeting Cards */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                 {meetings.map((meeting, idx) => (
-                    <div key={idx} style={{
-                        display: 'flex', alignItems: 'center', backgroundColor: '#1C2230',
-                        border: '1px solid rgba(255, 255, 255, 0.05)', borderRadius: '14px', padding: '16px'
+                    <Box key={idx} sx={{
+                        display: 'flex', alignItems: 'center', backgroundColor: '#1C2230', flexDirection: { xs: 'column', sm: 'row' },
+                        border: '1px solid rgba(255, 255, 255, 0.05)', borderRadius: '14px', p: { xs: 2, md: 2 }
                     }}>
-                        {/* Date Badge */}
-                        <div style={{
-                            width: '56px', height: '56px', borderRadius: '14px',
-                            backgroundColor: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.05)',
-                            display: 'flex', flexDirection: 'column', alignItems: 'center',
-                            justifyContent: 'center', marginRight: '16px', flexShrink: 0
-                        }}>
-                            <span style={{ fontSize: '10px', color: '#9CA3AF', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px' }}>{meeting.month}</span>
-                            <span style={{ fontSize: '22px', color: 'white', fontWeight: 700, lineHeight: 1 }}>{meeting.day}</span>
-                        </div>
+                        {/* Top/Left Section: Date + Info */}
+                        <Box sx={{ display: 'flex', width: { xs: '100%', sm: 'auto' }, flexGrow: 1, alignItems: 'center', mb: { xs: 2, sm: 0 } }}>
+                            {/* Date Badge */}
+                            <Box sx={{
+                                width: { xs: '48px', md: '56px' }, height: { xs: '48px', md: '56px' }, borderRadius: '12px',
+                                backgroundColor: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.05)',
+                                display: 'flex', flexDirection: 'column', alignItems: 'center',
+                                justifyContent: 'center', mr: 2, flexShrink: 0
+                            }}>
+                                <Typography sx={{ fontSize: '9px', color: '#9CA3AF', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px' }}>{meeting.month}</Typography>
+                                <Typography sx={{ fontSize: { xs: '18px', md: '22px' }, color: 'white', fontWeight: 700, lineHeight: 1 }}>{meeting.day}</Typography>
+                            </Box>
 
-                        {/* Info */}
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                            <p style={{ color: 'white', fontSize: '14px', fontWeight: 600, margin: 0 }}>{meeting.title}</p>
-                            <p style={{ color: '#9CA3AF', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px', margin: '4px 0 0 0' }}>
-                                <AccessTimeIcon style={{ fontSize: '14px' }} />
-                                {meeting.time}
-                            </p>
-                        </div>
+                            {/* Info */}
+                            <Box sx={{ flex: 1, minWidth: 0 }}>
+                                <Typography sx={{ color: 'white', fontSize: { xs: '13px', md: '14px' }, fontWeight: 600, m: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{meeting.title}</Typography>
+                                <Typography sx={{ color: '#9CA3AF', fontSize: '12px', display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}>
+                                    <AccessTimeIcon sx={{ fontSize: '14px' }} />
+                                    {meeting.time}
+                                </Typography>
+                            </Box>
+                        </Box>
 
                         {/* Avatars */}
-                        <div style={{ display: 'flex', alignItems: 'center', marginLeft: '16px' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', ml: { xs: 0, sm: 2 }, width: { xs: '100%', sm: 'auto' }, justifyContent: { xs: 'flex-start', sm: 'flex-end' }, pl: { xs: '64px', sm: 0 } }}>
                             {[...Array(Math.min(meeting.attendees, 3))].map((_, i) => (
-                                <img
+                                <Box
+                                    component="img"
                                     key={i}
                                     src={`https://ui-avatars.com/api/?name=U${i + 1}&background=${['8B5CF6', '6366F1', '4F46E5'][i]}&color=fff&size=28&bold=true`}
                                     alt=""
-                                    style={{
+                                    sx={{
                                         width: '28px', height: '28px', borderRadius: '50%',
-                                        border: '2px solid #1C2230', marginLeft: i > 0 ? '-8px' : '0'
+                                        border: '2px solid #1C2230', ml: i > 0 ? '-8px' : '0'
                                     }}
                                 />
                             ))}
                             {meeting.attendees > 3 && (
-                                <span style={{
+                                <Box component="span" sx={{
                                     width: '28px', height: '28px', borderRadius: '50%',
                                     backgroundColor: 'rgba(255, 255, 255, 0.1)', border: '2px solid #1C2230',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    fontSize: '10px', color: '#D1D5DB', fontWeight: 600, marginLeft: '-8px'
+                                    fontSize: '10px', color: '#D1D5DB', fontWeight: 600, ml: '-8px'
                                 }}>
                                     +{meeting.attendees - 3}
-                                </span>
+                                </Box>
                             )}
-                        </div>
-                    </div>
+                        </Box>
+                    </Box>
                 ))}
-            </div>
-        </div>
+            </Box>
+        </Box>
     );
 };
 

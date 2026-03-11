@@ -16,20 +16,21 @@ export default function PinnedSummary() {
 
             <Box sx={{
                 display: 'flex',
+                flexDirection: { xs: 'column', md: 'row' },
                 bgcolor: 'rgba(34, 43, 61, 0.4)', // Matching PastMeetings card bg
                 borderRadius: '16px',
-                p: 2.5,
+                p: { xs: 2, md: 2.5 },
                 border: '1px solid rgba(255, 255, 255, 0.05)',
-                gap: 3
+                gap: { xs: 2, md: 3 }
             }}>
                 {/* Left Side: Video/Image thumbnail representation */}
                 <Box sx={{
-                    width: '30%',
+                    width: { xs: '100%', md: '30%' },
                     bgcolor: '#2D3748', // Placeholder thumbnail color
                     borderRadius: '12px',
                     position: 'relative',
                     overflow: 'hidden',
-                    minHeight: '180px'
+                    minHeight: { xs: '150px', md: '180px' }
                 }}>
                     <Chip
                         label="URGENT FOLLOW-UP"
@@ -59,17 +60,17 @@ export default function PinnedSummary() {
                 </Box>
 
                 {/* Right Side: Content */}
-                <Box sx={{ width: '70%', display: 'flex', flexDirection: 'column' }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                <Box sx={{ width: { xs: '100%', md: '70%' }, display: 'flex', flexDirection: 'column' }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1, gap: 1 }}>
                         <Typography variant="caption" sx={{ color: '#6366F1', fontWeight: 800, letterSpacing: 1 }}>
                             PRODUCT STRATEGY
                         </Typography>
-                        <Typography variant="caption" sx={{ color: '#94A3B8', fontWeight: 500 }}>
+                        <Typography variant="caption" sx={{ color: '#94A3B8', fontWeight: 500, textAlign: 'right' }}>
                             Oct 24, 2023 • 45m
                         </Typography>
                     </Box>
 
-                    <Typography variant="h5" sx={{ color: '#F8FAFC', fontWeight: 800, mb: 1.5 }}>
+                    <Typography variant="h5" sx={{ color: '#F8FAFC', fontWeight: 800, mb: 1.5, fontSize: { xs: '1.25rem', md: '1.5rem' } }}>
                         Product Roadmap Q4 Planning
                     </Typography>
 
@@ -77,7 +78,7 @@ export default function PinnedSummary() {
                         The team finalized the key milestones for the Q4 release. Main focus is on the mobile UI overhaul and integration of the new AI transcription engine. Resource allocation was the primary blocker identified.
                     </Typography>
 
-                    <Box sx={{ display: 'flex', gap: 1.5, mt: 'auto' }}>
+                    <Box sx={{ display: 'flex', gap: 1.5, mt: 'auto', flexWrap: 'wrap' }}>
                         <Button
                             variant="contained"
                             sx={{
@@ -87,8 +88,11 @@ export default function PinnedSummary() {
                                 borderRadius: '20px',
                                 textTransform: 'none',
                                 px: 3,
+                                py: { xs: 0.8, md: 1 },
+                                fontSize: { xs: '0.85rem', md: '0.875rem' },
                                 '&:hover': { bgcolor: '#4F46E5' },
                                 boxShadow: '0 4px 14px 0 rgba(99, 102, 241, 0.3)',
+                                flexGrow: { xs: 1, md: 0 }
                             }}
                         >
                             View Transcript
@@ -104,7 +108,9 @@ export default function PinnedSummary() {
                                 borderRadius: '20px',
                                 textTransform: 'none',
                                 px: 2,
-                                '&:hover': { borderColor: 'rgba(255, 255, 255, 0.1)', bgcolor: 'rgba(255, 255, 255, 0.1)' }
+                                fontSize: { xs: '0.85rem', md: '0.875rem' },
+                                '&:hover': { borderColor: 'rgba(255, 255, 255, 0.1)', bgcolor: 'rgba(255, 255, 255, 0.1)' },
+                                flexGrow: { xs: 1, md: 0 }
                             }}
                         >
                             Share
@@ -120,7 +126,9 @@ export default function PinnedSummary() {
                                 borderRadius: '20px',
                                 textTransform: 'none',
                                 px: 2,
-                                '&:hover': { borderColor: 'rgba(255, 255, 255, 0.1)', bgcolor: 'rgba(255, 255, 255, 0.1)' }
+                                fontSize: { xs: '0.85rem', md: '0.875rem' },
+                                '&:hover': { borderColor: 'rgba(255, 255, 255, 0.1)', bgcolor: 'rgba(255, 255, 255, 0.1)' },
+                                flexGrow: { xs: 1, md: 0 }
                             }}
                         >
                             Recording

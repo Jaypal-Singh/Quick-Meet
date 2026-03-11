@@ -111,6 +111,7 @@ export default function Calendar() {
                                 variant="h4"
                                 onClick={handleMonthClick}
                                 sx={{
+                                    fontSize: { xs: '1.5rem', md: '2.125rem' },
                                     fontWeight: 800,
                                     color: '#F8FAFC',
                                     letterSpacing: '-0.5px',
@@ -173,6 +174,7 @@ export default function Calendar() {
                                 variant="h4"
                                 onClick={handleYearClick}
                                 sx={{
+                                    fontSize: { xs: '1.5rem', md: '2.125rem' },
                                     fontWeight: 800,
                                     color: '#F8FAFC',
                                     letterSpacing: '-0.5px',
@@ -244,8 +246,8 @@ export default function Calendar() {
                     </Typography>
                 </Box>
 
-                <Box sx={{ bgcolor: 'rgba(34, 43, 61, 0.6)', p: 0.5, borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
-                    <ButtonGroup variant="text" sx={{ '& .MuiButton-root': { textTransform: 'none', minWidth: '80px', border: 'none !important' } }}>
+                <Box sx={{ bgcolor: 'rgba(34, 43, 61, 0.6)', p: 0.5, borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.05)', display: { xs: 'none', sm: 'block' } }}>
+                    <ButtonGroup variant="text" sx={{ '& .MuiButton-root': { textTransform: 'none', minWidth: { xs: '60px', md: '80px' }, border: 'none !important', fontSize: { xs: '12px', md: '14px' } } }}>
                         <Button sx={{ bgcolor: '#222B3D', color: '#FFFFFF', borderRadius: '8px !important', fontWeight: 600, boxShadow: '0 2px 8px rgba(0,0,0,0.2)', '&:hover': { bgcolor: '#222B3D' } }}>Month</Button>
                         <Button sx={{ color: '#94A3B8', '&:hover': { color: '#E2E8F0', bgcolor: 'transparent' } }}>Week</Button>
                         <Button sx={{ color: '#94A3B8', '&:hover': { color: '#E2E8F0', bgcolor: 'transparent' } }}>Day</Button>
@@ -273,12 +275,12 @@ export default function Calendar() {
                 </Box>
 
                 {/* Grid Cells */}
-                <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gridAutoRows: 'minmax(100px, auto)' }}>
+                <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gridAutoRows: { xs: 'minmax(70px, auto)', sm: 'minmax(100px, auto)' } }}>
                     {dates.map((item, idx) => (
                         <Box
                             key={idx}
                             sx={{
-                                p: 1.5,
+                                p: { xs: 0.5, md: 1.5 },
                                 borderRight: '1px solid rgba(255, 255, 255, 0.05)',
                                 borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
                                 '&:nth-of-type(7n)': { borderRight: 'none' }, // Remove right border for last column
