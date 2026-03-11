@@ -1,4 +1,3 @@
-import React from 'react';
 import LinkIcon from '@mui/icons-material/Link';
 import AddIcon from '@mui/icons-material/Add';
 
@@ -46,7 +45,9 @@ const HeroSection = () => {
                         <LinkIcon fontSize="small" style={{ color: '#6B7280' }} />
                         <input
                             type="text"
-                            placeholder="Enter meet"
+                            placeholder="Enter meet code"
+                            value={meetingCode}
+                            onChange={(e) => setMeetingCode(e.target.value)}
                             style={{
                                 background: 'transparent', outline: 'none', border: 'none',
                                 fontSize: '14px', color: 'white', width: '90px'
@@ -55,7 +56,9 @@ const HeroSection = () => {
                     </div>
 
                     {/* Join Call */}
-                    <button style={{
+                    <button 
+                        onClick={() => meetingCode && navigate(`/${meetingCode}`)}
+                        style={{
                         background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)', color: '#FFFFFF', fontWeight: 700,
                         padding: '0 24px', height: '44px', borderRadius: '999px',
                         fontSize: '14px', border: 'none', cursor: 'pointer', boxShadow: '0 4px 14px 0 rgba(99, 102, 241, 0.4)'
@@ -64,7 +67,9 @@ const HeroSection = () => {
                     </button>
 
                     {/* New Meeting */}
-                    <button style={{
+                    <button 
+                        onClick={() => navigate(`/${Math.random().toString(36).substring(2, 9)}`)}
+                        style={{
                         display: 'flex', alignItems: 'center', gap: '6px',
                         backgroundColor: 'transparent', border: '1px solid rgba(255, 255, 255, 0.1)',
                         color: 'white', fontWeight: 600, padding: '0 20px',

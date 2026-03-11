@@ -4,7 +4,7 @@ import LandingPage from '../landing';
 import Authentication from '../authentication';
 // import HomeComponent from '../home';
 // import History from '../history';
-import VideoMeetComponent from '../VideoMeet';
+import VideoMeetComponent from '../videoMeet/VideoMeet';
 import Root from '../root/Root';
 import Dashboard from '../dashboard/Dashboard';
 import Meetings from '../meeting/Meetings';
