@@ -13,10 +13,10 @@ export default function Summarise() {
             <Box
                 sx={{
                     position: 'sticky',
-                    top: '-32px', // Matches Root.jsx p: 4 (4*8=32px)
+                    top: { xs: '-20px', md: '-28px' }, // Matches Root.jsx p: { xs: '20px 16px', md: '28px 32px' }
                     zIndex: 10,
                     bgcolor: '#0B0F19',
-                    pt: '32px',
+                    pt: { xs: '20px', md: '28px' },
                     mt: '-8px', // Prevent gap
                     pb: 1,
                 }}

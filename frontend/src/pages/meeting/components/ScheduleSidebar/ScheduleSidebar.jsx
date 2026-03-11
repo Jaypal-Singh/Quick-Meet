@@ -19,7 +19,7 @@ export default function ScheduleSidebar() {
                 bgcolor: 'rgba(23, 28, 40, 0.4)',
                 border: '1px solid rgba(255, 255, 255, 0.05)',
                 borderRadius: '24px',
-                p: 3,
+                p: { xs: 2, md: 3 },
                 display: 'flex',
                 flexDirection: 'column',
             }}

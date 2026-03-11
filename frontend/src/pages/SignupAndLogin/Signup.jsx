@@ -1,0 +1,436 @@
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
+import server from '../../environment';
+
+export default function Signup() {
+    const navigate = useNavigate();
+
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const handleSignup = async (e) => {
+        e.preventDefault();
+        setError('');
+
+        if (!name || !email || !password) {
+            setError('Please fill in all fields.');
+            return;
+        }
+        if (password.length < 8) {
+            setError('Password must be at least 8 characters.');
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const client = axios.create({ baseURL: `${server}/api/v1/users` });
+            const request = await client.post('/register', { name, username: email, password });
+
+            if (request.status === 201) {
+                localStorage.setItem('username', name);
+                localStorage.setItem('email', email);
+                navigate('/login');
+            }
+        } catch (err) {
+            const msg = err?.response?.data?.message || 'Registration failed. Please try again.';
+            setError(msg);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleGoogleSignup = () => {
+        setError('Google authentication coming soon!');
+    };
+
+    return (
+        <div style={styles.page}>
+            {/* Ambient glow effects */}
+            <div style={styles.glowTop} />
+            <div style={styles.glowBottom} />
+
+            <div style={styles.card}>
+                {/* Logo */}
+                <div style={styles.logoWrapper}>
+                    <div style={styles.logoIcon}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                            <path d="M15 10l4.553-2.276A1 1 0 0121 8.723v6.554a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"
+                                stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                    </div>
+                    <span style={styles.brandName}>MeetNext</span>
+                    <span style={styles.proBadge}>PRO SUITE</span>
+                </div>
+
+                <h1 style={styles.title}>Create your account</h1>
+                <p style={styles.subtitle}>Join the professional community at MeetNext.</p>
+
+                <form onSubmit={handleSignup} style={styles.form}>
+                    {/* Full Name */}
+                    <div style={styles.fieldGroup}>
+                        <label style={styles.label}>Full Name</label>
+                        <div
+                            style={styles.inputWrapper}
+                            onFocus={() => {}}
+                        >
+                            <span style={styles.inputIcon}>
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="#6B7280" strokeWidth="1.8" strokeLinecap="round" />
+                                    <circle cx="12" cy="7" r="4" stroke="#6B7280" strokeWidth="1.8" />
+                                </svg>
+                            </span>
+                            <input
+                                type="text"
+                                placeholder="John Doe"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                style={styles.input}
+                                onFocus={(e) => e.target.parentElement.style.borderColor = 'rgba(99,102,241,0.6)'}
+                                onBlur={(e) => e.target.parentElement.style.borderColor = 'rgba(255,255,255,0.05)'}
+                                autoFocus
+                            />
+                        </div>
+                    </div>
+
+                    {/* Email */}
+                    <div style={styles.fieldGroup}>
+                        <label style={styles.label}>Email Address</label>
+                        <div style={styles.inputWrapper}>
+                            <span style={styles.inputIcon}>
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="#6B7280" strokeWidth="1.8" strokeLinecap="round" />
+                                    <polyline points="22,6 12,13 2,6" stroke="#6B7280" strokeWidth="1.8" strokeLinecap="round" />
+                                </svg>
+                            </span>
+                            <input
+                                type="email"
+                                placeholder="name@example.com"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                style={styles.input}
+                                onFocus={(e) => e.target.parentElement.style.borderColor = 'rgba(99,102,241,0.6)'}
+                                onBlur={(e) => e.target.parentElement.style.borderColor = 'rgba(255,255,255,0.05)'}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Password */}
+                    <div style={styles.fieldGroup}>
+                        <label style={styles.label}>
+                            Password <span style={{ color: '#8B5CF6' }}>*</span>
+                        </label>
+                        <div style={styles.inputWrapper}>
+                            <span style={styles.inputIcon}>
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke="#6B7280" strokeWidth="1.8" />
+                                    <path d="M7 11V7a5 5 0 0110 0v4" stroke="#6B7280" strokeWidth="1.8" strokeLinecap="round" />
+                                </svg>
+                            </span>
+                            <input
+                                type={showPassword ? 'text' : 'password'}
+                                placeholder="••••••••"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                style={{ ...styles.input, paddingRight: '40px' }}
+                                onFocus={(e) => e.target.parentElement.style.borderColor = 'rgba(99,102,241,0.6)'}
+                                onBlur={(e) => e.target.parentElement.style.borderColor = 'rgba(255,255,255,0.05)'}
+                            />
+                            <button type="button" onClick={() => setShowPassword(!showPassword)} style={styles.eyeBtn} tabIndex={-1}>
+                                {showPassword ? (
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                        <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19M1 1l22 22" stroke="#6B7280" strokeWidth="1.8" strokeLinecap="round" />
+                                        <circle cx="12" cy="12" r="3" stroke="#6B7280" strokeWidth="1.8" />
+                                    </svg>
+                                ) : (
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="#6B7280" strokeWidth="1.8" strokeLinecap="round" />
+                                        <circle cx="12" cy="12" r="3" stroke="#6B7280" strokeWidth="1.8" />
+                                    </svg>
+                                )}
+                            </button>
+                        </div>
+                        <p style={styles.hint}>Must be at least 8 characters with a mix of letters and numbers.</p>
+                    </div>
+
+                    {/* Error */}
+                    {error && <p style={styles.error}>{error}</p>}
+
+                    {/* Submit */}
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        style={{ ...styles.primaryBtn, opacity: loading ? 0.75 : 1 }}
+                        onMouseEnter={(e) => { if (!loading) { e.target.style.transform = 'translateY(-1px)'; e.target.style.boxShadow = '0 6px 20px rgba(99,102,241,0.55)'; } }}
+                        onMouseLeave={(e) => { e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = '0 4px 14px rgba(99,102,241,0.4)'; }}
+                    >
+                        {loading ? 'Creating account...' : 'Create Account'}
+                    </button>
+
+                    {/* Divider */}
+                    <div style={styles.divider}>
+                        <div style={styles.dividerLine} />
+                        <span style={styles.dividerText}>OR CONTINUE WITH</span>
+                        <div style={styles.dividerLine} />
+                    </div>
+
+                    {/* Google */}
+                    <button
+                        type="button"
+                        onClick={handleGoogleSignup}
+                        style={styles.googleBtn}
+                        onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(99,102,241,0.4)'; e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.06)'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.05)'; e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.02)'; }}
+                    >
+                        <svg width="18" height="18" viewBox="0 0 24 24">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                        </svg>
+                        Sign up with Google
+                    </button>
+                </form>
+
+                <p style={styles.footerText}>
+                    By creating an account, you agree to MeetNext's{' '}
+                    <a href="#" style={styles.footerLink}>Terms of Service</a>
+                    {' '}and{' '}
+                    <a href="#" style={styles.footerLink}>Privacy Policy</a>.
+                </p>
+
+                <p style={styles.switchText}>
+                    Already have an account?{' '}
+                    <Link to="/login" style={styles.switchLink}>Sign in</Link>
+                </p>
+            </div>
+        </div>
+    );
+}
+
+const styles = {
+    page: {
+        height: '100vh',
+        overflow: 'hidden',
+        backgroundColor: '#0B0F19',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '0 16px',
+        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        boxSizing: 'border-box',
+        position: 'relative',
+    },
+    glowTop: {
+        position: 'absolute',
+        top: '-120px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        width: '500px',
+        height: '300px',
+        background: 'radial-gradient(ellipse at center, rgba(99,102,241,0.12) 0%, transparent 70%)',
+        pointerEvents: 'none',
+    },
+    glowBottom: {
+        position: 'absolute',
+        bottom: '-100px',
+        right: '20%',
+        width: '300px',
+        height: '300px',
+        background: 'radial-gradient(ellipse at center, rgba(139,92,246,0.08) 0%, transparent 70%)',
+        pointerEvents: 'none',
+    },
+    card: {
+        width: '100%',
+        maxWidth: '430px',
+        background: 'linear-gradient(180deg, #1C2230 0%, #131722 100%)',
+        borderRadius: '16px',
+        padding: '34px 32px',
+        border: '1px solid rgba(255,255,255,0.05)',
+        boxShadow: '0 24px 60px rgba(0,0,0,0.5)',
+        position: 'relative',
+        zIndex: 1,
+    },
+    logoWrapper: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '10px',
+        marginBottom: '24px',
+    },
+    logoIcon: {
+        width: '34px',
+        height: '34px',
+        borderRadius: '10px',
+        background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        boxShadow: '0 4px 12px rgba(99,102,241,0.3)',
+        flexShrink: 0,
+    },
+    brandName: {
+        fontSize: '16px',
+        fontWeight: '800',
+        color: 'white',
+        letterSpacing: '-0.3px',
+    },
+    proBadge: {
+        fontSize: '9px',
+        fontWeight: '700',
+        color: '#8B5CF6',
+        letterSpacing: '1.5px',
+        marginTop: '2px',
+    },
+    title: {
+        fontSize: '24px',
+        fontWeight: '800',
+        color: 'white',
+        margin: '0 0 5px 0',
+        letterSpacing: '-0.5px',
+    },
+    subtitle: {
+        fontSize: '13.5px',
+        color: '#9CA3AF',
+        margin: '0 0 24px 0',
+    },
+    form: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '16px',
+    },
+    fieldGroup: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '6px',
+    },
+    label: {
+        fontSize: '13px',
+        fontWeight: '500',
+        color: '#E2E8F0',
+    },
+    inputWrapper: {
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255,255,255,0.04)',
+        border: '1px solid rgba(255,255,255,0.05)',
+        borderRadius: '10px',
+        transition: 'border-color 0.2s',
+        padding: '0 13px',
+    },
+    inputIcon: {
+        display: 'flex',
+        alignItems: 'center',
+        marginRight: '9px',
+        flexShrink: 0,
+    },
+    input: {
+        flex: 1,
+        background: 'transparent',
+        border: 'none',
+        outline: 'none',
+        color: 'white',
+        fontSize: '14px',
+        padding: '12px 0',
+        fontFamily: 'inherit',
+    },
+    eyeBtn: {
+        position: 'absolute',
+        right: '11px',
+        background: 'none',
+        border: 'none',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        padding: '4px',
+    },
+    hint: {
+        fontSize: '11.5px',
+        color: '#6B7280',
+        margin: 0,
+        lineHeight: '1.5',
+    },
+    error: {
+        fontSize: '13px',
+        color: '#F87171',
+        margin: '0',
+        padding: '10px 13px',
+        backgroundColor: 'rgba(248,113,113,0.08)',
+        borderRadius: '8px',
+        border: '1px solid rgba(248,113,113,0.18)',
+    },
+    primaryBtn: {
+        width: '100%',
+        padding: '13px',
+        background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)',
+        border: 'none',
+        borderRadius: '999px',
+        color: '#FFFFFF',
+        fontSize: '14.5px',
+        fontWeight: '700',
+        cursor: 'pointer',
+        transition: 'transform 0.2s, box-shadow 0.2s, opacity 0.2s',
+        fontFamily: 'inherit',
+        letterSpacing: '0.2px',
+        boxShadow: '0 4px 14px rgba(99,102,241,0.4)',
+    },
+    divider: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '10px',
+    },
+    dividerLine: {
+        flex: 1,
+        height: '1px',
+        backgroundColor: 'rgba(255,255,255,0.06)',
+    },
+    dividerText: {
+        fontSize: '10.5px',
+        color: '#6B7280',
+        letterSpacing: '0.8px',
+        whiteSpace: 'nowrap',
+    },
+    googleBtn: {
+        width: '100%',
+        padding: '12px',
+        backgroundColor: 'rgba(255,255,255,0.02)',
+        border: '1px solid rgba(255,255,255,0.05)',
+        borderRadius: '999px',
+        color: 'white',
+        fontSize: '14px',
+        fontWeight: '500',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '10px',
+        transition: 'border-color 0.2s, background-color 0.2s',
+        fontFamily: 'inherit',
+    },
+    footerText: {
+        fontSize: '11.5px',
+        color: '#6B7280',
+        textAlign: 'center',
+        marginTop: '18px',
+        lineHeight: '1.6',
+    },
+    footerLink: {
+        color: '#8B5CF6',
+        textDecoration: 'none',
+    },
+    switchText: {
+        fontSize: '13px',
+        color: '#9CA3AF',
+        textAlign: 'center',
+        marginTop: '10px',
+    },
+    switchLink: {
+        color: '#8B5CF6',
+        fontWeight: '600',
+        textDecoration: 'none',
+    },
+};

@@ -60,7 +60,15 @@ export default function Transcripts() {
                 ))}
             </Box>
 
-            <Box sx={{ mt: 2, mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Box sx={{ 
+                mt: 2, 
+                mb: 4, 
+                display: 'flex', 
+                flexDirection: { xs: 'column', sm: 'row' },
+                justifyContent: 'space-between', 
+                alignItems: { xs: 'flex-start', sm: 'center' },
+                gap: 2
+            }}>
                 <Box sx={{ color: '#94A3B8', fontSize: '0.875rem' }}>
                     Showing 4 of 24 transcripts
                 </Box>

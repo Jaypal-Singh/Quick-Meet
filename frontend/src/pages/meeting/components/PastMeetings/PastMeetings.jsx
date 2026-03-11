@@ -44,7 +44,7 @@ export default function PastMeetings() {
                 </Box>
             </Box>
 
-            <Box sx={{ display: 'flex', gap: 3 }}>
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, gap: 3 }}>
                 {pastMeetings.map((meeting) => (
                     <Box
                         key={meeting.id}
