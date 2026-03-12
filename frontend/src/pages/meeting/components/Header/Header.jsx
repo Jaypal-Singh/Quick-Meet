@@ -1,10 +1,30 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, InputBase, IconButton, Button } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import AddIcon from '@mui/icons-material/Add';
+import ScheduleMeetingModal from './ScheduleMeetingModal';
 
-export default function Header() {
+export default function Header({ onSchedule, onUpdate, onDelete, editingMeeting, isEditModalOpen, onCloseEdit, autoOpenCreate }) {
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+    useEffect(() => {
+        if (autoOpenCreate) {
+            setIsCreateModalOpen(true);
+        }
+    }, [autoOpenCreate]);
+
+    const handleOpenCreateModal = () => setIsCreateModalOpen(true);
+    const handleCloseCreateModal = () => setIsCreateModalOpen(false);
+
+    const handleSchedule = async (meetingData) => {
+        if (onSchedule) onSchedule(meetingData);
+    };
+
+    const handleUpdate = async (meetingData) => {
+        if (onUpdate) onUpdate(meetingData);
+    };
+
     return (
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { xs: 'stretch', md: 'center' }, gap: 2, justifyContent: 'space-between', mb: { xs: 3, md: 4 } }}>
             {/* Search Bar */}
@@ -55,6 +75,7 @@ export default function Header() {
                 <Button
                     variant="contained"
                     startIcon={<AddIcon />}
+                    onClick={handleOpenCreateModal}
                     sx={{
                         background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)',
                         color: '#FFFFFF',
@@ -76,6 +97,22 @@ export default function Header() {
                     Schedule New Meeting
                 </Button>
             </Box>
+
+            {/* Create Meeting Modal */}
+            <ScheduleMeetingModal 
+                open={isCreateModalOpen} 
+                onClose={handleCloseCreateModal} 
+                onSchedule={handleSchedule} 
+            />
+
+            {/* Edit Meeting Modal */}
+            <ScheduleMeetingModal 
+                open={isEditModalOpen} 
+                onClose={onCloseEdit} 
+                onSchedule={handleUpdate}
+                onDelete={onDelete}
+                initialData={editingMeeting}
+            />
         </Box>
     );
 }

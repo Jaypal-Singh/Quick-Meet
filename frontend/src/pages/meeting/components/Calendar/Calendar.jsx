@@ -2,21 +2,24 @@ import React, { useState } from 'react';
 import { Box, Typography, ButtonGroup, Button, IconButton, Menu, MenuItem } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import MeetingDetailsModal from './MeetingDetailsModal';
 
-export default function Calendar() {
+export default function Calendar({ meetings = [], onEdit }) {
     const [currentDate, setCurrentDate] = useState(new Date()); // Dynamic current date
+    const [selectedMeeting, setSelectedMeeting] = useState(null);
+    const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
     const daysOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
     // Placeholder events matching the image design
     const dummyEvents = {
         '2023-9-4': [ // Oct 4
-            { id: 1, time: '09:00', title: 'Design Sprint', color: 'rgba(249, 115, 22, 0.2)', border: '#F97316', text: '#F97316' },
-            { id: 2, time: '11:30', title: 'Stakeholder Review', color: 'rgba(249, 115, 22, 0.2)', border: '#F97316', text: '#F97316' },
-            { id: 3, time: '14:00', title: 'QA Sync', color: 'rgba(56, 188, 248, 0.2)', border: '#38BDF8', text: '#38BDF8' }
+            { id: 1, time: '09:00', title: 'Design Sprint', color: 'rgba(249, 115, 22, 0.2)', border: '#F97316', text: '#F97316', description: 'Design sync for the new dashboard', participants: 'alex@example.com, sara@example.com', date: 'Oct 4, 2023', startTime: '09:00', endTime: '10:30' },
+            { id: 2, time: '11:30', title: 'Stakeholder Review', color: 'rgba(249, 115, 22, 0.2)', border: '#F97316', text: '#F97316', description: 'Reviewing progress with key stakeholders', participants: 'boss@example.com', date: 'Oct 4, 2023', startTime: '11:30', endTime: '12:30' },
+            { id: 3, time: '14:00', title: 'QA Sync', color: 'rgba(56, 188, 248, 0.2)', border: '#38BDF8', text: '#38BDF8', description: 'Weekly QA report and sync', participants: 'tester1@example.com', date: 'Oct 4, 2023', startTime: '14:00', endTime: '14:30' }
         ],
         '2023-9-5': [ // Oct 5
-            { id: 4, time: '10:00', title: 'Product All Hands', color: 'rgba(249, 115, 22, 0.2)', border: '#F97316', text: '#F97316' }
+            { id: 4, time: '10:00', title: 'Product All Hands', color: 'rgba(249, 115, 22, 0.2)', border: '#F97316', text: '#F97316', description: 'Monthly company-wide meeting', participants: 'team@example.com', date: 'Oct 5, 2023', startTime: '10:00', endTime: '11:00' }
         ]
     };
 
@@ -44,16 +47,32 @@ export default function Calendar() {
 
         // Current month
         for (let i = 1; i <= daysInCurrentMonth; i++) {
-            const dateStr = `${year}-${month}-${i}`;
-            const isToday = dateStr === todayStr;
-            const hasEvents = dummyEvents[dateStr];
+            const pad = (n) => n.toString().padStart(2, '0');
+            const targetDateStr = `${year}-${pad(month + 1)}-${pad(i)}`;
+            const displayDateStr = `${year}-${month}-${i}`; // For staticEvents lookup
+            const isToday = displayDateStr === todayStr;
+            
+            // Combine dummy and dynamic meetings
+            // Format dynamic meetings for display
+            const dynamicMeetingsForDate = meetings.filter(m => m.date === targetDateStr).map(m => ({
+                id: m.id,
+                time: m.startTime,
+                title: m.title,
+                color: 'rgba(139, 92, 246, 0.15)', // Purple theme
+                border: '#8B5CF6',
+                text: '#A78BFA',
+                raw: m // Keep the original data for details
+            }));
+
+            const staticEvents = dummyEvents[displayDateStr] || [];
+            const allEvents = [...staticEvents, ...dynamicMeetingsForDate];
 
             dates.push({
                 date: i,
                 disabled: false,
-                active: !!hasEvents,
+                active: allEvents.length > 0,
                 isToday: isToday,
-                events: hasEvents || null
+                events: allEvents.length > 0 ? allEvents : null
             });
         }
 
@@ -98,6 +117,21 @@ export default function Calendar() {
     const handleYearSelect = (year) => {
         setCurrentDate(new Date(year, currentDate.getMonth(), 1));
         handleYearClose();
+    };
+
+    const handleEventClick = (e, event) => {
+        e.stopPropagation();
+        // If it's a dynamic meeting, it has the 'raw' property
+        const meetingData = event.raw ? event.raw : {
+            title: event.title,
+            description: event.description,
+            date: event.date,
+            startTime: event.startTime,
+            endTime: event.endTime,
+            participants: event.participants
+        };
+        setSelectedMeeting(meetingData);
+        setIsDetailsModalOpen(true);
     };
 
     return (
@@ -241,9 +275,17 @@ export default function Calendar() {
                             </IconButton>
                         </Box>
                     </Box>
-                    <Typography variant="body2" sx={{ color: '#8B5CF6', fontWeight: 600, mt: 0.5 }}>
-                        You have 4 meetings today
-                    </Typography>
+                    {(() => {
+                        const todayStr = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD format
+                        const todayMeetingsCount = meetings.filter(m => m.date === todayStr).length;
+                        return (
+                            <Typography variant="body2" sx={{ color: '#8B5CF6', fontWeight: 600, mt: 0.5 }}>
+                                {todayMeetingsCount === 0
+                                    ? "You have no meetings today"
+                                    : `You have ${todayMeetingsCount} meeting${todayMeetingsCount > 1 ? 's' : ''} today`}
+                            </Typography>
+                        );
+                    })()}
                 </Box>
 
                 <Box sx={{ bgcolor: 'rgba(34, 43, 61, 0.6)', p: 0.5, borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.05)', display: { xs: 'none', sm: 'block' } }}>
@@ -319,6 +361,7 @@ export default function Calendar() {
                                     {item.events.map(ev => (
                                         <Box
                                             key={ev.id}
+                                            onClick={(e) => handleEventClick(e, ev)}
                                             sx={{
                                                 bgcolor: ev.color,
                                                 borderLeft: `2px solid ${ev.border}`,
@@ -343,6 +386,13 @@ export default function Calendar() {
                     ))}
                 </Box>
             </Box>
+
+            <MeetingDetailsModal
+                open={isDetailsModalOpen}
+                onClose={() => setIsDetailsModalOpen(false)}
+                meeting={selectedMeeting}
+                onEdit={onEdit}
+            />
         </Box>
     );
 }

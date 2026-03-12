@@ -108,8 +108,6 @@ async def add_to_activity(user_data: AddToActivityRequest):
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
         
-    # new_meeting = Meeting(user_id=user.username, meetingCode=meeting_code)
-
     new_meeting = Meeting(
         user_id=user.username, 
         meetingCode=meeting_code,
@@ -117,7 +115,6 @@ async def add_to_activity(user_data: AddToActivityRequest):
         startTime=datetime.now(),
         endTime=datetime.now()
     )
-    
     await new_meeting.create()
     return {"message": "Meeting added to activity"}
 
