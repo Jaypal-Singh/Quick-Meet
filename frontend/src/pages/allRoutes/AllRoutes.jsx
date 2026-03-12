@@ -12,6 +12,7 @@ import Reports from '../reports/Reports';
 import Settings from '../settings/settings';
 import MeetingHistory from '../meeting/history/MeetingHistory';
 import UpcomingSchedule from '../dashboard/UpcomingSchedule';
+import Friends from '../friends/Friends';
 
 export default function AllRoutes() {
     return (
@@ -24,6 +25,7 @@ export default function AllRoutes() {
             <Route element={<Root />}>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/meetings" element={<Meetings />} />
+                <Route path="/friends" element={<Friends />} />
                 <Route path="/summaries" element={<Summarise />} />
                 <Route path="/transcripts" element={<Transcripts />} />
                 <Route path="/reports" element={<Reports />} />

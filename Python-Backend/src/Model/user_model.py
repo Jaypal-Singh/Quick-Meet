@@ -8,7 +8,8 @@ class User(Document):
     username: str
     password: str
     token: Optional[str] = None
-    
+    fcm_token: Optional[str] = None
+
     class Settings:
         name = "users"
 
@@ -24,3 +25,6 @@ class UserLogin(BaseModel):
 class AddToActivityRequest(BaseModel):
     token: str
     meeting_code: str
+
+class GoogleLoginRequest(BaseModel):
+    access_token: str
