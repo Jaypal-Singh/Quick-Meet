@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import { useGoogleLogin } from '@react-oauth/google';
 import server from '../../environment';
 
 export default function Login() {
@@ -42,8 +43,31 @@ export default function Login() {
         }
     };
 
+    const googleLogin = useGoogleLogin({
+        onSuccess: async (tokenResponse) => {
+            setLoading(true);
+            try {
+                const response = await axios.post(`${server}/api/v1/users/google-login`, {
+                    access_token: tokenResponse.access_token
+                });
+                
+                if (response.status === 200) {
+                    localStorage.setItem('token', response.data.token);
+                    localStorage.setItem('email', response.data.email);
+                    localStorage.setItem('username', response.data.name);
+                    navigate('/dashboard');
+                }
+            } catch (err) {
+                setError('Google login failed. Please try again.');
+            } finally {
+                setLoading(false);
+            }
+        },
+        onError: () => setError('Google login failed.')
+    });
+
     const handleGoogleLogin = () => {
-        setError('Google authentication coming soon!');
+        googleLogin();
     };
 
     return (
