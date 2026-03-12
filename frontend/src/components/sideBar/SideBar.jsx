@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { Box, Typography, Button, IconButton, useMediaQuery, useTheme } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import VideocamIcon from '@mui/icons-material/Videocam';
@@ -9,11 +9,13 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import LogoutIcon from '@mui/icons-material/Logout';
+import PeopleIcon from '@mui/icons-material/People';
 
 const NAV_ITEMS = [
     { path: '/dashboard', label: 'Dashboard', icon: <DashboardIcon /> },
     { path: '/meetings', label: 'Meetings', icon: <VideocamIcon /> },
     { path: '/summaries', label: 'Summaries', icon: <AutoAwesomeIcon /> },
+    { path: '/friends', label: 'Friends', icon: <PeopleIcon /> },
     { path: '/transcripts', label: 'Transcripts', icon: <ChatIcon /> },
     { path: '/settings', label: 'Settings', icon: <SettingsIcon /> },
 ];
@@ -21,6 +23,16 @@ const NAV_ITEMS = [
 export default function SideBar() {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('username');
+        localStorage.removeItem('email');
+        navigate('/login');
+    };
+
+    const username = localStorage.getItem('username') || 'User';
 
     return (
         <Box
@@ -189,7 +201,7 @@ export default function SideBar() {
                             color: '#E2E8F0',
                             transition: 'all 0.3s ease'
                         }}>
-                           <Typography sx={{fontSize: '9px', fontWeight: 'bold'}}>AR</Typography>
+                           <Typography sx={{fontSize: '9px', fontWeight: 'bold'}}>{username.split(' ').map(n => n[0]).join('').toUpperCase()}</Typography>
                         </Box>
                         <Typography variant="body2" sx={{ fontSize: '0.65rem', fontFamily: 'inherit', letterSpacing: '-0.2px', mt: 0.5 }}>
                             Profile
@@ -209,10 +221,14 @@ export default function SideBar() {
                             <PersonOutlineIcon sx={{ color: '#94A3B8', fontSize: 20, transition: 'color 0.3s ease' }} />
                         </Box>
                         <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-                            <Typography variant="body2" sx={{ fontWeight: 600, color: 'white', lineHeight: 1.2 }}>Alex Rivera</Typography>
+                            <Typography variant="body2" sx={{ fontWeight: 600, color: 'white', lineHeight: 1.2 }}>{username}</Typography>
                             <Typography variant="caption" sx={{ color: '#8B5CF6', fontSize: '0.75rem', fontWeight: 500 }}>Pro Plan</Typography>
                         </Box>
-                        <IconButton size="small" sx={{ color: '#94A3B8', transition: 'all 0.3s ease', '&:hover': { color: '#EF4444', bgcolor: 'rgba(239, 68, 68, 0.1)', transform: 'scale(1.1)' } }}>
+                        <IconButton 
+                            size="small" 
+                            onClick={handleLogout}
+                            sx={{ color: '#94A3B8', transition: 'all 0.3s ease', '&:hover': { color: '#EF4444', bgcolor: 'rgba(239, 68, 68, 0.1)', transform: 'scale(1.1)' } }}
+                        >
                             <LogoutIcon fontSize="small" />
                         </IconButton>
                     </Box>

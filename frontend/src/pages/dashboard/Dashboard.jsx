@@ -1,14 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, useTheme, useMediaQuery } from '@mui/material';
 import TopHeader from './TopHeader';
 import HeroSection from './HeroSection';
 import UpcomingMeetings from './UpcomingMeetings';
 import InsightsSidebar from './InsightsSidebar';
 import RecentSummaries from './RecentSummaries';
+import { requestForToken } from '../../firebase';
 
 export default function Dashboard() {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+    useEffect(() => {
+        requestForToken();
+    }, []);
 
     return (
         <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: { xs: 2.5, md: 3 }, color: 'white', maxWidth: '1200px', mx: 'auto' }}>
