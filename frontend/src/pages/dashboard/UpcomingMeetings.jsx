@@ -1,13 +1,48 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const UpcomingMeetings = () => {
-    const meetings = [
-        { month: 'OCT', day: '23', title: 'Design System Review', time: '10:30 AM - 11:15 AM', attendees: 5 },
-        { month: 'OCT', day: '23', title: 'Quarterly Marketing Sync', time: '02:00 PM - 03:30 PM', attendees: 12 },
-    ];
+    const navigate = useNavigate();
+    const [meetings, setMeetings] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const token = localStorage.getItem('token');
+
+    useEffect(() => {
+        const fetchMeetings = async () => {
+            if (!token) return;
+            try {
+                const response = await axios.get(`http://localhost:8000/api/v1/meetings/?token=${token}`);
+                const now = new Date();
+                const filtered = response.data.filter(m => new Date(m.startTime) > now)
+                    .map(m => {
+                        const start = new Date(m.startTime);
+                        const end = new Date(m.endTime);
+                        return {
+                            ...m,
+                            month: start.toLocaleDateString('en-US', { month: 'short' }).toUpperCase(),
+                            day: start.getDate(),
+                            time: `${start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
+                            attendees: Array.isArray(m.participants) ? m.participants.length : 0
+                        };
+                    })
+                    .sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
+                setMeetings(filtered);
+            } catch (error) {
+                console.error('Error fetching upcoming meetings:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchMeetings();
+    }, [token]);
+
+    const displayMeetings = meetings.slice(0, 2);
+
+    if (loading) return null;
 
     return (
         <Box>
@@ -17,68 +52,85 @@ const UpcomingMeetings = () => {
                     <CalendarMonthIcon sx={{ color: '#6366F1', fontSize: '20px' }} />
                     Upcoming Meetings
                 </Typography>
-                <Button sx={{ color: '#8B5CF6', fontSize: { xs: '12px', md: '14px' }, fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', textTransform: 'none', p: 0, minWidth: 'auto', '&:hover': { background: 'none', textDecoration: 'underline' } }}>
+                <Button
+                    onClick={() => navigate('/upcoming')}
+                    sx={{ color: '#8B5CF6', fontSize: { xs: '12px', md: '14px' }, fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', textTransform: 'none', p: 0, minWidth: 'auto', '&:hover': { background: 'none', textDecoration: 'underline' } }}
+                >
                     View Schedule
                 </Button>
             </Box>
 
             {/* Meeting Cards */}
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                {meetings.map((meeting, idx) => (
-                    <Box key={idx} sx={{
-                        display: 'flex', alignItems: 'center', backgroundColor: '#1C2230', flexDirection: { xs: 'column', sm: 'row' },
-                        border: '1px solid rgba(255, 255, 255, 0.05)', borderRadius: '14px', p: { xs: 2, md: 2 }
-                    }}>
-                        {/* Top/Left Section: Date + Info */}
-                        <Box sx={{ display: 'flex', width: { xs: '100%', sm: 'auto' }, flexGrow: 1, alignItems: 'center', mb: { xs: 2, sm: 0 } }}>
-                            {/* Date Badge */}
-                            <Box sx={{
-                                width: { xs: '48px', md: '56px' }, height: { xs: '48px', md: '56px' }, borderRadius: '12px',
-                                backgroundColor: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.05)',
-                                display: 'flex', flexDirection: 'column', alignItems: 'center',
-                                justifyContent: 'center', mr: 2, flexShrink: 0
-                            }}>
-                                <Typography sx={{ fontSize: '9px', color: '#9CA3AF', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px' }}>{meeting.month}</Typography>
-                                <Typography sx={{ fontSize: { xs: '18px', md: '22px' }, color: 'white', fontWeight: 700, lineHeight: 1 }}>{meeting.day}</Typography>
-                            </Box>
-
-                            {/* Info */}
-                            <Box sx={{ flex: 1, minWidth: 0 }}>
-                                <Typography sx={{ color: 'white', fontSize: { xs: '13px', md: '14px' }, fontWeight: 600, m: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{meeting.title}</Typography>
-                                <Typography sx={{ color: '#9CA3AF', fontSize: '12px', display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}>
-                                    <AccessTimeIcon sx={{ fontSize: '14px' }} />
-                                    {meeting.time}
-                                </Typography>
-                            </Box>
-                        </Box>
-
-                        {/* Avatars */}
-                        <Box sx={{ display: 'flex', alignItems: 'center', ml: { xs: 0, sm: 2 }, width: { xs: '100%', sm: 'auto' }, justifyContent: { xs: 'flex-start', sm: 'flex-end' }, pl: { xs: '64px', sm: 0 } }}>
-                            {[...Array(Math.min(meeting.attendees, 3))].map((_, i) => (
-                                <Box
-                                    component="img"
-                                    key={i}
-                                    src={`https://ui-avatars.com/api/?name=U${i + 1}&background=${['8B5CF6', '6366F1', '4F46E5'][i]}&color=fff&size=28&bold=true`}
-                                    alt=""
-                                    sx={{
-                                        width: '28px', height: '28px', borderRadius: '50%',
-                                        border: '2px solid #1C2230', ml: i > 0 ? '-8px' : '0'
-                                    }}
-                                />
-                            ))}
-                            {meeting.attendees > 3 && (
-                                <Box component="span" sx={{
-                                    width: '28px', height: '28px', borderRadius: '50%',
-                                    backgroundColor: 'rgba(255, 255, 255, 0.1)', border: '2px solid #1C2230',
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    fontSize: '10px', color: '#D1D5DB', fontWeight: 600, ml: '-8px'
+                {displayMeetings.length > 0 ? (
+                    displayMeetings.map((meeting, idx) => (
+                        <Box key={idx} sx={{
+                            display: 'flex', alignItems: 'center', backgroundColor: '#1C2230', flexDirection: { xs: 'column', sm: 'row' },
+                            border: '1px solid rgba(255, 255, 255, 0.05)', borderRadius: '14px', p: { xs: 2, md: 2 }
+                        }}>
+                            {/* Top/Left Section: Date + Info */}
+                            <Box sx={{ display: 'flex', width: { xs: '100%', sm: 'auto' }, flexGrow: 1, alignItems: 'center', mb: { xs: 2, sm: 0 } }}>
+                                {/* Date Badge */}
+                                <Box sx={{
+                                    width: { xs: '48px', md: '56px' }, height: { xs: '48px', md: '56px' }, borderRadius: '12px',
+                                    backgroundColor: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.05)',
+                                    display: 'flex', flexDirection: 'column', alignItems: 'center',
+                                    justifyContent: 'center', mr: 2, flexShrink: 0
                                 }}>
-                                    +{meeting.attendees - 3}
+                                    <Typography sx={{ fontSize: '9px', color: '#9CA3AF', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px' }}>{meeting.month}</Typography>
+                                    <Typography sx={{ fontSize: { xs: '18px', md: '22px' }, color: 'white', fontWeight: 700, lineHeight: 1 }}>{meeting.day}</Typography>
                                 </Box>
-                            )}
+
+                                {/* Info */}
+                                <Box sx={{ flex: 1, minWidth: 0 }}>
+                                    <Typography sx={{ color: 'white', fontSize: { xs: '13px', md: '14px' }, fontWeight: 600, m: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{meeting.title}</Typography>
+                                    <Typography sx={{ color: '#9CA3AF', fontSize: '12px', display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}>
+                                        <AccessTimeIcon sx={{ fontSize: '14px' }} />
+                                        {meeting.time}
+                                    </Typography>
+                                </Box>
+                            </Box>
+
+                            {/* Avatars */}
+                            <Box sx={{ display: 'flex', alignItems: 'center', ml: { xs: 0, sm: 2 }, width: { xs: '100%', sm: 'auto' }, justifyContent: { xs: 'flex-start', sm: 'flex-end' }, pl: { xs: '64px', sm: 0 } }}>
+                                {[...Array(Math.min(meeting.attendees, 3))].map((_, i) => (
+                                    <Box
+                                        component="img"
+                                        key={i}
+                                        src={`https://ui-avatars.com/api/?name=U${i + 1}&background=${['8B5CF6', '6366F1', '4F46E5'][i]}&color=fff&size=28&bold=true`}
+                                        alt=""
+                                        sx={{
+                                            width: '28px', height: '28px', borderRadius: '50%',
+                                            border: '2px solid #1C2230', ml: i > 0 ? '-8px' : '0'
+                                        }}
+                                    />
+                                ))}
+                                {meeting.attendees > 3 && (
+                                    <Box component="span" sx={{
+                                        width: '28px', height: '28px', borderRadius: '50%',
+                                        backgroundColor: 'rgba(255, 255, 255, 0.1)', border: '2px solid #1C2230',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        fontSize: '10px', color: '#D1D5DB', fontWeight: 600, ml: '-8px'
+                                    }}>
+                                        +{meeting.attendees - 3}
+                                    </Box>
+                                )}
+                            </Box>
                         </Box>
+                    ))
+                ) : (
+                    <Box sx={{
+                        p: 4,
+                        textAlign: 'center',
+                        bgcolor: '#1C2230',
+                        borderRadius: '14px',
+                        border: '1px solid rgba(255, 255, 255, 0.05)'
+                    }}>
+                        <Typography sx={{ color: '#9CA3AF', fontSize: '14px' }}>
+                            No upcoming meetings scheduled.
+                        </Typography>
                     </Box>
-                ))}
+                )}
             </Box>
         </Box>
     );

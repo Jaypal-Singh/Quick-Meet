@@ -3,6 +3,7 @@ from src.Model.meeting_model import Meeting
 from fastapi import HTTPException, status
 from passlib.context import CryptContext
 import uuid
+from datetime import datetime
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -58,7 +59,13 @@ async def add_to_activity(user_data: AddToActivityRequest):
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
         
-    new_meeting = Meeting(user_id=user.username, meetingCode=meeting_code)
+    new_meeting = Meeting(
+        user_id=user.username, 
+        meetingCode=meeting_code,
+        title="Joined Meeting",
+        startTime=datetime.now(),
+        endTime=datetime.now()
+    )
     await new_meeting.create()
     return {"message": "Meeting added to activity"}
 

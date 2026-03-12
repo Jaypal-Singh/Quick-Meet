@@ -1,16 +1,128 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Typography, Button, IconButton, Avatar, Chip } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import LinkIcon from '@mui/icons-material/Link';
+import EventIcon from '@mui/icons-material/Event';
+import AddIcon from '@mui/icons-material/Add';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
-export default function ScheduleSidebar() {
-    const participants = [
-        { id: 'JD', name: 'Jane Doe', role: 'Host', status: 'Confirmed', color: 'success' },
-        { id: 'MS', name: 'Michael Scott', role: 'Regional Manager', status: 'Pending', color: 'warning' },
-        { id: 'PB', name: 'Pam Beesly', role: 'Designer', status: 'Declined', color: 'error' },
-        { id: 'DW', name: 'Dwight Watson', role: 'Sales', status: 'Confirmed', color: 'success' },
-    ];
+export default function ScheduleSidebar({ meetings = [], onEdit }) {
+    const currentUserEmail = localStorage.getItem('email');
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const navigate = useNavigate();
+
+    // Find all upcoming meetings
+    const getUpcomingMeetings = () => {
+        if (!meetings || meetings.length === 0) return [];
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        // Sort all meetings by date and time
+        const allMeetings = [...meetings].sort((a, b) => {
+            const dateA = new Date(`${a.date}T${a.startTime}`);
+            const dateB = new Date(`${b.date}T${b.startTime}`);
+            return dateA - dateB;
+        });
+
+        // Find meetings that are today or in future
+        const upcoming = allMeetings.filter(m => {
+            const mDate = new Date(m.date);
+            mDate.setHours(0, 0, 0, 0);
+            return mDate >= today;
+        });
+
+        if (upcoming.length === 0) return [];
+
+        // Get the date of the very next meeting
+        const nextMeetingDate = upcoming[0].date;
+
+        // Filter to only include meetings on that SAME date
+        return upcoming.filter(m => m.date === nextMeetingDate).map(m => ({
+            ...m,
+            isToday: new Date(m.date).toDateString() === new Date().toDateString(),
+        }));
+    };
+
+    const upcomingMeetings = getUpcomingMeetings();
+    const nextMeeting = upcomingMeetings[currentIndex];
+
+    // Functions for pagination
+    const handlePrev = () => {
+        if (currentIndex > 0) setCurrentIndex(currentIndex - 1);
+    };
+
+    const handleNext = () => {
+        if (currentIndex < upcomingMeetings.length - 1) setCurrentIndex(currentIndex + 1);
+    };
+
+    // Parse participants for display
+    const participantList = nextMeeting?.participants ? (
+        typeof nextMeeting.participants === 'string'
+            ? nextMeeting.participants.split(',').map(p => p.trim())
+            : nextMeeting.participants
+    ).map((p, i) => {
+        const name = p.split('(')[0].trim();
+        const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+        return { id: initials, name, role: 'Participant', status: 'Confirmed', color: 'success' };
+    }) : [];
+
+    if (!nextMeeting) {
+        return (
+            <Box sx={{
+                height: '100%',
+                bgcolor: 'rgba(23, 28, 40, 0.4)',
+                borderRadius: '24px',
+                p: 3,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: '1px solid rgba(255, 255, 255, 0.05)',
+                position: 'relative',
+                overflow: 'hidden'
+            }}>
+                {/* Visual Glow */}
+                <Box sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: '150px',
+                    height: '150px',
+                    background: 'radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%)',
+                    zIndex: 0
+                }} />
+
+                <Box sx={{
+                    width: 64,
+                    height: 64,
+                    borderRadius: '20px',
+                    bgcolor: 'rgba(99, 102, 241, 0.1)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    mb: 3,
+                    border: '1px solid rgba(99, 102, 241, 0.2)',
+                    position: 'relative',
+                    zIndex: 1
+                }}>
+                    <EventIcon sx={{ color: '#6366F1', fontSize: 32 }} />
+                </Box>
+
+                <Typography variant="h6" sx={{ color: '#F8FAFC', fontWeight: 700, mb: 1, textAlign: 'center', position: 'relative', zIndex: 1 }}>
+                    All Clear for Now
+                </Typography>
+
+                <Typography variant="body2" sx={{ color: '#94A3B8', textAlign: 'center', lineHeight: 1.6, maxWidth: '200px', position: 'relative', zIndex: 1 }}>
+                    You don't have any upcoming meetings scheduled.
+                </Typography>
+            </Box>
+        );
+    }
 
     return (
         <Box
@@ -37,24 +149,21 @@ export default function ScheduleSidebar() {
                         borderRadius: '6px'
                     }}
                 />
-                <IconButton size="small" sx={{ color: '#94A3B8' }}>
-                    <MoreHorizIcon />
-                </IconButton>
             </Box>
 
             <Typography variant="h5" sx={{ color: '#F8FAFC', fontWeight: 800, letterSpacing: '-0.5px', mb: 1 }}>
-                Stakeholder Review
+                {nextMeeting.title}
             </Typography>
 
             <Typography variant="body2" sx={{ color: '#94A3B8', lineHeight: 1.6, mb: 3 }}>
-                Reviewing the Q4 roadmap and finalizing budget allocations for the engineering department.
+                {nextMeeting.description}
             </Typography>
 
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, mb: 3 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                     <AccessTimeIcon sx={{ color: '#6366F1', fontSize: 20 }} />
                     <Typography variant="body2" sx={{ color: '#E2E8F0', fontWeight: 600 }}>
-                        Today, 11:30 AM - 12:30 PM
+                        {nextMeeting.isToday ? 'Today' : nextMeeting.date}, {nextMeeting.startTime} - {nextMeeting.endTime}
                     </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
@@ -69,14 +178,14 @@ export default function ScheduleSidebar() {
                             '&:hover': { color: '#8B5CF6' }
                         }}
                     >
-                        meetnext.io/stakeholder-rev-q4
+                        {nextMeeting.link || `meetnext.io/${nextMeeting.title.toLowerCase().replace(/\s+/g, '-')}`}
                     </Typography>
                 </Box>
             </Box>
 
             {/* Participants */}
             <Typography variant="caption" sx={{ color: '#6366F1', fontWeight: 800, letterSpacing: 1.5, mb: 1.5, display: 'block' }}>
-                PARTICIPANTS (12)
+                PARTICIPANTS ({participantList.length})
             </Typography>
 
             <Box sx={{
@@ -91,8 +200,8 @@ export default function ScheduleSidebar() {
                 '&::-webkit-scrollbar-track': { background: 'transparent' },
                 '&::-webkit-scrollbar-thumb': { background: 'rgba(255,255,255,0.1)', borderRadius: '4px' },
             }}>
-                {participants.map((p) => (
-                    <Box key={p.id} sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                {participantList.map((p, idx) => (
+                    <Box key={idx} sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                         <Avatar sx={{ bgcolor: 'rgba(255,255,255,0.1)', color: '#E2E8F0', width: 36, height: 36, fontSize: '0.85rem', fontWeight: 700 }}>
                             {p.id}
                         </Avatar>
@@ -107,7 +216,6 @@ export default function ScheduleSidebar() {
                         <Chip
                             label={p.status}
                             size="small"
-                            color={p.color}
                             sx={{
                                 height: 20,
                                 fontSize: '0.65rem',
@@ -125,48 +233,70 @@ export default function ScheduleSidebar() {
                 ))}
             </Box>
 
+            {/* Pagination Controls */}
+            {upcomingMeetings.length > 1 && (
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 2, gap: 2 }}>
+                    <IconButton size="small" onClick={handlePrev} disabled={currentIndex === 0} sx={{ color: '#94A3B8', '&.Mui-disabled': { color: 'rgba(255,255,255,0.1)' } }}>
+                        <ChevronLeftIcon />
+                    </IconButton>
+                    <Typography variant="caption" sx={{ color: '#94A3B8', fontWeight: 600 }}>
+                        {currentIndex + 1} of {upcomingMeetings.length}
+                    </Typography>
+                    <IconButton size="small" onClick={handleNext} disabled={currentIndex === upcomingMeetings.length - 1} sx={{ color: '#94A3B8', '&.Mui-disabled': { color: 'rgba(255,255,255,0.1)' } }}>
+                        <ChevronRightIcon />
+                    </IconButton>
+                </Box>
+            )}
+
             {/* Action Buttons */}
             <Box sx={{ mt: 3, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                <Button
-                    variant="contained"
-                    sx={{
-                        bgcolor: '#6366F1',
-                        color: '#FFFFFF',
-                        borderRadius: '12px',
-                        textTransform: 'none',
-                        fontWeight: 700,
-                        fontSize: '1rem',
-                        py: 1.5,
-                        boxShadow: '0 4px 14px 0 rgba(99, 102, 241, 0.4)',
-                        transition: 'all 0.3s ease',
-                        '&:hover': {
-                            bgcolor: '#4F46E5',
-                            boxShadow: '0 6px 20px rgba(99, 102, 241, 0.6)',
-                            transform: 'translateY(-2px)',
-                        }
-                    }}
-                >
-                    Join Meeting
-                </Button>
-                <Button
-                    variant="outlined"
-                    sx={{
-                        borderColor: 'rgba(255, 255, 255, 0.1)',
-                        color: '#E2E8F0',
-                        borderRadius: '12px',
-                        textTransform: 'none',
-                        fontWeight: 600,
-                        fontSize: '0.95rem',
-                        py: 1.5,
-                        transition: 'all 0.3s ease',
-                        '&:hover': {
-                            borderColor: 'rgba(255, 255, 255, 0.2)',
-                            bgcolor: 'rgba(255, 255, 255, 0.05)',
-                        }
-                    }}
-                >
-                    Edit Details
-                </Button>
+                {nextMeeting.isToday && (
+                    <Button
+                        variant="contained"
+                        onClick={() => navigate(`/${nextMeeting.meetingCode || nextMeeting.id}`)}
+                        sx={{
+                            bgcolor: '#6366F1',
+                            color: '#FFFFFF',
+                            borderRadius: '12px',
+                            textTransform: 'none',
+                            fontWeight: 700,
+                            fontSize: '1rem',
+                            py: 1.5,
+                            boxShadow: '0 4px 14px 0 rgba(99, 102, 241, 0.4)',
+                            transition: 'all 0.3s ease',
+                            '&:hover': {
+                                bgcolor: '#4F46E5',
+                                boxShadow: '0 6px 20px rgba(99, 102, 241, 0.6)',
+                                transform: 'translateY(-2px)',
+                            }
+                        }}
+                    >
+                        Join Meeting
+                    </Button>
+                )}
+
+                {nextMeeting.isHost && (
+                    <Button
+                        variant="outlined"
+                        onClick={() => onEdit && onEdit(nextMeeting)}
+                        sx={{
+                            borderColor: 'rgba(255, 255, 255, 0.1)',
+                            color: '#E2E8F0',
+                            borderRadius: '12px',
+                            textTransform: 'none',
+                            fontWeight: 600,
+                            fontSize: '0.95rem',
+                            py: 1.5,
+                            transition: 'all 0.3s ease',
+                            '&:hover': {
+                                borderColor: 'rgba(255, 255, 255, 0.2)',
+                                bgcolor: 'rgba(255, 255, 255, 0.05)',
+                            }
+                        }}
+                    >
+                        Edit Details
+                    </Button>
+                )}
             </Box>
         </Box>
     );

@@ -1,0 +1,154 @@
+import React from 'react';
+import {
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Button,
+    Box,
+    Typography,
+    IconButton,
+    InputAdornment,
+    Fade,
+    Backdrop,
+    Chip
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import TitleIcon from '@mui/icons-material/Title';
+import DescriptionIcon from '@mui/icons-material/Description';
+import EventIcon from '@mui/icons-material/Event';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import GroupIcon from '@mui/icons-material/Group';
+
+const MeetingDetailsModal = ({ open, onClose, meeting, onEdit }) => {
+    if (!meeting) return null;
+
+    return (
+        <Dialog
+            open={open}
+            onClose={onClose}
+            fullWidth
+            maxWidth="xs"
+            TransitionComponent={Fade}
+            transitionDuration={400}
+            closeAfterTransition
+            BackdropComponent={Backdrop}
+            BackdropProps={{
+                timeout: 500,
+                sx: {
+                    backgroundColor: 'rgba(15, 23, 42, 0.4)',
+                    backdropFilter: 'blur(12px)',
+                }
+            }}
+            PaperProps={{
+                sx: {
+                    bgcolor: 'rgba(30, 41, 59, 0.95)',
+                    backgroundImage: 'none',
+                    borderRadius: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+                    p: 1
+                }
+            }}
+        >
+            <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
+                <Typography variant="h6" fontWeight="700" color="#F8FAFC">
+                    Meeting Details
+                </Typography>
+                <IconButton onClick={onClose} sx={{ color: '#94A3B8', '&:hover': { color: '#F8FAFC', bgcolor: 'rgba(255,255,255,0.05)' } }}>
+                    <CloseIcon />
+                </IconButton>
+            </DialogTitle>
+
+            <DialogContent>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5, mt: 1 }}>
+                    {/* Title */}
+                    <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
+                        <TitleIcon sx={{ color: '#6366F1', mt: 0.3 }} />
+                        <Box>
+                            <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 0.5 }}>Title</Typography>
+                            <Typography variant="body1" sx={{ color: '#F8FAFC', fontWeight: 600 }}>{meeting.title}</Typography>
+                        </Box>
+                    </Box>
+
+                    {/* Date & Time */}
+                    <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
+                        <EventIcon sx={{ color: '#6366F1', mt: 0.3 }} />
+                        <Box>
+                            <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 0.5 }}>Date & Time</Typography>
+                            <Typography variant="body1" sx={{ color: '#F8FAFC', fontWeight: 600 }}>
+                                {meeting.date} • {meeting.startTime} - {meeting.endTime}
+                            </Typography>
+                        </Box>
+                    </Box>
+
+                    {/* Agenda */}
+                    {meeting.description && (
+                        <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
+                            <DescriptionIcon sx={{ color: '#6366F1', mt: 0.3 }} />
+                            <Box>
+                                <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 0.5 }}>Agenda</Typography>
+                                <Typography variant="body2" sx={{ color: '#CBD5E1', lineHeight: 1.6 }}>
+                                    {meeting.description}
+                                </Typography>
+                            </Box>
+                        </Box>
+                    )}
+
+                    {/* Participants */}
+                    {meeting.participants && (
+                        <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
+                            <GroupIcon sx={{ color: '#6366F1', mt: 0.3 }} />
+                            <Box>
+                                <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 1 }}>Participants</Typography>
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                                    {meeting.participants.split(',').map((p, i) => (
+                                        <Chip 
+                                            key={i} 
+                                            label={p.trim()} 
+                                            size="small" 
+                                            sx={{ 
+                                                bgcolor: 'rgba(99, 102, 241, 0.1)', 
+                                                color: '#8B5CF6',
+                                                border: '1px solid rgba(139, 92, 246, 0.2)',
+                                                fontWeight: 500,
+                                                fontSize: '0.75rem'
+                                            }} 
+                                        />
+                                    ))}
+                                </Box>
+                            </Box>
+                        </Box>
+                    )}
+                </Box>
+            </DialogContent>
+
+            <DialogActions sx={{ px: 3, pb: 3, display: 'flex', justifyContent: 'center' }}>
+                <Button
+                    fullWidth
+                    onClick={() => {
+                        if (onEdit) onEdit(meeting);
+                        onClose();
+                    }}
+                    variant="contained"
+                    sx={{
+                        background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)',
+                        borderRadius: '12px',
+                        textTransform: 'none',
+                        fontWeight: 600,
+                        py: 1.2,
+                        boxShadow: '0 4px 14px 0 rgba(99, 102, 241, 0.3)',
+                        '&:hover': {
+                            background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)',
+                            boxShadow: '0 6px 20px rgba(99, 102, 241, 0.5)',
+                        }
+                    }}
+                >
+                    Edit Meeting
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
+};
+
+export default MeetingDetailsModal;
