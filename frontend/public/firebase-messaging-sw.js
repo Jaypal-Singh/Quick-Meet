@@ -6,22 +6,22 @@ importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-com
 // Initialize the Firebase app in the service worker by passing in your configuration.
 // REPLACE THIS WITH YOUR ACTUAL CONFIG FROM FIREBASE CONSOLE
 firebase.initializeApp({
-  apiKey: "AIzaSyCHlP71q9ZQ90_ozA1DUo3Xb5wBkKE7xf8",
+    apiKey: "AIzaSyCHlP71q9ZQ9O_ozA1DUo3Xb5wBkKE7xf8",
   authDomain: "quickmeet-af798.firebaseapp.com",
   projectId: "quickmeet-af798",
   storageBucket: "quickmeet-af798.firebasestorage.app",
   messagingSenderId: "497787112271",
-  appId: "1:497787112271:web:c63e40499f9b754a5a933a",
+  appId: "1:497787112271:web:c63e40499f9b754d5a933a",
   measurementId: "G-XQ5KWW52S8"
 });
 
 self.addEventListener('install', (event) => {
-  console.log('[firebase-messaging-sw.js] Service worker installing');
+  console.log('[firebase-messaging-sw.js] Service worker installing...');
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
-  console.log('[firebase-messaging-sw.js] Service worker activating');
+  console.log('[firebase-messaging-sw.js] Service worker activating...');
   event.waitUntil(clients.claim());
 });
 
