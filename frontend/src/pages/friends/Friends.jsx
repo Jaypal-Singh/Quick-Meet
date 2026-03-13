@@ -41,18 +41,19 @@ export default function Friends() {
 
     const handleMeet = async (friendUsername) => {
         const meetingCode = Math.random().toString(36).substring(2, 10);
+        setNotification({ open: true, message: "Sending invite...", severity: "info" });
         try {
             await axios.post(`${server}/api/v1/friends/invite`, {
                 token,
                 friend_username: friendUsername,
                 meeting_code: meetingCode
             });
-            // Redirect to meeting
-            navigate(`/video-meet?roomID=${meetingCode}`);
+            // Redirect to meeting with state
+            navigate(`/video-meet?roomID=${meetingCode}`, { state: { inviteSent: true } });
         } catch (error) {
             console.error("Error sending invite:", error);
             // Even if notification fails, we still want to join the meeting
-            navigate(`/video-meet?roomID=${meetingCode}`);
+            navigate(`/video-meet?roomID=${meetingCode}`, { state: { inviteSent: false, error: "Failed to send notification" } });
         }
     };
 

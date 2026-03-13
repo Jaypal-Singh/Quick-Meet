@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import io from "socket.io-client";
-import { Badge, IconButton, TextField, CircularProgress } from '@mui/material';
+import { Badge, IconButton, TextField, CircularProgress, Snackbar, Alert } from '@mui/material';
+import { useLocation } from 'react-router-dom';
 import MeetingReadyPopup from '../../components/meetingReadyPopup/MeetingReadyPopup';
 import server from '../../environment';
 import VideoControls from './components/VideoControls';
@@ -18,6 +19,9 @@ const peerConfigConnections = {
 }
 
 export default function VideoMeetComponent() {
+
+    const location = useLocation();
+    const [notification, setNotification] = useState({ open: false, message: "", severity: "success" });
 
     var socketRef = useRef();
     let socketIdRef = useRef();
@@ -64,13 +68,31 @@ export default function VideoMeetComponent() {
     // }
 
     useEffect(() => { // phase 1.1
-        console.log("HELLO")
+        console.log("QuickMeet Video Component Mounted");
+        
+        // Safety timeout to ensure loader disappears even if something hangs
+        const timeout = setTimeout(() => {
+            setIsConnecting(prev => {
+                if (prev) {
+                    console.warn('[Safety] Forcing loader off after 10s timeout');
+                    return false;
+                }
+                return prev;
+            });
+        }, 10000);
+
         let localUsername = localStorage.getItem('username') || localStorage.getItem('name') || ('User_' + Math.floor(Math.random() * 1000));
         setUsername(localUsername);
-        getPermissions(); // get audio and video permission to user
+        getPermissions(); 
 
-        // Cleanup on unmount (handles React StrictMode double-mount)
+        if (location.state?.inviteSent) {
+            setNotification({ open: true, message: "Meeting invite sent successfully!", severity: "success" });
+        } else if (location.state?.error) {
+            setNotification({ open: true, message: location.state.error, severity: "error" });
+        }
+
         return () => {
+            clearTimeout(timeout);
             // Disconnect socket
             if (socketRef.current) {
                 socketRef.current.disconnect();
@@ -102,59 +124,81 @@ export default function VideoMeetComponent() {
         }
     }
 
+    const [globalError, setGlobalError] = useState(null);
+    const isInitializing = useRef(false);
+
     const getPermissions = async () => {
-        let vAvailable = true;
-        let aAvailable = true;
-        setIsConnecting(true); // show loader
+        if (isInitializing.current || didInitialSetup.current) {
+            console.log('[Init] Skipping: isInitializing=', isInitializing.current, 'didInitialSetup=', didInitialSetup.current);
+            return;
+        }
+
+        isInitializing.current = true;
+        setGlobalError(null);
+        setIsConnecting(true);
+        console.log('[Init] getPermissions started');
+        
         try {
-            const videoPermission = await navigator.mediaDevices.getUserMedia({ video: true });
-            if (videoPermission) {
-                setVideoAvailable(true);
-                console.log('Video permission granted');
-                videoPermission.getTracks().forEach(t => t.stop()); // Stop permission-check stream
-            } else {
-                setVideoAvailable(false);
-                vAvailable = false;
-                console.log('Video permission denied');
+            // 1. Identify what hardware is actually present
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            const hasVideo = devices.some(d => d.kind === 'videoinput');
+            const hasAudio = devices.some(d => d.kind === 'audioinput');
+            console.log('[Init] Hardware detected:', { hasVideo, hasAudio });
+
+            if (!hasVideo && !hasAudio) {
+                throw new Error("No camera or microphone found on this device.");
             }
 
-            const audioPermission = await navigator.mediaDevices.getUserMedia({ audio: true });
-            if (audioPermission) {
-                setAudioAvailable(true);
-                console.log('Audio permission granted');
-                audioPermission.getTracks().forEach(t => t.stop()); // Stop permission-check stream
-            } else {
-                setAudioAvailable(false);
-                aAvailable = false;
-                console.log('Audio permission denied');
-            }
-
-            if (navigator.mediaDevices.getDisplayMedia) {
-                setScreenAvailable(true);
-            } else {
-                setScreenAvailable(false);
-            }
-
-            if (vAvailable || aAvailable) {
-                const userMediaStream = await navigator.mediaDevices.getUserMedia({ video: vAvailable, audio: aAvailable });
-                if (userMediaStream) {
-                    window.localStream = userMediaStream;
-                    setLocalStream(userMediaStream);
-                    if (localVideoref.current) {
-                        localVideoref.current.srcObject = userMediaStream;
+            // 2. Perform ONE unified request for whatever is available
+            // This is the most stable pattern across all modern browsers
+            let stream;
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: hasVideo, 
+                    audio: hasAudio 
+                });
+                console.log('[Init] Stream captured successfully');
+            } catch (err) {
+                console.warn('[Init] Initial capture failed, trying fallback:', err.message);
+                // Fallback: try video only if audio failed, or vice versa
+                if (hasVideo && hasAudio) {
+                    try {
+                        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                        console.log('[Init] Fallback: Video only success');
+                    } catch (err2) {
+                        stream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
+                        console.log('[Init] Fallback: Audio only success');
                     }
+                } else {
+                    throw err;
                 }
             }
-        } catch (error) {
-            console.log(error);
-            vAvailable = false;
-            aAvailable = false;
-        } finally {
-            setVideo(vAvailable);
-            setAudio(aAvailable);
+
+            if (stream) {
+                window.localStream = stream;
+                setLocalStream(stream);
+                
+                const vTrack = stream.getVideoTracks()[0];
+                const aTrack = stream.getAudioTracks()[0];
+                
+                setVideo(!!vTrack);
+                setAudio(!!aTrack);
+                setVideoAvailable(!!vTrack);
+                setAudioAvailable(!!aTrack);
+
+                if (localVideoref.current) {
+                    localVideoref.current.srcObject = stream;
+                }
+            }
+
             connectToSocketServer();
-            setIsConnecting(false); // hide loader
-            didInitialSetup.current = true; // Mark initial setup done
+        } catch (error) {
+            console.error('[Init] Fatal error:', error);
+            setGlobalError(error.message || "Failed to access camera/microphone.");
+        } finally {
+            setIsConnecting(false);
+            didInitialSetup.current = true;
+            isInitializing.current = false;
         }
     };
 
@@ -328,6 +372,11 @@ export default function VideoMeetComponent() {
 
 
     let connectToSocketServer = () => { // phase 3.1
+        if (socketRef.current && socketRef.current.connected) {
+            console.log('[Socket] Already connected, skipping initialization');
+            return;
+        }
+
         socketRef.current = io.connect(server_url, { secure: false })
 
         socketRef.current.on('signal', gotMessageFromServer)
@@ -358,6 +407,8 @@ export default function VideoMeetComponent() {
                 }
 
                 clients.forEach((socketListId) => {
+                    // CRITICAL: Don't connect to yourself!
+                    if (socketListId === socketIdRef.current) return;
 
                     // Skip if connection already exists (don't overwrite working connections)
                     if (connections[socketListId]) {
@@ -549,18 +600,27 @@ export default function VideoMeetComponent() {
     return (
         <div>
 
+             {globalError && (
+                <div className="flex flex-col items-center justify-center h-screen w-screen bg-red-950 text-white p-10 z-[300]">
+                    <h1 className="text-3xl font-bold mb-4">Meeting Error</h1>
+                    <p className="bg-black/30 p-4 rounded-lg font-mono text-pink-300 break-all max-w-2xl">{globalError}</p>
+                    <button onClick={() => window.location.reload()} className="mt-8 px-6 py-2 bg-white text-black rounded-lg font-bold">Reload Application</button>
+                    <p className="mt-4 text-xs text-red-300/50">Check if your camera is being used by another app</p>
+                </div>
+            )}
+
             {isConnecting ? (
-                <div className="flex flex-col items-center justify-center h-screen bg-[#040F0F] text-white">
-                    <CircularProgress sx={{ color: '#818CF8', mb: 3 }} size={48} />
-                    <h2 className="text-xl font-medium mb-3">Getting ready...</h2>
-                    <p className="text-gray-500">You'll be able to join in just a moment</p>
+                <div className="flex flex-col items-center justify-center h-screen w-screen bg-[#040F0F] text-white z-[200]">
+                    <div className="w-12 h-12 border-4 border-white/10 border-t-indigo-500 rounded-full animate-spin mb-6"></div>
+                    <h2 className="text-2xl font-bold mb-2">Join Meeting</h2>
+                    <p className="text-indigo-300 animate-pulse">Requesting camera and audio access...</p>
                 </div>
             ) : (
 
                 <div className="relative w-screen h-screen bg-[#040F0F] overflow-hidden flex flex-col">
 
                     {/* Hidden video element to keep localVideoref pipeline alive */}
-                    <video ref={localVideoref} autoPlay muted className="hidden" />
+                    <video ref={localVideoref} autoPlay playsInline muted className="hidden" />
 
                     {/* Meeting Ready Popup */}
                     {showMeetingReady && videos.length === 0 && (
@@ -587,16 +647,18 @@ export default function VideoMeetComponent() {
                     />
 
                     {/* Main Content Area: Video Grid + Chat Side by Side */}
-                    <div className="flex-1 flex overflow-hidden transition-all duration-500 ease-in-out">
+                    <div className="flex-1 flex overflow-hidden">
 
                         {/* Video Area */}
-                        <div className="flex-1 relative p-4 pb-24 transition-all duration-500 ease-in-out flex gap-4">
+                        <div className={`flex-1 relative p-4 pb-24 transition-all duration-350 ease-[cubic-bezier(0.4,0,0.2,1)] flex gap-4 ${
+                            showModal ? 'pr-[360px]' : 'pr-0'
+                        }`}>
                             
                             {pinnedTile ? (
                                 // --- PINNED LAYOUT (Main Area + Sidebar) ---
                                 <>
                                     {/* Main Pinned Video Area */}
-                                    <div className="flex-1 h-full rounded-xl overflow-hidden transition-all duration-500 ease-in-out bg-black/50 border border-white/10">
+                                    <div className="flex-1 h-full rounded-2xl overflow-hidden transition-all duration-500 ease-in-out bg-black/50 border border-white/5 shadow-2xl">
                                         <VideoTile 
                                             videoObj={pinnedTile} 
                                             isLocal={pinnedTile.isLocal || false}
@@ -609,11 +671,11 @@ export default function VideoMeetComponent() {
 
                                     {/* Right vertical sidebar for unpinned videos */}
                                     {unpinnedTiles.length > 0 && (
-                                        <div className="w-[280px] h-full overflow-y-auto flex flex-col gap-3 pr-1 hide-scrollbar">
+                                        <div className="w-[240px] h-full overflow-y-auto flex flex-col gap-3 pr-1 hide-scrollbar">
                                             {unpinnedTiles.map((vid) => (
                                                 <div 
                                                     key={vid.socketId} 
-                                                    className="w-full h-[180px] shrink-0 rounded-xl overflow-hidden transition-all duration-300 ease-in-out"
+                                                    className="w-full aspect-video shrink-0 rounded-xl overflow-hidden transition-all duration-300 ease-in-out border border-white/5"
                                                 >
                                                     <VideoTile 
                                                         videoObj={vid} 
@@ -630,38 +692,34 @@ export default function VideoMeetComponent() {
                                 </>
                             ) : (
                                 // --- REGULAR GRID LAYOUT ---
-                                <>
-                                    <div
-                                        className="w-full h-full gap-3 transition-all duration-500 ease-in-out"
-                                        style={{
-                                            display: 'grid',
-                                            gridTemplateColumns: `repeat(${gridLayout.cols}, 1fr)`,
-                                            gridTemplateRows: `repeat(${gridLayout.rows}, 1fr)`,
-                                        }}
-                                    >
-                                        {unpinnedTiles.map((vid) => (
-                                            <div 
-                                                key={vid.socketId} 
-                                                className="rounded-xl overflow-hidden transition-all duration-500 ease-in-out"
-                                            >
-                                                <VideoTile 
-                                                    videoObj={vid} 
-                                                    isLocal={vid.isLocal || false}
-                                                    videoEnabled={vid.isLocal ? video : true}
-                                                    isPinned={false}
-                                                    isScreenShare={vid.isLocal && screen}
-                                                    onPin={() => setPinnedSocketId(vid.socketId)}
-                                                />
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    {/* Local floating thumbnail (ONLY shown if not already in grid and others exist) - But wait, local is in the grid now because we appended it to allTiles! So we don't need the floating thumbnail unless we specifically remove local from the grid. For Google Meet vibe, local IS in the grid usually. But keeping floating if you want. Wait, I added local to `allTiles` so it's in the grid anyway! So no need for floating thumbnail anymore! */}
-                                </>
+                                <div
+                                    className="w-full h-full gap-4 transition-all duration-500 ease-in-out"
+                                    style={{
+                                        display: 'grid',
+                                        gridTemplateColumns: `repeat(${gridLayout.cols}, 1fr)`,
+                                        gridTemplateRows: `repeat(${gridLayout.rows}, 1fr)`,
+                                    }}
+                                >
+                                    {unpinnedTiles.map((vid) => (
+                                        <div 
+                                            key={vid.socketId} 
+                                            className="rounded-2xl overflow-hidden transition-all duration-500 ease-in-out border border-white/5 bg-black/40 shadow-lg"
+                                        >
+                                            <VideoTile 
+                                                videoObj={vid} 
+                                                isLocal={vid.isLocal || false}
+                                                videoEnabled={vid.isLocal ? video : true}
+                                                isPinned={false}
+                                                isScreenShare={vid.isLocal && screen}
+                                                onPin={() => setPinnedSocketId(vid.socketId)}
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
                             )}
                         </div>
 
-                        {/* Chat Sidebar - sits as flex panel next to video grid */}
+                        {/* Chat Sidebar - fixed on the right with slide animation */}
                         <ChatSidebar 
                             showModal={showModal}
                             setModal={setModal}
@@ -673,6 +731,22 @@ export default function VideoMeetComponent() {
                     </div>
                 </div>
             )}
+
+            {/* Notification Snackbar */}
+            <Snackbar 
+                open={notification.open} 
+                autoHideDuration={4000} 
+                onClose={() => setNotification({ ...notification, open: false })}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            >
+                <Alert 
+                    onClose={() => setNotification({ ...notification, open: false })} 
+                    severity={notification.severity}
+                    sx={{ borderRadius: '12px', bgcolor: notification.severity === 'success' ? '#10B981' : (notification.severity === 'info' ? '#6366F1' : '#EF4444'), color: 'white' }}
+                >
+                    {notification.message}
+                </Alert>
+            </Snackbar>
 
         </div>
     )
