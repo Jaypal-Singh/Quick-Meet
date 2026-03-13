@@ -115,7 +115,6 @@ async def add_to_activity(user_data: AddToActivityRequest):
         startTime=datetime.now(),
         endTime=datetime.now()
     )
-    
     await new_meeting.create()
     return {"message": "Meeting added to activity"}
 

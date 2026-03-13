@@ -10,6 +10,14 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PeopleIcon from '@mui/icons-material/People';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import FlashOnIcon from '@mui/icons-material/FlashOn';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { useNavigate } from 'react-router-dom';
 
 const NAV_ITEMS = [
     { path: '/dashboard', label: 'Dashboard', icon: <DashboardIcon /> },
@@ -24,15 +32,35 @@ export default function SideBar() {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const navigate = useNavigate();
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const open = Boolean(anchorEl);
 
     const handleLogout = () => {
         localStorage.removeItem('token');
-        localStorage.removeItem('username');
         localStorage.removeItem('email');
+        localStorage.removeItem('username');
         navigate('/login');
     };
 
     const username = localStorage.getItem('username') || 'User';
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleInstantMeeting = () => {
+        handleClose();
+        navigate(`/${Math.random().toString(36).substring(2, 9)}`);
+    };
+
+    const handleScheduleMeeting = () => {
+        handleClose();
+        navigate('/meetings', { state: { openSchedule: true } });
+    };
 
     return (
         <Box
@@ -45,12 +73,12 @@ export default function SideBar() {
                 left: { xs: 0, md: 'auto' },
                 right: { xs: 0, md: 'auto' }, // Anchor right edge
                 margin: 0,                    // Explicitly remove any margins
-                zIndex: 9999,                 // Bring to absolute front
+                zIndex: 1200,                 // Behind modals (1300) to allow blur
                 flexShrink: 0,
                 bgcolor: { xs: '#10131B', md: 'transparent' }, // Solid dark color for mobile
-                background: { 
+                background: {
                     xs: '#10131B', // Solid opaque color
-                    md: 'linear-gradient(180deg, #1C2230 0%, #131722 100%)' 
+                    md: 'linear-gradient(180deg, #1C2230 0%, #131722 100%)'
                 },
                 borderRight: { xs: 'none', md: '1px solid rgba(255, 255, 255, 0.03)' },
                 borderTop: { xs: '1px solid rgba(255, 255, 255, 0.06)', md: 'none' },
@@ -78,10 +106,10 @@ export default function SideBar() {
             )}
 
             {/* Navigation */}
-            <Box sx={{ 
-                flexGrow: { xs: 1, md: 1 }, 
-                display: 'flex', 
-                flexDirection: { xs: 'row', md: 'column' }, 
+            <Box sx={{
+                flexGrow: { xs: 1, md: 1 },
+                display: 'flex',
+                flexDirection: { xs: 'row', md: 'column' },
                 gap: { xs: 0, md: 1 },
                 justifyContent: { xs: 'space-between', md: 'flex-start' },
                 width: '100%',
@@ -90,7 +118,7 @@ export default function SideBar() {
                 {NAV_ITEMS.map((item) => {
                     // Hide Settings on mobile as per user request
                     if (isMobile && item.label === 'Settings') return null;
-                    
+
                     return (
                         <Box
                             component={NavLink}
@@ -188,10 +216,10 @@ export default function SideBar() {
                             }
                         }}
                     >
-                        <Box className="profile-avatar" sx={{ 
-                            width: 24, 
-                            height: 24, 
-                            borderRadius: '50%', 
+                        <Box className="profile-avatar" sx={{
+                            width: 24,
+                            height: 24,
+                            borderRadius: '50%',
                             border: '1px solid rgba(255,255,255,0.2)',
                             bgcolor: 'transparent',
                             display: 'flex',
@@ -201,7 +229,7 @@ export default function SideBar() {
                             color: '#E2E8F0',
                             transition: 'all 0.3s ease'
                         }}>
-                           <Typography sx={{fontSize: '9px', fontWeight: 'bold'}}>{username.split(' ').map(n => n[0]).join('').toUpperCase()}</Typography>
+                            <Typography sx={{ fontSize: '9px', fontWeight: 'bold' }}>{username.split(' ').map(n => n[0]).join('').toUpperCase()}</Typography>
                         </Box>
                         <Typography variant="body2" sx={{ fontSize: '0.65rem', fontFamily: 'inherit', letterSpacing: '-0.2px', mt: 0.5 }}>
                             Profile
@@ -213,9 +241,51 @@ export default function SideBar() {
             {/* New Meeting & Profile Section - Desktop Only */}
             {!isMobile && (
                 <Box sx={{ mt: 'auto', display: 'flex', flexDirection: 'column', gap: 3 }}>
-                    <Button variant="contained" startIcon={<AddCircleOutlineIcon />} sx={{ background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)', color: '#FFFFFF', borderRadius: '24px', textTransform: 'none', fontWeight: 600, fontSize: '0.95rem', py: 1.5, boxShadow: '0 4px 14px 0 rgba(99, 102, 241, 0.4)', transition: 'all 0.3s ease', '&:hover': { background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)', boxShadow: '0 6px 20px rgba(99, 102, 241, 0.6)', transform: 'translateY(-2px)' } }}>
+                    <Button
+                        variant="contained"
+                        startIcon={<AddCircleOutlineIcon />}
+                        endIcon={<KeyboardArrowUpIcon />}
+                        onClick={handleClick}
+                        sx={{ background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)', color: '#FFFFFF', borderRadius: '24px', textTransform: 'none', fontWeight: 600, fontSize: '0.95rem', py: 1.5, boxShadow: '0 4px 14px 0 rgba(99, 102, 241, 0.4)', transition: 'all 0.3s ease', '&:hover': { background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)', boxShadow: '0 6px 20px rgba(99, 102, 241, 0.6)', transform: 'translateY(-2px)' } }}>
                         New Meeting
                     </Button>
+                    <Menu
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleClose}
+                        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                        transformOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                        PaperProps={{
+                            sx: {
+                                bgcolor: '#1C2230',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                mb: 1,
+                                width: '220px',
+                                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+                                '& .MuiMenuItem-root': {
+                                    color: 'white',
+                                    fontSize: '14px',
+                                    py: 1.5,
+                                    '&:hover': {
+                                        bgcolor: 'rgba(255, 255, 255, 0.05)',
+                                    },
+                                },
+                            },
+                        }}
+                    >
+                        <MenuItem onClick={handleInstantMeeting}>
+                            <ListItemIcon>
+                                <FlashOnIcon fontSize="small" sx={{ color: '#6366F1' }} />
+                            </ListItemIcon>
+                            <ListItemText primary="Start instant meeting" />
+                        </MenuItem>
+                        <MenuItem onClick={handleScheduleMeeting}>
+                            <ListItemIcon>
+                                <CalendarMonthIcon fontSize="small" sx={{ color: '#8B5CF6' }} />
+                            </ListItemIcon>
+                            <ListItemText primary="Schedule for later" />
+                        </MenuItem>
+                    </Menu>
                     <Box sx={{ bgcolor: 'rgba(34, 43, 61, 0.6)', border: '1px solid rgba(255, 255, 255, 0.05)', backdropFilter: 'blur(10px)', borderRadius: '16px', p: 1.5, display: 'flex', alignItems: 'center', gap: 1.5, transition: 'all 0.3s ease', cursor: 'pointer', '&:hover': { bgcolor: 'rgba(34, 43, 61, 0.9)', borderColor: 'rgba(255, 255, 255, 0.1)', transform: 'translateY(-2px)', boxShadow: '0 8px 24px rgba(0,0,0,0.2)', '& .profile-icon': { color: '#FFFFFF', bgcolor: '#6366F1' } } }}>
                         <Box className="profile-icon" sx={{ bgcolor: '#171C28', borderRadius: '12px', width: 38, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s ease' }}>
                             <PersonOutlineIcon sx={{ color: '#94A3B8', fontSize: 20, transition: 'color 0.3s ease' }} />
@@ -224,11 +294,7 @@ export default function SideBar() {
                             <Typography variant="body2" sx={{ fontWeight: 600, color: 'white', lineHeight: 1.2 }}>{username}</Typography>
                             <Typography variant="caption" sx={{ color: '#8B5CF6', fontSize: '0.75rem', fontWeight: 500 }}>Pro Plan</Typography>
                         </Box>
-                        <IconButton 
-                            size="small" 
-                            onClick={handleLogout}
-                            sx={{ color: '#94A3B8', transition: 'all 0.3s ease', '&:hover': { color: '#EF4444', bgcolor: 'rgba(239, 68, 68, 0.1)', transform: 'scale(1.1)' } }}
-                        >
+                        <IconButton onClick={handleLogout} size="small" sx={{ color: '#94A3B8', transition: 'all 0.3s ease', '&:hover': { color: '#EF4444', bgcolor: 'rgba(239, 68, 68, 0.1)', transform: 'scale(1.1)' } }}>
                             <LogoutIcon fontSize="small" />
                         </IconButton>
                     </Box>

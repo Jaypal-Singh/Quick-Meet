@@ -25,7 +25,6 @@ async def startup_event():
     await init_db()
 
 
-from src.routers import auth_router
 app.include_router(auth_router.router, prefix="/api/v1/users")
 
 from src.routers import friend_router

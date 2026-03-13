@@ -10,6 +10,8 @@ import Summarise from '../summarise/summarise';
 import Transcripts from '../transcripts/transcripts';
 import Reports from '../reports/Reports';
 import Settings from '../settings/settings';
+import MeetingHistory from '../meeting/history/MeetingHistory';
+import UpcomingSchedule from '../dashboard/UpcomingSchedule';
 import Friends from '../friends/Friends';
 
 export default function AllRoutes() {
@@ -28,6 +30,8 @@ export default function AllRoutes() {
                 <Route path="/transcripts" element={<Transcripts />} />
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/settings" element={<Settings />} />
+                <Route path="/meetings/history" element={<MeetingHistory />} />
+                <Route path="/upcoming" element={<UpcomingSchedule />} />
             </Route>
 
             {/* Dynamic Video Meeting route */}

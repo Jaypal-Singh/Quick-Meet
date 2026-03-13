@@ -3,12 +3,39 @@ import { Box, Typography, Button, IconButton, useTheme, useMediaQuery } from '@m
 import LinkIcon from '@mui/icons-material/Link';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import FlashOnIcon from '@mui/icons-material/FlashOn';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 const HeroSection = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const [meetingCode, setMeetingCode] = useState("");
     const navigate = useNavigate();
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleInstantMeeting = () => {
+        handleClose();
+        navigate(`/${Math.random().toString(36).substring(2, 9)}`);
+    };
+
+    const handleScheduleMeeting = () => {
+        handleClose();
+        navigate('/meetings', { state: { openSchedule: true } });
+    };
 
     return (
         <Box sx={{
@@ -76,9 +103,10 @@ const HeroSection = () => {
                         Join Call
                     </Button>
 
-                    {/* New Meeting */}
+                    {/* New Meeting Dropdown */}
                     <Button 
-                        onClick={() => navigate(`/${Math.random().toString(36).substring(2, 9)}`)}
+                        onClick={handleClick}
+                        endIcon={<KeyboardArrowDownIcon />}
                         sx={{
                         display: 'flex', alignItems: 'center', gap: 1,
                         backgroundColor: 'transparent', border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -89,6 +117,40 @@ const HeroSection = () => {
                         <AddIcon fontSize="small" />
                         New Meeting
                     </Button>
+                    <Menu
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleClose}
+                        PaperProps={{
+                            sx: {
+                                bgcolor: '#1C2230',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                mt: 1,
+                                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+                                '& .MuiMenuItem-root': {
+                                    color: 'white',
+                                    fontSize: '14px',
+                                    py: 1.5,
+                                    '&:hover': {
+                                        bgcolor: 'rgba(255, 255, 255, 0.05)',
+                                    },
+                                },
+                            },
+                        }}
+                    >
+                        <MenuItem onClick={handleInstantMeeting}>
+                            <ListItemIcon>
+                                <FlashOnIcon fontSize="small" sx={{ color: '#6366F1' }} />
+                            </ListItemIcon>
+                            <ListItemText primary="Start an instant meeting" />
+                        </MenuItem>
+                        <MenuItem onClick={handleScheduleMeeting}>
+                            <ListItemIcon>
+                                <CalendarMonthIcon fontSize="small" sx={{ color: '#8B5CF6' }} />
+                            </ListItemIcon>
+                            <ListItemText primary="Schedule for later" />
+                        </MenuItem>
+                    </Menu>
                 </Box>
             </Box>
 
