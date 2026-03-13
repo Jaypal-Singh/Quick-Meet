@@ -17,7 +17,7 @@ import ListItemText from '@mui/material/ListItemText';
 import FlashOnIcon from '@mui/icons-material/FlashOn';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { useNavigate } from 'react-router-dom';
+
 
 const NAV_ITEMS = [
     { path: '/dashboard', label: 'Dashboard', icon: <DashboardIcon /> },
