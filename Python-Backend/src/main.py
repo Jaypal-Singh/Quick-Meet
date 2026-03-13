@@ -31,6 +31,7 @@ app.include_router(auth_router.router, prefix="/api/v1/users")
 app.include_router(friend_router.router, prefix="/api/v1/friends")
 app.include_router(meeting_router.router, prefix="/api/v1/meetings")
 
+
 @app.get("/")
 def read_root():
     return {"message": "CORS is configured!"}

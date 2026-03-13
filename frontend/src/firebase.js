@@ -7,12 +7,12 @@ import server from './environment';
 // Your web app's Firebase configuration
 // REPLACE THIS WITH YOUR ACTUAL CONFIG FROM FIREBASE CONSOLE
 const firebaseConfig = {
-  apiKey: "AIzaSyCHlP71q9ZQ90_ozA1DUo3Xb5wBkKE7xf8",
+  apiKey: "AIzaSyCHlP71q9ZQ9O_ozA1DUo3Xb5wBkKE7xf8",
   authDomain: "quickmeet-af798.firebaseapp.com",
   projectId: "quickmeet-af798",
   storageBucket: "quickmeet-af798.firebasestorage.app",
   messagingSenderId: "497787112271",
-  appId: "1:497787112271:web:c63e40499f9b754a5a933a",
+  appId: "1:497787112271:web:c63e40499f9b754d5a933a",
   measurementId: "G-XQ5KWW52S8"
 };
 
@@ -38,54 +38,84 @@ export const requestForToken = async () => {
     const permission = await Notification.requestPermission();
     console.log('FCM: Notification permission status:', permission);
     
-    if (permission === 'granted') {
-      console.log('FCM: Initializing service worker registration...');
-      let registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
-      await navigator.serviceWorker.ready;
+    if (permission !== 'granted') {
+      console.warn('FCM: Permission not granted.');
+      return;
+    }
+
+    if (!('serviceWorker' in navigator)) {
+      console.error('FCM: Service workers are not supported in this browser.');
+      return;
+    }
+
+    console.log('FCM: Checking service worker registration...');
+    let registration = await navigator.serviceWorker.getRegistration('/firebase-messaging-sw.js');
+    
+    if (!registration) {
+      console.log('FCM: No existing registration found, registering new one...');
+      registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
+        scope: '/'
+      });
+    }
+
+    // Wait for the service worker to be ready
+    await navigator.serviceWorker.ready;
+
+    // Ensure it's active
+    if (registration.active) {
+      console.log('FCM: Service worker active.');
+    } else {
+      console.log('FCM: Waiting for service worker to become active...');
+      await new Promise((resolve) => {
+        const sw = registration.installing || registration.waiting;
+        if (sw) {
+          sw.addEventListener('statechange', (e) => {
+            if (e.target.state === 'activated') {
+              console.log('FCM: Service worker activated successfully.');
+              resolve();
+            }
+          });
+        } else {
+          resolve();
+        }
+      });
+    }
+
+    console.log('FCM: Requesting token...');
+    try {
+      const currentToken = await getToken(messaging, { 
+        vapidKey: VAPID_KEY,
+        serviceWorkerRegistration: registration
+      });
       
-      console.log('FCM: Service worker ready. Requesting token...');
-      try {
-        const currentToken = await getToken(messaging, { 
-          vapidKey: VAPID_KEY,
-          serviceWorkerRegistration: registration
-        });
-        
-        if (currentToken) {
-          console.log('FCM: Token generated successfully!');
-          const userToken = localStorage.getItem('token');
-          if (userToken) {
+      if (currentToken) {
+        console.log('FCM: Token generated successfully!');
+        const userToken = localStorage.getItem('token');
+        if (userToken) {
+          try {
             await axios.post(`${server}/api/v1/users/update_fcm_token`, {
               token: userToken,
               fcm_token: currentToken
             });
             console.log('FCM: Backend updated.');
+          } catch (apiErr) {
+            console.error('FCM: Failed to update backend:', apiErr);
           }
-          return currentToken;
         }
-      } catch (tokenErr) {
-        console.warn('FCM: Token request failed, attempting auto-fix (unregister & retry)...', tokenErr);
-        // UNREGISTER and RETRY ONCE
-        await registration.unregister();
-        registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
-        await navigator.serviceWorker.ready;
-        
-        const retryToken = await getToken(messaging, { 
-          vapidKey: VAPID_KEY,
-          serviceWorkerRegistration: registration
-        });
-        if (retryToken) {
-          console.log('FCM: Token generated successfully after auto-fix!');
-          const userToken = localStorage.getItem('token');
-          if (userToken) {
-            await axios.post(`${server}/api/v1/users/update_fcm_token`, {
-              token: userToken,
-              fcm_token: retryToken
-            });
-            console.log('FCM: Backend updated after auto-fix.');
-          }
-          return retryToken;
-        }
+        return currentToken;
       }
+    } catch (tokenErr) {
+      console.error('FCM: Token request failed:', tokenErr);
+      
+      const isBrave = !!(navigator.brave && await navigator.brave.isBrave());
+      if (isBrave) {
+        console.error('FCM ERROR: Brave detected. Please go to brave://settings/google_services and enable "Use Google services for push messaging", then fully restart Brave.');
+      }
+
+      if (tokenErr.message.includes('could not retrieve the public key') || tokenErr.name === 'AbortError') {
+        console.error('FCM ERROR: This is a browser-level failure. It usually means the Push Service is blocked by your browser/VPN or the VAPID key is invalid for this project.');
+      }
+      throw tokenErr;
     }
   } catch (err) {
     console.error('FCM: Fatal error during registration/token request:', err);
@@ -94,10 +124,9 @@ export const requestForToken = async () => {
   }
 };
 
-export const onMessageListener = () =>
-  new Promise((resolve) => {
-    onMessage(messaging, (payload) => {
-      console.log('Received foreground message:', payload);
-      resolve(payload);
-    });
+export const onMessageListener = (callback) => {
+  return onMessage(messaging, (payload) => {
+    console.log('Received foreground message:', payload);
+    if (callback) callback(payload);
   });
+};
