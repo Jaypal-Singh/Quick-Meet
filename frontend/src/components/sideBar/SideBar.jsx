@@ -18,7 +18,6 @@ import FlashOnIcon from '@mui/icons-material/FlashOn';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
-
 const NAV_ITEMS = [
     { path: '/dashboard', label: 'Dashboard', icon: <DashboardIcon /> },
     { path: '/meetings', label: 'Meetings', icon: <VideocamIcon /> },
