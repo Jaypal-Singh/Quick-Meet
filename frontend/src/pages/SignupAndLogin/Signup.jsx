@@ -34,6 +34,7 @@ export default function Signup() {
 
             if (request.status === 201) {
                 localStorage.setItem('username', name);
+                localStorage.setItem('name', name);
                 localStorage.setItem('email', email);
                 navigate('/login');
             }
@@ -57,6 +58,7 @@ export default function Signup() {
                     localStorage.setItem('token', response.data.token);
                     localStorage.setItem('email', response.data.email);
                     localStorage.setItem('username', response.data.name);
+                    localStorage.setItem('name', response.data.name);
                     navigate('/dashboard');
                 }
             } catch (err) {

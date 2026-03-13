@@ -81,17 +81,26 @@ async def invite_to_meeting(data: InviteRequest):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Friend not found")
     
     if not friend.fcm_token:
-        # We can't send a push if they don't have a token, but we don't want to error out the whole UI
-        return {"message": "Friend is not reachable via push notifications", "sent": False}
+        # We can't send a push if they don't have a token.
+        return {"message": f"Cannot invite {data.friend_username}: They haven't enabled notifications yet.", "sent": False}
 
     # Send notification
-    success = await notify_meeting_invite(
-        token=friend.fcm_token,
-        inviter_name=sender.name,
-        meeting_code=data.meeting_code
-    )
-    
-    if success:
-        return {"message": "Invite sent successfully", "sent": True}
-    else:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to send notification")
+    try:
+        success = await notify_meeting_invite(
+            token=friend.fcm_token,
+            inviter_name=sender.name,
+            inviter_username=sender.username,
+            recipient_username=friend.username,
+            meeting_code=data.meeting_code
+        )
+        
+        if success:
+            return {"message": "Invite sent successfully", "sent": True}
+        else:
+            return {"message": "Firebase failed to deliver the notification. Check backend logs.", "sent": False}
+    except Exception as e:
+        print(f"Error in invite_to_meeting: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+            detail=f"Notification error: {str(e)}"
+        )

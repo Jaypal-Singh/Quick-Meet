@@ -89,18 +89,21 @@ export const requestForToken = async () => {
       });
       
       if (currentToken) {
-        console.log('FCM: Token generated successfully!');
+        console.log('FCM: Token generated successfully:', currentToken);
         const userToken = localStorage.getItem('token');
         if (userToken) {
           try {
-            await axios.post(`${server}/api/v1/users/update_fcm_token`, {
+            console.log('FCM: Updating backend with token...');
+            const response = await axios.post(`${server}/api/v1/users/update_fcm_token`, {
               token: userToken,
               fcm_token: currentToken
             });
-            console.log('FCM: Backend updated.');
+            console.log('FCM: Backend updated successfully:', response.data);
           } catch (apiErr) {
-            console.error('FCM: Failed to update backend:', apiErr);
+            console.error('FCM: Failed to update backend:', apiErr.response?.data || apiErr.message);
           }
+        } else {
+          console.warn('FCM: User token not found in localStorage, skipping backend update.');
         }
         return currentToken;
       }

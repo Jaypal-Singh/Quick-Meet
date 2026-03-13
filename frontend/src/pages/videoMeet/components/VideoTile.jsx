@@ -21,6 +21,17 @@ const VideoTile = ({ videoObj, isLocal, videoEnabled, isPinned, onPin, isScreenS
     // Local camera should be mirrored. Local screen share should NOT be mirrored.
     const shouldMirror = isLocal && !isScreenShare;
 
+    const videoRef = React.useRef(null);
+
+    React.useEffect(() => {
+        if (videoRef.current && videoObj?.stream) {
+            if (videoRef.current.srcObject !== videoObj.stream) {
+                videoRef.current.srcObject = videoObj.stream;
+                console.log(`[VideoTile] Assigned stream to video: socket=${videoObj.socketId}`);
+            }
+        }
+    }, [videoObj?.stream, videoObj?.socketId]);
+
     return (
         <div 
             onClick={onPin}
@@ -30,12 +41,9 @@ const VideoTile = ({ videoObj, isLocal, videoEnabled, isPinned, onPin, isScreenS
             {hasActiveVideo ? (
                 <video
                     data-socket={videoObj.socketId}
-                    ref={ref => {
-                        if (ref && videoObj.stream && ref.srcObject !== videoObj.stream) {
-                            ref.srcObject = videoObj.stream;
-                        }
-                    }}
+                    ref={videoRef}
                     autoPlay
+                    playsInline
                     muted={isLocal}
                     className={`w-full h-full ${isPinned ? 'object-contain bg-black' : 'object-cover'} ${shouldMirror ? 'scale-x-[-1]' : ''}`}
                 />

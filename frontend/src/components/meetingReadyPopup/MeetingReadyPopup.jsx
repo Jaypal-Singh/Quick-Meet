@@ -1,56 +1,157 @@
-import React, { useState } from 'react';
-import { IconButton, Snackbar } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { IconButton, Snackbar, Avatar, CircularProgress, Alert, Typography } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CloseIcon from '@mui/icons-material/Close';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
+import VideocamIcon from '@mui/icons-material/Videocam';
+import axios from 'axios';
+import server from '../../environment';
 
 const MeetingReadyPopup = ({ meetingUrl, username, onClose }) => {
     const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [showFriends, setShowFriends] = useState(false);
+    const [friends, setFriends] = useState([]);
+    const [loadingFriends, setLoadingFriends] = useState(false);
+    const [inviteStatus, setInviteStatus] = useState({ open: false, message: "", severity: "success" });
 
     const handleCopy = () => {
         navigator.clipboard.writeText(meetingUrl);
         setOpenSnackbar(true);
     };
 
+    const fetchFriends = async () => {
+        setLoadingFriends(true);
+        try {
+            const token = localStorage.getItem("token");
+            const response = await axios.get(`${server}/api/v1/friends/list`, {
+                params: { token }
+            });
+            setFriends(response.data);
+        } catch (error) {
+            console.error("Error fetching friends:", error);
+        } finally {
+            setLoadingFriends(false);
+        }
+    };
+
+    useEffect(() => {
+        if (showFriends) {
+            fetchFriends();
+        }
+    }, [showFriends]);
+
+    const sendInvite = async (friendUsername) => {
+        const token = localStorage.getItem("token");
+        // Extract meeting code from URL (e.g., http://localhost:3000/CODE)
+        const meetingCode = meetingUrl.split('/').pop();
+        
+        try {
+            const response = await axios.post(`${server}/api/v1/friends/invite`, {
+                token,
+                friend_username: friendUsername,
+                meeting_code: meetingCode
+            });
+            setInviteStatus({ 
+                open: true, 
+                message: response.data.sent ? `Invite sent to ${friendUsername}!` : response.data.message, 
+                severity: response.data.sent ? "success" : "warning" 
+            });
+        } catch (error) {
+            setInviteStatus({ 
+                open: true, 
+                message: "Failed to send invite.", 
+                severity: "error" 
+            });
+        }
+    };
+
     return (
-        <div className="absolute bottom-[100px] left-6 w-[360px] p-6 rounded-xl z-[100] bg-[#1C2230] border border-white/10 shadow-2xl">
+        <div className="absolute bottom-[100px] left-6 w-[360px] max-h-[500px] flex flex-col rounded-xl z-[100] bg-[#1C2230] border border-white/10 shadow-2xl overflow-hidden">
             
-            <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-medium text-white">Your meeting's ready</h2>
-                <IconButton size="small" onClick={onClose} sx={{ color: '#9CA3AF' }}>
-                    <CloseIcon fontSize="small" />
-                </IconButton>
+            <div className="p-6 border-b border-white/5">
+                <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-lg font-medium text-white">Your meeting's ready</h2>
+                    <IconButton size="small" onClick={onClose} sx={{ color: '#9CA3AF' }}>
+                        <CloseIcon fontSize="small" />
+                    </IconButton>
+                </div>
+
+                <button 
+                    onClick={() => setShowFriends(!showFriends)}
+                    className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium mb-4 transition-all ${
+                        showFriends 
+                        ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/20' 
+                        : 'bg-purple-600/20 text-purple-400 border border-purple-500/30 hover:bg-purple-600/30'
+                    }`}
+                >
+                    <PersonAddAlt1Icon fontSize="small" />
+                    {showFriends ? 'Hide friends' : 'Add others'}
+                </button>
+
+                {!showFriends && (
+                    <>
+                        <p className="text-gray-400 text-sm mb-4 leading-relaxed">
+                            Or share this meeting link with others you want in the meeting
+                        </p>
+
+                        <div className="flex items-center bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 mb-2">
+                            <span className="flex-1 text-gray-300 text-sm overflow-hidden text-ellipsis whitespace-nowrap">
+                                {meetingUrl}
+                            </span>
+                            <IconButton size="small" onClick={handleCopy} sx={{ color: '#9CA3AF', padding: '4px' }}>
+                                <ContentCopyIcon fontSize="small" />
+                            </IconButton>
+                        </div>
+                    </>
+                )}
             </div>
 
-            <button 
-                disabled
-                className="flex items-center gap-2 bg-purple-600/20 text-purple-400 border border-purple-500/30 rounded-full px-4 py-2 text-sm font-medium mb-4 cursor-not-allowed opacity-60"
-            >
-                <PersonAddAlt1Icon fontSize="small" />
-                Add others
-            </button>
-
-            <p className="text-gray-400 text-sm mb-4 leading-relaxed">
-                Or share this meeting link with others you want in the meeting
-            </p>
-
-            <div className="flex items-center bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 mb-4">
-                <span className="flex-1 text-gray-300 text-sm overflow-hidden text-ellipsis whitespace-nowrap">
-                    {meetingUrl}
-                </span>
-                <IconButton size="small" onClick={handleCopy} sx={{ color: '#9CA3AF', padding: '4px' }}>
-                    <ContentCopyIcon fontSize="small" />
-                </IconButton>
-            </div>
-
-            {username && (
-                <p className="text-gray-500 text-xs flex items-center gap-1.5">
-                    <svg width="12" height="14" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M6 6.5C7.38071 6.5 8.5 5.38071 8.5 4C8.5 2.61929 7.38071 1.5 6 1.5C4.61929 1.5 3.5 2.61929 3.5 4C3.5 5.38071 4.61929 6.5 6 6.5ZM6 8C3.99661 8 0 9.00339 0 11.0034V12.5H12V11.0034C12 9.00339 8.00339 8 6 8Z" fill="#6B7280"/>
-                    </svg>
-                    Joined as {username}
-                </p>
+            {showFriends && (
+                <div className="flex-1 overflow-y-auto p-4 bg-black/20 min-h-[150px] max-h-[300px]">
+                    <Typography variant="caption" className="text-gray-500 mb-3 block px-2">INVITE YOUR FRIENDS</Typography>
+                    
+                    {loadingFriends ? (
+                        <div className="flex justify-center py-6">
+                            <CircularProgress size={20} sx={{ color: '#818CF8' }} />
+                        </div>
+                    ) : friends.length > 0 ? (
+                        <div className="flex flex-col gap-2">
+                            {friends.map((friend) => (
+                                <div key={friend.username} className="flex items-center justify-between p-2 rounded-lg hover:bg-white/5 transition-colors group">
+                                    <div className="flex items-center gap-3">
+                                        <Avatar sx={{ width: 32, height: 32, bgcolor: '#4F46E5', fontSize: '0.9rem' }}>
+                                            {friend.name[0]}
+                                        </Avatar>
+                                        <div className="overflow-hidden">
+                                            <p className="text-white text-sm font-medium truncate w-[140px]">{friend.name}</p>
+                                            <p className="text-gray-500 text-[10px] truncate w-[140px]">@{friend.username}</p>
+                                        </div>
+                                    </div>
+                                    <button 
+                                        onClick={() => sendInvite(friend.username)}
+                                        className="text-[11px] bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-3 py-1 rounded-md hover:bg-indigo-500 hover:text-white transition-all opacity-0 group-hover:opacity-100"
+                                    >
+                                        Invite
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-center text-gray-500 text-sm py-4">No friends found</p>
+                    )}
+                </div>
             )}
+
+            <div className="p-4 px-6 border-t border-white/5">
+                {username && (
+                    <p className="text-gray-500 text-xs flex items-center gap-1.5">
+                        <svg width="12" height="14" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6 6.5C7.38071 6.5 8.5 5.38071 8.5 4C8.5 2.61929 7.38071 1.5 6 1.5C4.61929 1.5 3.5 2.61929 3.5 4C3.5 5.38071 4.61929 6.5 6 6.5ZM6 8C3.99661 8 0 9.00339 0 11.0034V12.5H12V11.0034C12 9.00339 8.00339 8 6 8Z" fill="#6B7280"/>
+                        </svg>
+                        Joined as {username}
+                    </p>
+                )}
+            </div>
 
             <Snackbar
                 open={openSnackbar}
@@ -59,6 +160,17 @@ const MeetingReadyPopup = ({ meetingUrl, username, onClose }) => {
                 message="Meeting link copied!"
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
             />
+
+            <Snackbar
+                open={inviteStatus.open}
+                autoHideDuration={4000}
+                onClose={() => setInviteStatus({ ...inviteStatus, open: false })}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+            >
+                <Alert severity={inviteStatus.severity} sx={{ width: '100%', borderRadius: '10px' }}>
+                    {inviteStatus.message}
+                </Alert>
+            </Snackbar>
         </div>
     );
 };

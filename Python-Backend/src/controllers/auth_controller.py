@@ -97,7 +97,7 @@ async def login(user_data: UserLogin): # Reusing UserRegister for now as it has 
     user.token = token
     await user.save()
     
-    return {"message": "Login successful", "token": token}
+    return {"message": "Login successful", "token": token, "name": user.name}
 
 
 async def add_to_activity(user_data: AddToActivityRequest):
