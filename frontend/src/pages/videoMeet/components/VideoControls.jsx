@@ -15,7 +15,7 @@ const VideoControls = ({
 }) => {
     return (
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3 bg-[#1C2230]/95 backdrop-blur-md px-6 py-3 rounded-full z-50 shadow-xl border border-white/10">
-            
+
             <IconButton onClick={handleAudio} sx={{ color: audio ? '#ffffff' : '#ef4444', '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' } }}>
                 {audio ? <MicIcon /> : <MicOffIcon />}
             </IconButton>
@@ -30,21 +30,21 @@ const VideoControls = ({
                 </IconButton>
             )}
 
-            <IconButton 
-                onClick={handleEndCall} 
-                sx={{ 
-                    backgroundColor: '#ef4444', 
-                    color: '#ffffff', 
+            <IconButton
+                onClick={handleEndCall}
+                sx={{
+                    backgroundColor: '#ef4444',
+                    color: '#ffffff',
                     padding: '12px',
-                    '&:hover': { backgroundColor: '#dc2626' } 
+                    '&:hover': { backgroundColor: '#dc2626' }
                 }}
             >
                 <CallEndIcon />
             </IconButton>
 
             <Badge badgeContent={newMessages} color="error" max={99}>
-                <IconButton 
-                    onClick={() => setModal(!showModal)} 
+                <IconButton
+                    onClick={() => setModal(!showModal)}
                     sx={{ color: showModal ? '#818CF8' : '#9CA3AF', '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' } }}
                 >
                     <ChatIcon />
