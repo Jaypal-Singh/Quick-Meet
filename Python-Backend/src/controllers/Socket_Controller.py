@@ -69,3 +69,16 @@ def register_socket_events(sio):
             # We use the path/room name as the room ID
             for client_id in connections[matching_room]:
                 await sio.emit('chat-message', (data, sender, sid), room=client_id)
+
+    @sio.on('caption-message')
+    async def handle_caption_message(sid, data, sender):
+        matching_room = None
+        for room, clients in connections.items():
+            if sid in clients:
+                matching_room = room
+                break
+        
+        if matching_room:
+            for client_id in connections[matching_room]:
+                if client_id != sid: # Don't send back to the speaker
+                    await sio.emit('caption-message', (data, sender, sid), room=client_id)
