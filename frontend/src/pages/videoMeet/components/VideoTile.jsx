@@ -35,7 +35,7 @@ const VideoTile = ({ videoObj, isLocal, videoEnabled, isPinned, onPin, isScreenS
     return (
         <div 
             onClick={onPin}
-            className={`relative w-full h-full flex items-center justify-center overflow-hidden rounded-xl bg-[#1C2230] hover:ring-2 hover:ring-purple-500/50 transition-all cursor-pointer ${isPinned ? 'ring-2 ring-purple-500' : 'border border-white/5'}`}
+            className={`relative w-full h-full flex items-center justify-center overflow-hidden rounded-xl bg-[#1C2230] hover:ring-2 hover:ring-purple-500/50 transition-all cursor-pointer ${isPinned ? 'ring-2 ring-purple-500' : ''}`}
         >
             
             {hasActiveVideo ? (
@@ -49,16 +49,16 @@ const VideoTile = ({ videoObj, isLocal, videoEnabled, isPinned, onPin, isScreenS
                 />
             ) : (
                 <div className="w-full h-full flex items-center justify-center bg-[#131722]">
-                    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 text-white flex items-center justify-center text-4xl font-semibold shadow-lg">
+                    <div className="w-24 h-24 rounded-full bg-[#8B5CF6] text-white flex items-center justify-center text-4xl font-semibold shadow-lg">
                         {initial}
                     </div>
                 </div>
             )}
 
             {/* Username overlay */}
-            <div className="absolute bottom-3 left-3 flex items-center gap-2 bg-[#1C2230] px-3 py-1.5 rounded-lg shadow-md border border-white/10">
+            <div className="absolute bottom-4 left-4 flex items-center gap-2 bg-[#1C2230] px-3 py-1.5 rounded-lg border border-white/5 shadow-md">
                 <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                <span className="text-white text-sm font-medium">
+                <span className="text-white text-xs font-medium tracking-wide">
                     {username}{isLocal ? ' (You)' : ''}{isScreenShare && isLocal ? ' (Presenting)' : ''}
                 </span>
             </div>

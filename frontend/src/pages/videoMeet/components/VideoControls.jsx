@@ -14,7 +14,7 @@ const VideoControls = ({
     handleVideo, handleAudio, handleScreen, handleEndCall, setModal
 }) => {
     return (
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3 bg-[#1C2230]/95 backdrop-blur-md px-6 py-3 rounded-full z-50 shadow-xl border border-white/10">
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-3 bg-[#1C2230] px-6 py-3 rounded-full z-50 shadow-2xl">
 
             <IconButton onClick={handleAudio} sx={{ color: audio ? '#ffffff' : '#ef4444', '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' } }}>
                 {audio ? <MicIcon /> : <MicOffIcon />}

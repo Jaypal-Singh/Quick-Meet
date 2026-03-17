@@ -610,14 +610,14 @@ export default function VideoMeetComponent() {
             )}
 
             {isConnecting ? (
-                <div className="flex flex-col items-center justify-center h-screen w-screen bg-[#040F0F] text-white z-[200]">
+                <div className="flex flex-col items-center justify-center h-screen w-screen bg-[#0B0F19] text-white z-[200]">
                     <div className="w-12 h-12 border-4 border-white/10 border-t-indigo-500 rounded-full animate-spin mb-6"></div>
                     <h2 className="text-2xl font-bold mb-2">Join Meeting</h2>
                     <p className="text-indigo-300 animate-pulse">Requesting camera and audio access...</p>
                 </div>
             ) : (
 
-                <div className="relative w-screen h-screen bg-[#040F0F] overflow-hidden flex flex-col">
+                <div className="relative w-screen h-screen bg-[#0B0F19] overflow-hidden flex flex-col">
 
                     {/* Hidden video element to keep localVideoref pipeline alive */}
                     <video ref={localVideoref} autoPlay playsInline muted className="hidden" />
@@ -658,7 +658,7 @@ export default function VideoMeetComponent() {
                                 // --- PINNED LAYOUT (Main Area + Sidebar) ---
                                 <>
                                     {/* Main Pinned Video Area */}
-                                    <div className="flex-1 h-full rounded-2xl overflow-hidden transition-all duration-500 ease-in-out bg-black/50 border border-white/5 shadow-2xl">
+                                    <div className="flex-1 h-full rounded-2xl overflow-hidden transition-all duration-500 ease-in-out bg-[#131722] border border-white/5 shadow-2xl">
                                         <VideoTile 
                                             videoObj={pinnedTile} 
                                             isLocal={pinnedTile.isLocal || false}
@@ -675,7 +675,7 @@ export default function VideoMeetComponent() {
                                             {unpinnedTiles.map((vid) => (
                                                 <div 
                                                     key={vid.socketId} 
-                                                    className="w-full aspect-video shrink-0 rounded-xl overflow-hidden transition-all duration-300 ease-in-out border border-white/5"
+                                                    className="w-full aspect-video shrink-0 rounded-xl overflow-hidden transition-all duration-300 ease-in-out bg-[#131722] border border-white/5"
                                                 >
                                                     <VideoTile 
                                                         videoObj={vid} 
@@ -703,7 +703,7 @@ export default function VideoMeetComponent() {
                                     {unpinnedTiles.map((vid) => (
                                         <div 
                                             key={vid.socketId} 
-                                            className="rounded-2xl overflow-hidden transition-all duration-500 ease-in-out border border-white/5 bg-black/40 shadow-lg"
+                                            className="w-full h-full rounded-2xl overflow-hidden transition-all duration-500 ease-in-out bg-[#131722] border border-white/5 shadow-lg"
                                         >
                                             <VideoTile 
                                                 videoObj={vid} 
