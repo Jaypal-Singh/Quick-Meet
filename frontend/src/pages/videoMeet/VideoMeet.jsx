@@ -541,7 +541,7 @@ export default function VideoMeetComponent() {
             return;
         }
 
-        if (captions && audio) {
+        if (captions) {
             if (!recognitionRef.current) {
                 const recognition = new SpeechRecognition();
                 recognition.continuous = true;
@@ -578,7 +578,7 @@ export default function VideoMeetComponent() {
                 };
 
                 recognition.onend = () => {
-                    if (captions && audio && recognitionRef.current) {
+                    if (captions && recognitionRef.current) {
                         try {
                             recognitionRef.current.start();
                         } catch(e) {}
@@ -603,7 +603,7 @@ export default function VideoMeetComponent() {
                 recognitionRef.current.stop();
             }
         };
-    }, [captions, audio, username]);
+    }, [captions, username]);
 
     useEffect(() => {
         const interval = setInterval(() => {
