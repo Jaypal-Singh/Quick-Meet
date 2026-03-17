@@ -30,7 +30,7 @@ const VideoTile = ({ videoObj, isLocal, videoEnabled, isPinned, onPin, isScreenS
                 console.log(`[VideoTile] Assigned stream to video: socket=${videoObj.socketId}`);
             }
         }
-    }, [videoObj?.stream, videoObj?.socketId]);
+    }, [videoObj?.stream, videoObj?.socketId, hasActiveVideo]);
 
     return (
         <div 
