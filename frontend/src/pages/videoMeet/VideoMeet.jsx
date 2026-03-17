@@ -43,6 +43,10 @@ export default function VideoMeetComponent() {
 
     let [screenAvailable, setScreenAvailable] = useState();
 
+    let [captions, setCaptions] = useState(false);
+    let [activeCaptions, setActiveCaptions] = useState({}); // { socketId: { text: "...", timestamp: Date.now() } }
+    let recognitionRef = useRef(null);
+
     let [messages, setMessages] = useState([])
 
     let [message, setMessage] = useState("");
@@ -137,6 +141,8 @@ export default function VideoMeetComponent() {
         setGlobalError(null);
         setIsConnecting(true);
         console.log('[Init] getPermissions started');
+
+        setScreenAvailable(!!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia));
         
         try {
             // 1. Identify what hardware is actually present
@@ -389,6 +395,13 @@ export default function VideoMeetComponent() {
 
         socketRef.current.on('chat-message', addMessage)  // listener for chat message
 
+        socketRef.current.on('caption-message', (data, senderName, senderSocketId) => {
+            setActiveCaptions(prev => ({
+                ...prev,
+                [senderSocketId]: { text: data, name: senderName, timestamp: Date.now() }
+            }));
+        })
+
         socketRef.current.on('user-left', (id) => {
             setVideos((videos) => videos.filter((video) => video.socketId !== id))
             if(connections[id]){
@@ -517,6 +530,99 @@ export default function VideoMeetComponent() {
         setScreen(!screen);
     }
 
+    let handleCaptions = () => {
+        setCaptions(!captions);
+    }
+
+    useEffect(() => {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            console.warn("Speech Recognition API not supported in this browser.");
+            return;
+        }
+
+        if (captions && audio) {
+            if (!recognitionRef.current) {
+                const recognition = new SpeechRecognition();
+                recognition.continuous = true;
+                recognition.interimResults = true;
+                recognition.lang = 'en-US';
+
+                recognition.onresult = (event) => {
+                    let interimTranscript = '';
+                    let finalTranscript = '';
+
+                    for (let i = event.resultIndex; i < event.results.length; ++i) {
+                        if (event.results[i].isFinal) {
+                            finalTranscript += event.results[i][0].transcript;
+                        } else {
+                            interimTranscript += event.results[i][0].transcript;
+                        }
+                    }
+
+                    const transcript = finalTranscript || interimTranscript;
+                    if (transcript.trim() !== '') {
+                        setActiveCaptions(prev => ({
+                            ...prev,
+                            'local': { text: transcript, name: username, timestamp: Date.now() }
+                        }));
+                        
+                        if (socketRef.current) {
+                            socketRef.current.emit('caption-message', transcript, username);
+                        }
+                    }
+                };
+
+                recognition.onerror = (event) => {
+                    console.error("Speech recognition error", event.error);
+                };
+
+                recognition.onend = () => {
+                    if (captions && audio && recognitionRef.current) {
+                        try {
+                            recognitionRef.current.start();
+                        } catch(e) {}
+                    }
+                };
+
+                recognitionRef.current = recognition;
+            }
+
+            try {
+                recognitionRef.current.start();
+            } catch(e) { console.log(e); }
+        } else {
+            if (recognitionRef.current) {
+                recognitionRef.current.stop();
+                recognitionRef.current = null;
+            }
+        }
+
+        return () => {
+            if (recognitionRef.current) {
+                recognitionRef.current.stop();
+            }
+        };
+    }, [captions, audio, username]);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const now = Date.now();
+            setActiveCaptions(prev => {
+                let updated = { ...prev };
+                let changed = false;
+                Object.keys(updated).forEach(id => {
+                    if (now - updated[id].timestamp > 4000) { 
+                        delete updated[id];
+                        changed = true;
+                    }
+                });
+                return changed ? updated : prev;
+            });
+        }, 1000);
+        return () => clearInterval(interval);
+    }, []);
+
     //Phase 6: Exit (Call Khatam)
     let handleEndCall = () => {
         try {
@@ -639,11 +745,13 @@ export default function VideoMeetComponent() {
                         screenAvailable={screenAvailable}
                         newMessages={newMessages}
                         showModal={showModal}
+                        captions={captions}
                         handleVideo={handleVideo}
                         handleAudio={handleAudio}
                         handleScreen={handleScreen}
                         handleEndCall={handleEndCall}
                         setModal={setModal}
+                        handleCaptions={handleCaptions}
                     />
 
                     {/* Main Content Area: Video Grid + Chat Side by Side */}
@@ -693,7 +801,7 @@ export default function VideoMeetComponent() {
                             ) : (
                                 // --- REGULAR GRID LAYOUT ---
                                 <div
-                                    className="w-full h-full gap-4 transition-all duration-500 ease-in-out"
+                                    className="flex-1 w-full h-full gap-4 transition-all duration-500 ease-in-out"
                                     style={{
                                         display: 'grid',
                                         gridTemplateColumns: `repeat(${gridLayout.cols}, 1fr)`,
@@ -713,6 +821,18 @@ export default function VideoMeetComponent() {
                                                 isScreenShare={vid.isLocal && screen}
                                                 onPin={() => setPinnedSocketId(vid.socketId)}
                                             />
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* Captions Overlay */}
+                            {captions && Object.keys(activeCaptions).length > 0 && (
+                                <div className="absolute bottom-6 left-0 w-full flex flex-col items-center gap-2 pointer-events-none z-40 px-4">
+                                    {Object.values(activeCaptions).map((cap, idx) => (
+                                        <div key={idx} className="bg-black/60 backdrop-blur-sm text-white px-4 py-2 rounded-lg max-w-2xl text-center border border-white/10 shadow-lg animate-in fade-in slide-in-from-bottom-2 duration-300">
+                                            <span className="font-bold text-indigo-300 text-sm mr-2">{cap.name}:</span>
+                                            <span className="text-lg">{cap.text}</span>
                                         </div>
                                     ))}
                                 </div>

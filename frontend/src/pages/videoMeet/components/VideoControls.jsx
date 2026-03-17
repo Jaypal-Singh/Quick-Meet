@@ -8,10 +8,12 @@ import ScreenShareIcon from '@mui/icons-material/ScreenShare';
 import StopScreenShareIcon from '@mui/icons-material/StopScreenShare';
 import CallEndIcon from '@mui/icons-material/CallEnd';
 import ChatIcon from '@mui/icons-material/Chat';
+import ClosedCaptionIcon from '@mui/icons-material/ClosedCaption';
+import ClosedCaptionDisabledIcon from '@mui/icons-material/ClosedCaptionDisabled';
 
 const VideoControls = ({
-    video, audio, screen, screenAvailable, newMessages, showModal,
-    handleVideo, handleAudio, handleScreen, handleEndCall, setModal
+    video, audio, screen, screenAvailable, newMessages, showModal, captions,
+    handleVideo, handleAudio, handleScreen, handleEndCall, setModal, handleCaptions
 }) => {
     return (
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-3 bg-[#1C2230] px-6 py-3 rounded-full z-50 shadow-2xl">
@@ -29,6 +31,10 @@ const VideoControls = ({
                     {screen ? <ScreenShareIcon /> : <StopScreenShareIcon />}
                 </IconButton>
             )}
+
+            <IconButton onClick={handleCaptions} sx={{ color: captions ? '#10B981' : '#ffffff', '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' } }}>
+                {captions ? <ClosedCaptionIcon /> : <ClosedCaptionDisabledIcon />}
+            </IconButton>
 
             <IconButton
                 onClick={handleEndCall}
