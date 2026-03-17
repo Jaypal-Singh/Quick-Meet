@@ -7,7 +7,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "quick-meet-coral.vercel.app"],
+    allow_origins=["http://localhost:3000", "https://quick-meet-coral.vercel.app"],
     allow_headers=["*"],
     allow_credentials=True,        
     allow_methods=["*"],
