@@ -5,7 +5,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import axios from 'axios';
-import server from '../../environment';
+const server = import.meta.env.VITE_API_URL;
 
 const MeetingReadyPopup = ({ meetingUrl, username, onClose }) => {
     const [openSnackbar, setOpenSnackbar] = useState(false);

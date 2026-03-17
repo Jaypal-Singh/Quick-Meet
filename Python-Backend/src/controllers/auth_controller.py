@@ -49,6 +49,17 @@ async def login(user_data: UserLogin): # Reusing UserRegister for now as it has 
     
     return {"message": "Login successful", "token": token, "name": user.name}
 
+async def update_fcm_token(token: str, fcm_token: str):
+    user = await User.find_one(User.token == token)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token"
+        )
+    
+    user.fcm_token = fcm_token
+    await user.save()
+    return {"message": "FCM token updated successfully"}
 
 async def add_to_activity(user_data: AddToActivityRequest):
     token = user_data.token

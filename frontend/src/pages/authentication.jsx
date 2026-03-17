@@ -16,7 +16,7 @@ import { Snackbar } from '@mui/material';
 import axios from 'axios';
 import httpStatus from 'http-status';
 import { useNavigate } from 'react-router-dom';
-import server from '../environment';
+const server = import.meta.env.VITE_API_URL;
 
 
 

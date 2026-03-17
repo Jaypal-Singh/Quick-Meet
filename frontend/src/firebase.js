@@ -2,7 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import axios from 'axios';
-import server from './environment';
+const server = import.meta.env.VITE_API_URL;
 
 // Your web app's Firebase configuration
 // REPLACE THIS WITH YOUR ACTUAL CONFIG FROM FIREBASE CONSOLE
