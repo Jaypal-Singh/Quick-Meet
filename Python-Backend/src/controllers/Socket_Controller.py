@@ -29,13 +29,13 @@ def register_socket_events(sio):
     @sio.on('join-call')
     async def handle_join_call(sid, path):
         if path not in connections:
-            connections[path] = []
+            connections[path] = set() # Use set to avoid duplicates
         
-        connections[path].append(sid)
+        connections[path].add(sid)
         
         # Notify others in the room
         for client_id in connections[path]:
-            await sio.emit('user-joined', (sid, connections[path]), room=client_id)
+            await sio.emit('user-joined', (sid, list(connections[path])), room=client_id)
         
         # Send chat history to new user
         if path in messages:
@@ -65,6 +65,7 @@ def register_socket_events(sio):
                 'socket-id-sender': sid
             })
             
-            # Broadcast to everyone in the room
+            # Broadcast to everyone in the room using room argument
+            # We use the path/room name as the room ID
             for client_id in connections[matching_room]:
                 await sio.emit('chat-message', (data, sender, sid), room=client_id)

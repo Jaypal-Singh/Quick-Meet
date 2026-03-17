@@ -82,6 +82,8 @@ export default function Authentication() {
 
             if (request.status === httpStatus.OK) {
                 localStorage.setItem("token", request.data.token);
+                localStorage.setItem("name", request.data.name);
+                localStorage.setItem("username", request.data.name);
                 router("/dashboard");
             }
         } catch (err) {
