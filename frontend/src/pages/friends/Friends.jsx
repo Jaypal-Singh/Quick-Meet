@@ -21,7 +21,7 @@ import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import axios from 'axios';
-import server from '../../environment';
+const server = import.meta.env.VITE_API_URL;
 import TopHeader from '../dashboard/TopHeader';
 
 export default function Friends() {

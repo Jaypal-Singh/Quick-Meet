@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useGoogleLogin } from '@react-oauth/google';
-import server from '../../environment';
+const server = import.meta.env.VITE_API_URL;
 
 export default function Login() {
     const navigate = useNavigate();

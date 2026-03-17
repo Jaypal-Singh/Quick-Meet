@@ -3,7 +3,7 @@ import io from "socket.io-client";
 import { Badge, IconButton, TextField, CircularProgress, Snackbar, Alert } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 import MeetingReadyPopup from '../../components/meetingReadyPopup/MeetingReadyPopup';
-import server from '../../environment';
+const server = import.meta.env.VITE_API_URL;
 import VideoControls from './components/VideoControls';
 import VideoTile from './components/VideoTile';
 import ChatSidebar from './components/ChatSidebar';
