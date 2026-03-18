@@ -35,6 +35,7 @@ export default function AllRoutes() {
             </Route>
 
             {/* Dynamic Video Meeting route */}
+            <Route path='/video-meet' element={<VideoMeetComponent />} />
             <Route path='/:url' element={<VideoMeetComponent />} />
         </Routes>
     );

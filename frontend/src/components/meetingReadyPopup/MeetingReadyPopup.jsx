@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { IconButton, Snackbar, Avatar, CircularProgress, Alert, Typography } from '@mui/material';
+import { IconButton, Snackbar, Avatar, CircularProgress, Alert, Typography, Box } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CloseIcon from '@mui/icons-material/Close';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
@@ -157,9 +157,25 @@ const MeetingReadyPopup = ({ meetingUrl, username, onClose }) => {
                 open={openSnackbar}
                 autoHideDuration={3000}
                 onClose={() => setOpenSnackbar(false)}
-                message="Meeting link copied!"
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-            />
+            >
+                <Box sx={{ 
+                    bgcolor: '#131722', 
+                    color: 'white', 
+                    px: 3, py: 1.5, 
+                    borderRadius: '12px', 
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1
+                }}>
+                    <ContentCopyIcon sx={{ fontSize: '18px', color: '#6366F1' }} />
+                    Meeting link copied!
+                </Box>
+            </Snackbar>
 
             <Snackbar
                 open={inviteStatus.open}
@@ -167,9 +183,29 @@ const MeetingReadyPopup = ({ meetingUrl, username, onClose }) => {
                 onClose={() => setInviteStatus({ ...inviteStatus, open: false })}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
             >
-                <Alert severity={inviteStatus.severity} sx={{ width: '100%', borderRadius: '10px' }}>
-                    {inviteStatus.message}
-                </Alert>
+                <Box sx={{ 
+                    background: inviteStatus.severity === 'success' 
+                        ? 'linear-gradient(135deg, #1C2230 0%, #131722 100%)' 
+                        : 'rgba(28, 34, 48, 0.95)',
+                    color: 'white', 
+                    px: 3, py: 2, 
+                    borderRadius: '16px', 
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+                    minWidth: '280px'
+                }}>
+                    <Typography sx={{ 
+                        fontSize: '14px', 
+                        fontWeight: 600,
+                        color: inviteStatus.severity === 'error' ? '#F87171' : (inviteStatus.severity === 'warning' ? '#FBBF24' : '#6366F1'),
+                        mb: 0.5
+                    }}>
+                        {inviteStatus.severity === 'success' ? 'Invite Sent' : 'Notification'}
+                    </Typography>
+                    <Typography sx={{ fontSize: '13px', color: '#9CA3AF' }}>
+                        {inviteStatus.message}
+                    </Typography>
+                </Box>
             </Snackbar>
         </div>
     );

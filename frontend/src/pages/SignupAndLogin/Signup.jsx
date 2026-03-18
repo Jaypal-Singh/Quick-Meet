@@ -53,7 +53,7 @@ export default function Signup() {
                 const response = await axios.post(`${server}/api/v1/users/google-login`, {
                     access_token: tokenResponse.access_token
                 });
-                
+
                 if (response.status === 200) {
                     localStorage.setItem('token', response.data.token);
                     localStorage.setItem('email', response.data.email);
@@ -102,7 +102,7 @@ export default function Signup() {
                         <label style={styles.label}>Full Name</label>
                         <div
                             style={styles.inputWrapper}
-                            onFocus={() => {}}
+                            onFocus={() => { }}
                         >
                             <span style={styles.inputIcon}>
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
