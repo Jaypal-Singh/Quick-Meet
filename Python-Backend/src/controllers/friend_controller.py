@@ -4,6 +4,7 @@ from typing import List, Optional
 from fastapi import HTTPException, status
 from src.Model.user_model import User
 from src.Model.friend_model import Friend
+from src.core.config import settings
 
 class InviteRequest(BaseModel):
     token: str
@@ -80,24 +81,21 @@ async def invite_to_meeting(data: InviteRequest):
     if not friend:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Friend not found")
     
-    if not friend.fcm_token:
-        # We can't send a push if they don't have a token.
-        return {"message": f"Cannot invite {data.friend_username}: They haven't enabled notifications yet.", "sent": False}
-
-    # Send notification
+    # Send notification (this will save to DB even if token is missing)
     try:
         success = await notify_meeting_invite(
             token=friend.fcm_token,
             inviter_name=sender.name,
             inviter_username=sender.username,
             recipient_username=friend.username,
-            meeting_code=data.meeting_code
+            meeting_code=data.meeting_code,
+            meeting_link=f"{settings.FRONTEND_URL}/video-meet?roomID={data.meeting_code}"
         )
         
         if success:
-            return {"message": "Invite sent successfully", "sent": True}
+            return {"message": "Invite sent and push notification delivered", "sent": True}
         else:
-            return {"message": "Firebase failed to deliver the notification. Check backend logs.", "sent": False}
+            return {"message": "Invite saved to notifications (push failed or not enabled)", "sent": True}
     except Exception as e:
         print(f"Error in invite_to_meeting: {e}")
         raise HTTPException(

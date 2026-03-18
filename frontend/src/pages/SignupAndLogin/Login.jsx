@@ -51,7 +51,7 @@ export default function Login() {
                 const response = await axios.post(`${server}/api/v1/users/google-login`, {
                     access_token: tokenResponse.access_token
                 });
-                
+
                 if (response.status === 200) {
                     localStorage.setItem('token', response.data.token);
                     localStorage.setItem('email', response.data.email);

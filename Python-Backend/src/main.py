@@ -25,11 +25,12 @@ async def startup_event():
     await init_db()
 
 
-from src.routers import auth_router, meeting_router, friend_router
+from src.routers import auth_router, meeting_router, friend_router, notification_router
 
 app.include_router(auth_router.router, prefix="/api/v1/users")
 app.include_router(friend_router.router, prefix="/api/v1/friends")
 app.include_router(meeting_router.router, prefix="/api/v1/meetings")
+app.include_router(notification_router.router, prefix="/api/v1/notifications")
 
 
 @app.get("/")

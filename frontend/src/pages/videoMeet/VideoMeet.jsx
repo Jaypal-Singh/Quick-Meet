@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 import io from "socket.io-client";
-import { Badge, IconButton, TextField, CircularProgress, Snackbar, Alert } from '@mui/material';
-import { useLocation } from 'react-router-dom';
+import { Badge, IconButton, TextField, CircularProgress, Snackbar, Alert, Box, Typography } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import VideocamIcon from '@mui/icons-material/Videocam';
+import { useLocation, useParams } from 'react-router-dom';
 import MeetingReadyPopup from '../../components/meetingReadyPopup/MeetingReadyPopup';
 const server = import.meta.env.VITE_API_URL;
 import VideoControls from './components/VideoControls';
@@ -19,8 +21,13 @@ const peerConfigConnections = {
 }
 
 export default function VideoMeetComponent() {
-
+    const { url } = useParams();
     const location = useLocation();
+
+    // Extract room ID from either path or query param
+    const queryParams = new URLSearchParams(location.search);
+    const roomID = queryParams.get('roomID') || url;
+
     const [notification, setNotification] = useState({ open: false, message: "", severity: "success" });
 
     var socketRef = useRef();
@@ -73,7 +80,7 @@ export default function VideoMeetComponent() {
 
     useEffect(() => { // phase 1.1
         console.log("QuickMeet Video Component Mounted");
-        
+
         // Safety timeout to ensure loader disappears even if something hangs
         const timeout = setTimeout(() => {
             setIsConnecting(prev => {
@@ -87,7 +94,7 @@ export default function VideoMeetComponent() {
 
         let localUsername = localStorage.getItem('username') || localStorage.getItem('name') || ('User_' + Math.floor(Math.random() * 1000));
         setUsername(localUsername);
-        getPermissions(); 
+        getPermissions();
 
         if (location.state?.inviteSent) {
             setNotification({ open: true, message: "Meeting invite sent successfully!", severity: "success" });
@@ -143,7 +150,7 @@ export default function VideoMeetComponent() {
         console.log('[Init] getPermissions started');
 
         setScreenAvailable(!!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia));
-        
+
         try {
             // 1. Identify what hardware is actually present
             const devices = await navigator.mediaDevices.enumerateDevices();
@@ -159,9 +166,9 @@ export default function VideoMeetComponent() {
             // This is the most stable pattern across all modern browsers
             let stream;
             try {
-                stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: hasVideo, 
-                    audio: hasAudio 
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: hasVideo,
+                    audio: hasAudio
                 });
                 console.log('[Init] Stream captured successfully');
             } catch (err) {
@@ -183,10 +190,10 @@ export default function VideoMeetComponent() {
             if (stream) {
                 window.localStream = stream;
                 setLocalStream(stream);
-                
+
                 const vTrack = stream.getVideoTracks()[0];
                 const aTrack = stream.getAudioTracks()[0];
-                
+
                 setVideo(!!vTrack);
                 setAudio(!!aTrack);
                 setVideoAvailable(!!vTrack);
@@ -211,7 +218,7 @@ export default function VideoMeetComponent() {
     useEffect(() => {
         // Skip the first call - getPermissions already set up the stream
         if (!didInitialSetup.current) return;
-        
+
         // Instead of restarting the camera (which drops the WebRTC connection), 
         // cleanly toggle the track's enabled state.
         if (window.localStream) {
@@ -249,7 +256,7 @@ export default function VideoMeetComponent() {
             let senders = connections[id].getSenders();
             let videoTrack = stream.getVideoTracks()[0];
             let audioTrack = stream.getAudioTracks()[0];
-            
+
             senders.forEach(sender => {
                 if (sender.track && videoTrack && sender.track.kind === 'video') {
                     sender.replaceTrack(videoTrack);
@@ -323,7 +330,7 @@ export default function VideoMeetComponent() {
             let senders = connections[id].getSenders();
             let videoTrack = stream.getVideoTracks()[0];
             let audioTrack = stream.getAudioTracks()[0];
-            
+
             senders.forEach(sender => {
                 if (sender.track && videoTrack && sender.track.kind === 'video') {
                     sender.replaceTrack(videoTrack);
@@ -389,7 +396,7 @@ export default function VideoMeetComponent() {
 
         socketRef.current.on('connect', () => {
             console.log('[Socket] Connected with id:', socketRef.current.id);
-            socketRef.current.emit('join-call', window.location.href)
+            socketRef.current.emit('join-call', roomID)
             socketIdRef.current = socketRef.current.id
         })
 
@@ -404,7 +411,7 @@ export default function VideoMeetComponent() {
 
         socketRef.current.on('user-left', (id) => {
             setVideos((videos) => videos.filter((video) => video.socketId !== id))
-            if(connections[id]){
+            if (connections[id]) {
                 connections[id].close();
                 delete connections[id];
             }
@@ -412,88 +419,88 @@ export default function VideoMeetComponent() {
 
         socketRef.current.on('user-joined', (id, clients) => { // tell new user is comming (iam connected to you)
 
-                console.log('[Socket] user-joined event:', id, 'clients:', clients);
+            console.log('[Socket] user-joined event:', id, 'clients:', clients);
 
-                // Play join sound when a DIFFERENT user joins (not self)
-                if (id !== socketIdRef.current) {
-                    playJoinSound();
+            // Play join sound when a DIFFERENT user joins (not self)
+            if (id !== socketIdRef.current) {
+                playJoinSound();
+            }
+
+            clients.forEach((socketListId) => {
+                // CRITICAL: Don't connect to yourself!
+                if (socketListId === socketIdRef.current) return;
+
+                // Skip if connection already exists (don't overwrite working connections)
+                if (connections[socketListId]) {
+                    console.log('[Socket] Connection already exists for:', socketListId);
+                    return;
                 }
 
-                clients.forEach((socketListId) => {
-                    // CRITICAL: Don't connect to yourself!
-                    if (socketListId === socketIdRef.current) return;
-
-                    // Skip if connection already exists (don't overwrite working connections)
-                    if (connections[socketListId]) {
-                        console.log('[Socket] Connection already exists for:', socketListId);
-                        return;
+                connections[socketListId] = new RTCPeerConnection(peerConfigConnections)
+                // Wait for their ice candidate       
+                connections[socketListId].onicecandidate = function (event) {
+                    if (event.candidate != null) {
+                        socketRef.current.emit('signal', socketListId, JSON.stringify({ 'ice': event.candidate }))
                     }
+                }
 
-                    connections[socketListId] = new RTCPeerConnection(peerConfigConnections)
-                    // Wait for their ice candidate       
-                    connections[socketListId].onicecandidate = function (event) {
-                        if (event.candidate != null) {
-                            socketRef.current.emit('signal', socketListId, JSON.stringify({ 'ice': event.candidate }))
+                // Wait for their video stream
+                connections[socketListId].onaddstream = (event) => {
+                    console.log("[WebRTC] onaddstream for:", socketListId);
+
+                    // Atomic update - check and add/update inside setVideos to avoid race conditions
+                    setVideos(prevVideos => {
+                        let videoExists = prevVideos.find(video => video.socketId === socketListId);
+                        if (videoExists) {
+                            console.log("FOUND EXISTING - updating stream");
+                            const updatedVideos = prevVideos.map(video =>
+                                video.socketId === socketListId ? { ...video, stream: event.stream } : video
+                            );
+                            videoRef.current = updatedVideos;
+                            return updatedVideos;
+                        } else {
+                            console.log("CREATING NEW video tile");
+                            let newVideo = {
+                                socketId: socketListId,
+                                stream: event.stream,
+                                autoplay: true,
+                                playsinline: true
+                            };
+                            const updatedVideos = [...prevVideos, newVideo];
+                            videoRef.current = updatedVideos;
+                            return updatedVideos;
                         }
-                    }
-
-                    // Wait for their video stream
-                    connections[socketListId].onaddstream = (event) => {
-                        console.log("[WebRTC] onaddstream for:", socketListId);
-
-                        // Atomic update - check and add/update inside setVideos to avoid race conditions
-                        setVideos(prevVideos => {
-                            let videoExists = prevVideos.find(video => video.socketId === socketListId);
-                            if (videoExists) {
-                                console.log("FOUND EXISTING - updating stream");
-                                const updatedVideos = prevVideos.map(video =>
-                                    video.socketId === socketListId ? { ...video, stream: event.stream } : video
-                                );
-                                videoRef.current = updatedVideos;
-                                return updatedVideos;
-                            } else {
-                                console.log("CREATING NEW video tile");
-                                let newVideo = {
-                                    socketId: socketListId,
-                                    stream: event.stream,
-                                    autoplay: true,
-                                    playsinline: true
-                                };
-                                const updatedVideos = [...prevVideos, newVideo];
-                                videoRef.current = updatedVideos;
-                                return updatedVideos;
-                            }
-                        });
-                    };
+                    });
+                };
 
 
-                    // Add the local video stream
-                    if (window.localStream !== undefined && window.localStream !== null) {
-                        connections[socketListId].addStream(window.localStream)
-                    } else {
-                        let blackSilence = (...args) => new MediaStream([black(...args), silence()])
-                        window.localStream = blackSilence()
-                        connections[socketListId].addStream(window.localStream)
-                    }
-                })
-
-                if (id === socketIdRef.current) {
-                    for (let id2 in connections) {
-                        if (id2 === socketIdRef.current) continue
-
-                        // Stream is already added during connection creation above
-                        // Do NOT call addStream again - it creates duplicate streams
-
-                        connections[id2].createOffer().then((description) => {
-                            connections[id2].setLocalDescription(description)
-                                .then(() => {
-                                    socketRef.current.emit('signal', id2, JSON.stringify({ 'sdp': connections[id2].localDescription }))
-                                })
-                                .catch(e => console.log(e))
-                        })
-                    }
+                // Add the local video stream
+                if (window.localStream !== undefined && window.localStream !== null) {
+                    connections[socketListId].addStream(window.localStream)
+                } else {
+                    let blackSilence = (...args) => new MediaStream([black(...args), silence()])
+                    window.localStream = blackSilence()
+                    connections[socketListId].addStream(window.localStream)
                 }
             })
+
+            if (id === socketIdRef.current) {
+                for (let id2 in connections) {
+                    if (id2 === socketIdRef.current) continue
+
+                    // Stream is already added during connection creation above
+                    // Do NOT call addStream again - it creates duplicate streams
+
+                    connections[id2].createOffer().then((description) => {
+                        connections[id2].setLocalDescription(description)
+                            .then(() => {
+                                socketRef.current.emit('signal', id2, JSON.stringify({ 'sdp': connections[id2].localDescription }))
+                            })
+                            .catch(e => console.log(e))
+                    })
+                }
+            }
+        })
     }
 
     let silence = () => {
@@ -566,7 +573,7 @@ export default function VideoMeetComponent() {
                             ...prev,
                             'local': { text: transcript, name: username, timestamp: Date.now() }
                         }));
-                        
+
                         if (socketRef.current) {
                             socketRef.current.emit('caption-message', transcript, username);
                         }
@@ -581,7 +588,7 @@ export default function VideoMeetComponent() {
                     if (captions && recognitionRef.current) {
                         try {
                             recognitionRef.current.start();
-                        } catch(e) {}
+                        } catch (e) { }
                     }
                 };
 
@@ -590,7 +597,7 @@ export default function VideoMeetComponent() {
 
             try {
                 recognitionRef.current.start();
-            } catch(e) { console.log(e); }
+            } catch (e) { console.log(e); }
         } else {
             if (recognitionRef.current) {
                 recognitionRef.current.stop();
@@ -612,7 +619,7 @@ export default function VideoMeetComponent() {
                 let updated = { ...prev };
                 let changed = false;
                 Object.keys(updated).forEach(id => {
-                    if (now - updated[id].timestamp > 4000) { 
+                    if (now - updated[id].timestamp > 4000) {
                         delete updated[id];
                         changed = true;
                     }
@@ -706,20 +713,37 @@ export default function VideoMeetComponent() {
     return (
         <div>
 
-             {globalError && (
-                <div className="flex flex-col items-center justify-center h-screen w-screen bg-red-950 text-white p-10 z-[300]">
-                    <h1 className="text-3xl font-bold mb-4">Meeting Error</h1>
-                    <p className="bg-black/30 p-4 rounded-lg font-mono text-pink-300 break-all max-w-2xl">{globalError}</p>
-                    <button onClick={() => window.location.reload()} className="mt-8 px-6 py-2 bg-white text-black rounded-lg font-bold">Reload Application</button>
-                    <p className="mt-4 text-xs text-red-300/50">Check if your camera is being used by another app</p>
+            {globalError && (
+                <div className="flex flex-col items-center justify-center h-screen w-screen bg-[#0B0F19] text-white p-10 z-[300]">
+                    <div className="bg-[#1C2230] border border-white/10 p-8 rounded-2xl shadow-2xl max-w-lg w-full text-center">
+                        <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <CloseIcon sx={{ color: '#F87171', fontSize: '32px' }} />
+                        </div>
+                        <h1 className="text-2xl font-bold mb-4">Meeting Error</h1>
+                        <p className="text-gray-400 mb-8 leading-relaxed">{globalError}</p>
+                        <button 
+                            onClick={() => window.location.reload()} 
+                            className="w-full py-3 bg-white text-black rounded-xl font-bold hover:bg-gray-200 transition-colors"
+                        >
+                            Reload Application
+                        </button>
+                        <p className="mt-6 text-xs text-gray-500">Check if your camera is being used by another app</p>
+                    </div>
                 </div>
             )}
 
             {isConnecting ? (
                 <div className="flex flex-col items-center justify-center h-screen w-screen bg-[#0B0F19] text-white z-[200]">
-                    <div className="w-12 h-12 border-4 border-white/10 border-t-indigo-500 rounded-full animate-spin mb-6"></div>
-                    <h2 className="text-2xl font-bold mb-2">Join Meeting</h2>
-                    <p className="text-indigo-300 animate-pulse">Requesting camera and audio access...</p>
+                    <div className="relative">
+                        <div className="w-20 h-20 border-4 border-white/5 border-t-indigo-500 rounded-full animate-spin"></div>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <VideocamIcon sx={{ color: '#6366F1', fontSize: '24px' }} />
+                        </div>
+                    </div>
+                    <div className="mt-8 text-center">
+                        <h2 className="text-2xl font-bold mb-2">Setting up your call</h2>
+                        <p className="text-indigo-400/70 animate-pulse text-sm">Requesting camera and audio access...</p>
+                    </div>
                 </div>
             ) : (
 
@@ -730,15 +754,15 @@ export default function VideoMeetComponent() {
 
                     {/* Meeting Ready Popup */}
                     {showMeetingReady && videos.length === 0 && (
-                        <MeetingReadyPopup 
-                            meetingUrl={window.location.href}
+                        <MeetingReadyPopup
+                            meetingUrl={`${window.location.origin}/${roomID}`}
                             username={username}
                             onClose={() => setShowMeetingReady(false)}
                         />
                     )}
 
                     {/* Bottom Controls Component */}
-                    <VideoControls 
+                    <VideoControls
                         video={video}
                         audio={audio}
                         screen={screen}
@@ -758,17 +782,16 @@ export default function VideoMeetComponent() {
                     <div className="flex-1 flex overflow-hidden">
 
                         {/* Video Area */}
-                        <div className={`flex-1 relative p-4 pb-24 transition-all duration-350 ease-[cubic-bezier(0.4,0,0.2,1)] flex gap-4 ${
-                            showModal ? 'pr-[360px]' : 'pr-0'
-                        }`}>
-                            
+                        <div className={`flex-1 relative p-4 pb-24 transition-all duration-350 ease-[cubic-bezier(0.4,0,0.2,1)] flex gap-4 ${showModal ? 'pr-[360px]' : 'pr-0'
+                            }`}>
+
                             {pinnedTile ? (
                                 // --- PINNED LAYOUT (Main Area + Sidebar) ---
                                 <>
                                     {/* Main Pinned Video Area */}
                                     <div className="flex-1 h-full rounded-2xl overflow-hidden transition-all duration-500 ease-in-out bg-[#131722] border border-white/5 shadow-2xl">
-                                        <VideoTile 
-                                            videoObj={pinnedTile} 
+                                        <VideoTile
+                                            videoObj={pinnedTile}
                                             isLocal={pinnedTile.isLocal || false}
                                             videoEnabled={pinnedTile.isLocal ? video : true}
                                             isPinned={true}
@@ -781,12 +804,12 @@ export default function VideoMeetComponent() {
                                     {unpinnedTiles.length > 0 && (
                                         <div className="w-[240px] h-full overflow-y-auto flex flex-col gap-3 pr-1 hide-scrollbar">
                                             {unpinnedTiles.map((vid) => (
-                                                <div 
-                                                    key={vid.socketId} 
+                                                <div
+                                                    key={vid.socketId}
                                                     className="w-full aspect-video shrink-0 rounded-xl overflow-hidden transition-all duration-300 ease-in-out bg-[#131722] border border-white/5"
                                                 >
-                                                    <VideoTile 
-                                                        videoObj={vid} 
+                                                    <VideoTile
+                                                        videoObj={vid}
                                                         isLocal={vid.isLocal || false}
                                                         videoEnabled={vid.isLocal ? video : true}
                                                         isPinned={false}
@@ -809,12 +832,12 @@ export default function VideoMeetComponent() {
                                     }}
                                 >
                                     {unpinnedTiles.map((vid) => (
-                                        <div 
-                                            key={vid.socketId} 
+                                        <div
+                                            key={vid.socketId}
                                             className="w-full h-full rounded-2xl overflow-hidden transition-all duration-500 ease-in-out bg-[#131722] border border-white/5 shadow-lg"
                                         >
-                                            <VideoTile 
-                                                videoObj={vid} 
+                                            <VideoTile
+                                                videoObj={vid}
                                                 isLocal={vid.isLocal || false}
                                                 videoEnabled={vid.isLocal ? video : true}
                                                 isPinned={false}
@@ -840,7 +863,7 @@ export default function VideoMeetComponent() {
                         </div>
 
                         {/* Chat Sidebar - fixed on the right with slide animation */}
-                        <ChatSidebar 
+                        <ChatSidebar
                             showModal={showModal}
                             setModal={setModal}
                             messages={messages}
@@ -853,14 +876,14 @@ export default function VideoMeetComponent() {
             )}
 
             {/* Notification Snackbar */}
-            <Snackbar 
-                open={notification.open} 
-                autoHideDuration={4000} 
+            <Snackbar
+                open={notification.open}
+                autoHideDuration={4000}
                 onClose={() => setNotification({ ...notification, open: false })}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             >
-                <Alert 
-                    onClose={() => setNotification({ ...notification, open: false })} 
+                <Alert
+                    onClose={() => setNotification({ ...notification, open: false })}
                     severity={notification.severity}
                     sx={{ borderRadius: '12px', bgcolor: notification.severity === 'success' ? '#10B981' : (notification.severity === 'info' ? '#6366F1' : '#EF4444'), color: 'white' }}
                 >
