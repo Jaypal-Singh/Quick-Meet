@@ -26,7 +26,7 @@ const MeetingReadyPopup = ({ meetingUrl, username, onClose }) => {
             const response = await axios.get(`${server}/api/v1/friends/list`, {
                 params: { token }
             });
-            setFriends(response.data);
+            setFriends(response.data.friends || []);
         } catch (error) {
             console.error("Error fetching friends:", error);
         } finally {

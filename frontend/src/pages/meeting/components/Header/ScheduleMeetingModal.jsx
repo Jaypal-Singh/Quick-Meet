@@ -45,7 +45,7 @@ const ScheduleMeetingModal = ({ open, onClose, onSchedule, onDelete, initialData
             if (open && token) {
                 try {
                     const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/friends/list?token=${token}`);
-                    const data = Array.isArray(response.data) ? response.data : [];
+                    const data = response.data.friends || [];
                     setFriends(data.map(f => ({ name: f.name, email: f.username })));
                 } catch (error) {
                     console.error('Error fetching friends:', error);
