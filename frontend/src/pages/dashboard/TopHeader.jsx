@@ -32,7 +32,8 @@ const TopHeader = () => {
 
     useEffect(() => {
         fetchNotifications();
-        
+
+
         // Listen for real-time refresh event
         const handleRefresh = () => {
             console.log('TopHeader: Refreshing notifications due to real-time update');
@@ -40,7 +41,7 @@ const TopHeader = () => {
         };
 
         window.addEventListener('refreshMeetings', handleRefresh);
-        
+
         const interval = setInterval(fetchNotifications, 30000); // poll every 30s
         return () => {
             clearInterval(interval);
@@ -76,7 +77,7 @@ const TopHeader = () => {
     };
 
     useEffect(() => {
-        const timer = setInterval(() => setTick(t => t + 1), 1000); 
+        const timer = setInterval(() => setTick(t => t + 1), 1000);
         return () => clearInterval(timer);
     }, []);
 
@@ -88,7 +89,7 @@ const TopHeader = () => {
         const diffInSeconds = Math.floor((now - past) / 1000);
 
         // If clock skew makes it negative, or it's very fresh
-        if (diffInSeconds <= 5) return 'Just now'; 
+        if (diffInSeconds <= 5) return 'Just now';
         if (diffInSeconds < 60) return `${diffInSeconds}s ago`;
 
         const diffInMinutes = Math.floor(diffInSeconds / 60);
@@ -228,7 +229,6 @@ const TopHeader = () => {
                     </Box>
                     <Box
                         component="img"
-                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=8B5CF6&color=FFFFFF&bold=true&size=36`}
                         alt={name}
                         sx={{ width: { xs: '32px', sm: '36px' }, height: { xs: '32px', sm: '36px' }, borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(139, 92, 246, 0.3)' }}
                     />

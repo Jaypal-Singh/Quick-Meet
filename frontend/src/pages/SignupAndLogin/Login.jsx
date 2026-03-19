@@ -32,7 +32,12 @@ export default function Login() {
                 localStorage.setItem('email', email);
                 if (request.data.name) {
                     localStorage.setItem('username', request.data.name);
-                    localStorage.setItem('name', request.data.name); // Ensure 'name' is also saved
+                    localStorage.setItem('name', request.data.name);
+                }
+                if (request.data.profile_picture) {
+                    localStorage.setItem('profile_picture', request.data.profile_picture);
+                } else {
+                    localStorage.removeItem('profile_picture');
                 }
                 navigate('/dashboard');
             }
@@ -56,7 +61,12 @@ export default function Login() {
                     localStorage.setItem('token', response.data.token);
                     localStorage.setItem('email', response.data.email);
                     localStorage.setItem('username', response.data.name);
-                    localStorage.setItem('name', response.data.name); // Ensure 'name' is also saved
+                    localStorage.setItem('name', response.data.name);
+                    if (response.data.profile_picture) {
+                        localStorage.setItem('profile_picture', response.data.profile_picture);
+                    } else {
+                        localStorage.removeItem('profile_picture');
+                    }
                     navigate('/dashboard');
                 }
             } catch (err) {
