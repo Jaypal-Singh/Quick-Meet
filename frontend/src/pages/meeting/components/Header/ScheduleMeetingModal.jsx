@@ -13,7 +13,9 @@ import {
     Fade,
     Backdrop,
     Autocomplete,
-    Chip
+    Chip,
+    useTheme,
+    useMediaQuery
 } from '@mui/material';
 import axios from 'axios';
 import AddIcon from '@mui/icons-material/Add';
@@ -38,6 +40,8 @@ const ScheduleMeetingModal = ({ open, onClose, onSchedule, onDelete, initialData
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [errors, setErrors] = useState({});
     const [friends, setFriends] = useState([]);
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     useEffect(() => {
         const fetchFriends = async () => {
@@ -140,6 +144,7 @@ const ScheduleMeetingModal = ({ open, onClose, onSchedule, onDelete, initialData
                 onClose={onClose}
                 fullWidth
                 maxWidth="sm"
+                fullScreen={isMobile}
                 TransitionComponent={Fade}
                 transitionDuration={400}
                 closeAfterTransition
@@ -155,10 +160,10 @@ const ScheduleMeetingModal = ({ open, onClose, onSchedule, onDelete, initialData
                     sx: {
                         bgcolor: 'rgba(30, 41, 59, 0.95)',
                         backgroundImage: 'none',
-                        borderRadius: '24px',
-                        border: '1px solid rgba(255, 255, 255, 0.08)',
+                        borderRadius: isMobile ? 0 : '24px',
+                        border: isMobile ? 'none' : '1px solid rgba(255, 255, 255, 0.08)',
                         boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-                        p: 2
+                        p: isMobile ? 1 : 2
                     }
                 }}
             >
@@ -215,7 +220,7 @@ const ScheduleMeetingModal = ({ open, onClose, onSchedule, onDelete, initialData
                             sx={textFieldStyle}
                         />
 
-                        <Box sx={{ display: 'flex', gap: 2 }}>
+                        <Box sx={{ display: 'flex', gap: 2, flexDirection: isMobile ? 'column' : 'row' }}>
                             <TextField
                                 fullWidth
                                 required
@@ -402,7 +407,14 @@ const ScheduleMeetingModal = ({ open, onClose, onSchedule, onDelete, initialData
                     </Box>
                 </DialogContent>
 
-                <DialogActions sx={{ px: 3, pb: 3, display: 'flex', justifyContent: 'space-between' }}>
+                <DialogActions sx={{ 
+                    px: isMobile ? 2 : 3, 
+                    pb: isMobile ? 3 : 3, 
+                    display: 'flex', 
+                    flexDirection: isMobile ? 'column-reverse' : 'row',
+                    justifyContent: 'space-between',
+                    gap: isMobile ? 1.5 : 0
+                }}>
                     <Box>
                         {initialData && (
                             <Button
@@ -419,16 +431,17 @@ const ScheduleMeetingModal = ({ open, onClose, onSchedule, onDelete, initialData
                             </Button>
                         )}
                     </Box>
-                    <Box sx={{ display: 'flex', gap: 1.5 }}>
+                    <Box sx={{ display: 'flex', gap: 1.5, width: isMobile ? '100%' : 'auto' }}>
                         <Button
                             onClick={onClose}
-                            sx={{ color: '#94A3B8', textTransform: 'none', fontWeight: 600 }}
+                            sx={{ color: '#94A3B8', textTransform: 'none', fontWeight: 600, flex: isMobile ? 1 : 'none' }}
                         >
                             Cancel
                         </Button>
                         <Button
                             onClick={handleSubmit}
                             variant="contained"
+                            fullWidth={isMobile}
                             sx={{
                                 background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)',
                                 borderRadius: '12px',
@@ -436,6 +449,7 @@ const ScheduleMeetingModal = ({ open, onClose, onSchedule, onDelete, initialData
                                 fontWeight: 600,
                                 px: 3,
                                 py: 1.2,
+                                flex: isMobile ? 2 : 'none',
                                 boxShadow: '0 4px 14px 0 rgba(99, 102, 241, 0.3)',
                                 '&:hover': {
                                     background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)',
