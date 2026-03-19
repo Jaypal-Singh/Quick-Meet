@@ -11,9 +11,12 @@ import ChatIcon from '@mui/icons-material/Chat';
 import ClosedCaptionIcon from '@mui/icons-material/ClosedCaption';
 import ClosedCaptionDisabledIcon from '@mui/icons-material/ClosedCaptionDisabled';
 
+import RefreshIcon from '@mui/icons-material/Refresh';
+
 const VideoControls = ({
     video, audio, screen, screenAvailable, newMessages, showModal, captions,
-    handleVideo, handleAudio, handleScreen, handleEndCall, setModal, handleCaptions
+    handleVideo, handleAudio, handleScreen, handleEndCall, setModal, handleCaptions,
+    handleReconnect
 }) => {
     return (
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-3 bg-[#1C2230] px-6 py-3 rounded-full z-50 shadow-2xl">
@@ -34,6 +37,10 @@ const VideoControls = ({
 
             <IconButton onClick={handleCaptions} sx={{ color: captions ? '#10B981' : '#ffffff', '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' } }}>
                 {captions ? <ClosedCaptionIcon /> : <ClosedCaptionDisabledIcon />}
+            </IconButton>
+
+            <IconButton onClick={handleReconnect} title="Re-sync connection" sx={{ color: '#ffffff', '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)', color: '#818CF8' } }}>
+                <RefreshIcon />
             </IconButton>
 
             <IconButton

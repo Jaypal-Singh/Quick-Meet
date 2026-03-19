@@ -34,14 +34,20 @@ const ChatSidebar = ({ showModal, setModal, messages, message, setMessage, sendM
             <div className="flex-1 overflow-y-auto px-6 py-2 hide-scrollbar">
                 {messages.length !== 0 ? (
                     messages.map((item, index) => (
-                        <div key={index} className="mb-5 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                            <div className="flex items-baseline gap-2 mb-1">
-                                <p className="font-bold text-sm text-indigo-400">{item.sender}</p>
+                        <div key={index} className={`mb-5 flex flex-col ${item.isLocal ? 'items-end' : 'items-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
+                            <div className={`flex items-baseline gap-2 mb-1 ${item.isLocal ? 'flex-row-reverse' : ''}`}>
+                                <p className={`font-bold text-sm ${item.isLocal ? 'text-purple-400' : 'text-indigo-400'}`}>
+                                    {item.isLocal ? 'You' : item.sender}
+                                </p>
                                 <p className="text-[10px] text-gray-500 font-medium">
                                     {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                 </p>
                             </div>
-                            <p className="text-[13.5px] leading-relaxed text-gray-200 bg-white/5 px-3 py-2.5 rounded-2xl rounded-tl-none border border-white/5 inline-block max-w-full break-words">
+                            <p className={`text-[13.5px] leading-relaxed text-gray-200 px-3 py-2.5 rounded-2xl border border-white/5 inline-block max-w-[85%] break-words ${
+                                item.isLocal 
+                                ? 'bg-indigo-600/20 rounded-tr-none' 
+                                : 'bg-white/5 rounded-tl-none'
+                            }`}>
                                 {item.data}
                             </p>
                         </div>
