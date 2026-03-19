@@ -29,7 +29,10 @@ export default function Signup() {
 
         setLoading(true);
         try {
-            const client = axios.create({ baseURL: `${server}/api/v1/users` });
+            const client = axios.create({ 
+                baseURL: `${server}/api/v1/users`,
+                withCredentials: true 
+            });
             const request = await client.post('/register', { name, username: email, password });
 
             if (request.status === 201) {
@@ -52,10 +55,10 @@ export default function Signup() {
             try {
                 const response = await axios.post(`${server}/api/v1/users/google-login`, {
                     access_token: tokenResponse.access_token
-                });
+                }, { withCredentials: true });
 
                 if (response.status === 200) {
-                    localStorage.setItem('token', response.data.token);
+                    // Token is now set in HttpOnly cookie by server
                     localStorage.setItem('email', response.data.email);
                     localStorage.setItem('username', response.data.name);
                     localStorage.setItem('name', response.data.name);

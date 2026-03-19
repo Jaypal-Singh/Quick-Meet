@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { Box, Typography, Button, IconButton, useMediaQuery, useTheme } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import VideocamIcon from '@mui/icons-material/Videocam';
@@ -34,11 +35,20 @@ export default function SideBar() {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
 
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('email');
-        localStorage.removeItem('username');
-        navigate('/login');
+    const handleLogout = async () => {
+        try {
+            const server = import.meta.env.VITE_API_URL;
+            await axios.post(`${server}/api/v1/users/logout`);
+        } catch (err) {
+            console.error("Logout failed:", err);
+        } finally {
+            localStorage.removeItem('token'); // Fallback for old sessions
+            localStorage.removeItem('email');
+            localStorage.removeItem('username');
+            localStorage.removeItem('name');
+            localStorage.removeItem('profile_picture');
+            navigate('/login');
+        }
     };
 
     const username = localStorage.getItem('username') || 'User';

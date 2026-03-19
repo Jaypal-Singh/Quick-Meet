@@ -39,5 +39,5 @@ app.include_router(notification_router.router, prefix="/api/v1/notifications")
 
 @app.get("/")
 def read_root():
-    return {"message": "CORS is configured!"}
+    return {"message": "CORS is con `figured!"}
 

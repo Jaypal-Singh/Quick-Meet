@@ -81,7 +81,7 @@ const VideoTile = ({ videoObj, isLocal, videoEnabled, isPinned, onPin, isScreenS
                         {/* Glow effect */}
                         <div className="absolute -inset-1 bg-white/10 rounded-full blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
                         
-                        <div className="relative w-28 h-28 md:w-32 md:h-32 rounded-full border-2 border-white/10 bg-[#1C2230] shadow-2xl flex items-center justify-center overflow-hidden">
+                        <div className="relative w-20 h-20 md:w-32 md:h-32 rounded-full border-2 border-white/10 bg-[#1C2230] shadow-2xl flex items-center justify-center overflow-hidden">
                             {profilePic ? (
                                 <img 
                                     src={profilePic} 

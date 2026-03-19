@@ -7,8 +7,8 @@ import ChatIcon from '@mui/icons-material/Chat';
 const ChatSidebar = ({ showModal, setModal, messages, message, setMessage, sendMessage }) => {
     
     return (
-        <div className={`fixed ml-3 top-4 right-0 bottom-23 bg-[#1C2230] flex flex-col border border-white/10 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] z-[100] shadow-2xl rounded-3xl overflow-hidden ${
-            showModal ? 'w-[360px] translate-x-0 opacity-100' : 'w-[360px] translate-x-[calc(100%+32px)] opacity-0'
+        <div className={`fixed inset-y-0 right-0 md:top-4 md:bottom-23 md:right-4 bg-[#1C2230] flex flex-col border-l md:border border-white/10 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] z-[100] md:shadow-2xl md:rounded-3xl overflow-hidden ${
+            showModal ? 'w-full md:w-[360px] translate-x-0 opacity-100' : 'w-full md:w-[360px] translate-x-full md:translate-x-[calc(100%+32px)] opacity-0'
         }`}>
             {/* Header */}
             <div className="flex justify-between items-center px-6 py-5 border-b border-white/10">
