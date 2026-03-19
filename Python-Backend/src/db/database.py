@@ -8,4 +8,4 @@ from src.core.config import settings
 
 async def init_db():
     client = AsyncIOMotorClient(settings.MONGO_URL)
-    await init_beanie(database=client.QuickMeetCluster, document_models=[User, Meeting, Friend, Notification])
+    await init_beanie(database=client[settings.MONGO_DB_NAME], document_models=[User, Meeting, Friend, Notification])

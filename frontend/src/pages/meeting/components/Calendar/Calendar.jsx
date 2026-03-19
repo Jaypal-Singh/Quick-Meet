@@ -4,7 +4,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import MeetingDetailsModal from './MeetingDetailsModal';
 
-export default function Calendar({ meetings = [], onEdit }) {
+export default function Calendar({ meetings = [], onEdit, onAccept, onReject }) {
     const [currentDate, setCurrentDate] = useState(new Date()); // Dynamic current date
     const [selectedMeeting, setSelectedMeeting] = useState(null);
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
@@ -51,7 +51,7 @@ export default function Calendar({ meetings = [], onEdit }) {
             const targetDateStr = `${year}-${pad(month + 1)}-${pad(i)}`;
             const displayDateStr = `${year}-${month}-${i}`; // For staticEvents lookup
             const isToday = displayDateStr === todayStr;
-            
+
             // Combine dummy and dynamic meetings
             // Format dynamic meetings for display
             const dynamicMeetingsForDate = meetings.filter(m => m.date === targetDateStr).map(m => ({
@@ -288,13 +288,6 @@ export default function Calendar({ meetings = [], onEdit }) {
                     })()}
                 </Box>
 
-                <Box sx={{ bgcolor: 'rgba(34, 43, 61, 0.6)', p: 0.5, borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.05)', display: { xs: 'none', sm: 'block' } }}>
-                    <ButtonGroup variant="text" sx={{ '& .MuiButton-root': { textTransform: 'none', minWidth: { xs: '60px', md: '80px' }, border: 'none !important', fontSize: { xs: '12px', md: '14px' } } }}>
-                        <Button sx={{ bgcolor: '#222B3D', color: '#FFFFFF', borderRadius: '8px !important', fontWeight: 600, boxShadow: '0 2px 8px rgba(0,0,0,0.2)', '&:hover': { bgcolor: '#222B3D' } }}>Month</Button>
-                        <Button sx={{ color: '#94A3B8', '&:hover': { color: '#E2E8F0', bgcolor: 'transparent' } }}>Week</Button>
-                        <Button sx={{ color: '#94A3B8', '&:hover': { color: '#E2E8F0', bgcolor: 'transparent' } }}>Day</Button>
-                    </ButtonGroup>
-                </Box>
             </Box>
 
             {/* Calendar Grid */}
@@ -392,6 +385,8 @@ export default function Calendar({ meetings = [], onEdit }) {
                 onClose={() => setIsDetailsModalOpen(false)}
                 meeting={selectedMeeting}
                 onEdit={onEdit}
+                onAccept={onAccept}
+                onReject={onReject}
             />
         </Box>
     );

@@ -11,33 +11,57 @@ const UpcomingMeetings = () => {
     const [loading, setLoading] = useState(true);
     const token = localStorage.getItem('token');
 
+    const fetchMeetings = async () => {
+        if (!token) return;
+        try {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/meetings/?token=${token}`);
+            const now = new Date();
+            const email = localStorage.getItem('email');
+            const data = Array.isArray(response.data) ? response.data : [];
+            const filtered = data.filter(m => {
+                const isFuture = new Date(m.startTime) > now;
+                if (!isFuture) return false;
+                if (m.user_id === email) return true;
+                const myParticipant = Array.isArray(m.participants) 
+                    ? m.participants.find(p => (typeof p === 'object' ? p.username : p) === email)
+                    : null;
+                return !myParticipant || myParticipant.status !== 'rejected';
+            })
+                .map(m => {
+                    const start = new Date(m.startTime);
+                    const end = new Date(m.endTime);
+                    const normalizedParticipants = Array.isArray(m.participants)
+                        ? m.participants.map(p => typeof p === 'object' ? p.username : p)
+                        : [];
+                    return {
+                        ...m,
+                        month: start.toLocaleDateString('en-US', { month: 'short' }).toUpperCase(),
+                        day: start.getDate(),
+                        time: `${start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
+                        participants: normalizedParticipants,
+                        participantCount: normalizedParticipants.length,
+                    };
+                })
+                .sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
+            setMeetings(filtered);
+        } catch (error) {
+            console.error('Error fetching upcoming meetings:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchMeetings = async () => {
-            if (!token) return;
-            try {
-                const response = await axios.get(`http://localhost:8000/api/v1/meetings/?token=${token}`);
-                const now = new Date();
-                const filtered = response.data.filter(m => new Date(m.startTime) > now)
-                    .map(m => {
-                        const start = new Date(m.startTime);
-                        const end = new Date(m.endTime);
-                        return {
-                            ...m,
-                            month: start.toLocaleDateString('en-US', { month: 'short' }).toUpperCase(),
-                            day: start.getDate(),
-                            time: `${start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
-                            attendees: Array.isArray(m.participants) ? m.participants.length : 0
-                        };
-                    })
-                    .sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
-                setMeetings(filtered);
-            } catch (error) {
-                console.error('Error fetching upcoming meetings:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
         fetchMeetings();
+
+        // Listen for real-time refresh event
+        const handleRefresh = () => {
+            console.log('UpcomingMeetings: Refreshing meetings due to real-time update');
+            fetchMeetings();
+        };
+
+        window.addEventListener('refreshMeetings', handleRefresh);
+        return () => window.removeEventListener('refreshMeetings', handleRefresh);
     }, [token]);
 
     const displayMeetings = meetings.slice(0, 2);
@@ -93,7 +117,7 @@ const UpcomingMeetings = () => {
 
                             {/* Avatars */}
                             <Box sx={{ display: 'flex', alignItems: 'center', ml: { xs: 0, sm: 2 }, width: { xs: '100%', sm: 'auto' }, justifyContent: { xs: 'flex-start', sm: 'flex-end' }, pl: { xs: '64px', sm: 0 } }}>
-                                {[...Array(Math.min(meeting.attendees, 3))].map((_, i) => (
+                                {[...Array(Math.min(meeting.participantCount || 0, 3))].map((_, i) => (
                                     <Box
                                         component="img"
                                         key={i}
@@ -105,14 +129,14 @@ const UpcomingMeetings = () => {
                                         }}
                                     />
                                 ))}
-                                {meeting.attendees > 3 && (
+                                {(meeting.participantCount || 0) > 3 && (
                                     <Box component="span" sx={{
                                         width: '28px', height: '28px', borderRadius: '50%',
                                         backgroundColor: 'rgba(255, 255, 255, 0.1)', border: '2px solid #1C2230',
                                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                                         fontSize: '10px', color: '#D1D5DB', fontWeight: 600, ml: '-8px'
                                     }}>
-                                        +{meeting.attendees - 3}
+                                        +{(meeting.participantCount || 0) - 3}
                                     </Box>
                                 )}
                             </Box>

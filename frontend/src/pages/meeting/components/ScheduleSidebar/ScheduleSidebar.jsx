@@ -65,9 +65,27 @@ export default function ScheduleSidebar({ meetings = [], onEdit }) {
             ? nextMeeting.participants.split(',').map(p => p.trim())
             : nextMeeting.participants
     ).map((p, i) => {
-        const name = p.split('(')[0].trim();
+        // Handle both object format from backend and string format (fallback/manual)
+        const name = typeof p === 'object' ? p.name : (p.includes('(') ? p.split('(')[0].trim() : (p.includes('@') ? p.split('@')[0] : p));
+        const email = typeof p === 'object' ? p.username : (p.includes('(') ? p.split('(')[1].replace(')', '').trim() : (p.includes('@') ? p : ''));
+        const status = typeof p === 'object' ? (p.status || 'pending') : 'pending';
+        
         const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-        return { id: initials, name, role: 'Participant', status: 'Confirmed', color: 'success' };
+        
+        // Map status to UI properties
+        let statusLabel = status.charAt(0).toUpperCase() + status.slice(1);
+        let statusColor = 'default';
+        if (status === 'confirmed') statusColor = 'success';
+        else if (status === 'rejected') {
+            statusColor = 'error';
+            statusLabel = 'Rejected';
+        } else {
+            statusColor = 'warning';
+            statusLabel = 'Pending';
+        }
+
+        const isHost = email === nextMeeting.user_id;
+        return { id: initials, name, email, role: isHost ? 'Host' : 'Participant', isHost, status: statusLabel, color: statusColor };
     }) : [];
 
     if (!nextMeeting) {
@@ -178,7 +196,7 @@ export default function ScheduleSidebar({ meetings = [], onEdit }) {
                             '&:hover': { color: '#8B5CF6' }
                         }}
                     >
-                        {nextMeeting.link || `meetnext.io/${nextMeeting.title.toLowerCase().replace(/\s+/g, '-')}`}
+                        {`${window.location.origin}/video-meet?roomID=${nextMeeting.meetingCode}`}
                     </Typography>
                 </Box>
             </Box>
@@ -207,18 +225,19 @@ export default function ScheduleSidebar({ meetings = [], onEdit }) {
                         </Avatar>
                         <Box sx={{ flexGrow: 1 }}>
                             <Typography variant="body2" sx={{ color: '#F8FAFC', fontWeight: 700, lineHeight: 1.2 }}>
-                                {p.name}
+                                {p.name} {p.isHost && <span style={{ color: '#6366F1', fontSize: '0.65rem', marginLeft: '4px' }}>(Host)</span>}
                             </Typography>
                             <Typography variant="caption" sx={{ color: '#94A3B8', fontSize: '0.7rem' }}>
-                                {p.role}
+                                @{p.email}
                             </Typography>
                         </Box>
                         <Chip
                             label={p.status}
                             size="small"
-                            sx={{
-                                height: 20,
-                                fontSize: '0.65rem',
+                            color={p.color}
+                            sx={{ 
+                                height: 20, 
+                                fontSize: '0.65rem', 
                                 fontWeight: 700,
                                 bgcolor: p.status === 'Confirmed' ? 'rgba(34, 197, 94, 0.15)' :
                                     p.status === 'Pending' ? 'rgba(234, 179, 8, 0.15)' :

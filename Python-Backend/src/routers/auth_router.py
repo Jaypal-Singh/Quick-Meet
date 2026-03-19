@@ -1,5 +1,5 @@
 from fastapi import APIRouter, status, Body
-from src.Model.user_model import UserRegister, UserLogin, AddToActivityRequest, GoogleLoginRequest
+from src.Model.user_model import UserRegister, UserLogin, AddToActivityRequest, GoogleLoginRequest, UpdateProfilePictureRequest
 from src.Model.notification_model import UpdateFCMTokenRequest
 from src.controllers import auth_controller
 
@@ -28,3 +28,11 @@ async def add_to_activity(user_data: AddToActivityRequest):
 @router.get("/get_all_activity")
 async def get_all_activity(token: str):
     return await auth_controller.get_all_activity(token)
+
+@router.put("/update_profile_picture")
+async def update_profile_picture(data: UpdateProfilePictureRequest):
+    return await auth_controller.update_profile_picture(data)
+
+@router.delete("/remove_profile_picture")
+async def remove_profile_picture(token: str):
+    return await auth_controller.remove_profile_picture(token)

@@ -121,3 +121,38 @@ async def notify_new_message(token: str, sender_name: str, sender_username: str,
         print(f"Error saving notification to DB: {e}")
         
     return success
+
+async def notify_meeting_reminder(token: Optional[str], username: str, title: str, body: str, meeting_code: str):
+    """
+    Utility for meeting reminder notifications (24h or 30m before).
+    """
+    success = False
+    if token:
+        success = await send_push_notification(
+            token=token,
+            title="Meeting Reminder",
+            body=body,
+            data={
+                "type": "meeting_reminder",
+                "meeting_code": meeting_code,
+                "click_action": "FLUTTER_NOTIFICATION_CLICK"
+            }
+        )
+    
+    # Save to database
+    try:
+        notification_record = Notification(
+            recipient_username=username,
+            sender_username="system",
+            title="Meeting Reminder",
+            body=body,
+            type="meeting_reminder",
+            data={
+                "meeting_code": meeting_code
+            }
+        )
+        await notification_record.create()
+    except Exception as e:
+        print(f"Error saving reminder to DB: {e}")
+        
+    return success

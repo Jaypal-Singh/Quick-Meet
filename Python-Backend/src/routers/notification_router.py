@@ -14,3 +14,7 @@ async def mark_all_read(token: str):
 @router.put("/{notification_id}/read")
 async def mark_read(notification_id: str, token: str):
     return await notification_controller.mark_read(notification_id, token)
+
+@router.post("/{notification_id}/respond")
+async def respond_to_invite(notification_id: str, action: str, token: str):
+    return await notification_controller.respond_to_invite(notification_id, action, token)

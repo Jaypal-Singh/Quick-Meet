@@ -19,7 +19,7 @@ export default function Meetings() {
     const fetchMeetings = async () => {
         if (!token) return;
         try {
-            const response = await axios.get(`http://localhost:8000/api/v1/meetings/?token=${token}`);
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/meetings/?token=${token}`);
             const data = Array.isArray(response.data) ? response.data : [];
             const formattedMeetings = data.map(m => {
                 const start = new Date(m.startTime);
@@ -42,13 +42,25 @@ export default function Meetings() {
                     date: date,
                     startTime: startTime,
                     endTime: endTime,
-                    participants: Array.isArray(m.participants) ? m.participants.join(', ') : m.participants,
+                    participants: Array.isArray(m.participants) 
+                        ? m.participants.map(p => typeof p === 'object' ? p : { name: p, username: p, status: 'pending' })
+                        : (m.participants && typeof m.participants === 'string' 
+                            ? m.participants.split(',').map(p => ({ name: p.trim(), username: p.trim(), status: 'pending' })) 
+                            : []),
+                    participantCount: m.participantCount || (Array.isArray(m.participants) ? m.participants.length : 0),
                     isHost: m.user_id === currentUserEmail,
                     color: 'rgba(99, 102, 241, 0.2)',
                     border: '#6366F1',
                     text: '#8B5CF6'
                 };
-            }).filter(Boolean);
+            }).filter(m => {
+                if (!m) return false;
+                if (m.isHost) return true;
+                // Find current user's participant object
+                const myParticipant = m.participants.find(p => p.username === currentUserEmail);
+                // Only show if not rejected
+                return !myParticipant || myParticipant.status !== 'rejected';
+            });
             setMeetings(formattedMeetings);
         } catch (error) {
             console.error('Error fetching meetings:', error);
@@ -61,6 +73,15 @@ export default function Meetings() {
 
     useEffect(() => {
         fetchMeetings();
+
+        // Listen for real-time refresh event
+        const handleRefresh = () => {
+            console.log('Meetings: Refreshing meetings due to real-time update');
+            fetchMeetings();
+        };
+
+        window.addEventListener('refreshMeetings', handleRefresh);
+        return () => window.removeEventListener('refreshMeetings', handleRefresh);
     }, [token]);
 
     const handleScheduleMeeting = async (meetingData) => {
@@ -71,9 +92,11 @@ export default function Meetings() {
                 description: meetingData.description,
                 startTime: `${meetingData.date}T${meetingData.startTime}:00`,
                 endTime: `${meetingData.date}T${meetingData.endTime}:00`,
-                participants: meetingData.participants.split(',').map(p => p.trim()).filter(p => p !== '')
+                participants: Array.isArray(meetingData.participants)
+                    ? meetingData.participants
+                    : meetingData.participants.split(',').map(p => p.trim()).filter(p => p !== '')
             };
-            await axios.post('http://localhost:8000/api/v1/meetings/schedule', payload);
+            await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/meetings/schedule`, payload);
             fetchMeetings();
         } catch (error) {
             console.error('Error scheduling meeting:', error);
@@ -96,7 +119,7 @@ export default function Meetings() {
                     ? updatedMeeting.participants.split(',').map(p => p.trim()).filter(p => p !== '')
                     : updatedMeeting.participants
             };
-            await axios.put(`http://localhost:8000/api/v1/meetings/${updatedMeeting.id}`, payload);
+            await axios.put(`${import.meta.env.VITE_API_URL}/api/v1/meetings/${updatedMeeting.id}`, payload);
             setIsEditModalOpen(false);
             setEditingMeeting(null);
             fetchMeetings();
@@ -105,9 +128,27 @@ export default function Meetings() {
         }
     };
 
+    const handleRejectMeeting = async (meetingCode) => {
+        try {
+            await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/meetings/${meetingCode}/respond?action=reject&token=${token}`);
+            fetchMeetings();
+        } catch (error) {
+            console.error('Error rejecting meeting:', error);
+        }
+    };
+
+    const handleAcceptMeeting = async (meetingCode) => {
+        try {
+            await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/meetings/${meetingCode}/respond?action=accept&token=${token}`);
+            fetchMeetings();
+        } catch (error) {
+            console.error('Error accepting meeting:', error);
+        }
+    };
+
     const handleDeleteMeeting = async (id) => {
         try {
-            await axios.delete(`http://localhost:8000/api/v1/meetings/${id}?token=${token}`);
+            await axios.delete(`${import.meta.env.VITE_API_URL}/api/v1/meetings/${id}?token=${token}`);
             setIsEditModalOpen(false);
             setEditingMeeting(null);
             fetchMeetings();
@@ -150,13 +191,19 @@ export default function Meetings() {
                     onSchedule={handleScheduleMeeting}
                     onUpdate={handleUpdateMeeting}
                     onDelete={handleDeleteMeeting}
+                    onRefresh={fetchMeetings}
                     editingMeeting={editingMeeting}
                     isEditModalOpen={isEditModalOpen}
                     onCloseEdit={() => { setIsEditModalOpen(false); setEditingMeeting(null); }}
                     autoOpenCreate={openSchedule}
                 />
 
-                <Calendar meetings={meetings} onEdit={handleOpenEditModal} />
+                <Calendar 
+                    meetings={meetings} 
+                    onEdit={handleOpenEditModal} 
+                    onAccept={handleAcceptMeeting}
+                    onReject={handleRejectMeeting}
+                />
 
                 {/* Mobile: Show Upcoming section here (below calendar) */}
                 <Box sx={{ display: { xs: 'block', md: 'none' }, mb: 4 }}>

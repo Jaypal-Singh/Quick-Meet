@@ -19,7 +19,7 @@ export default function MeetingHistory() {
         const fetchMeetings = async () => {
             if (!token) return;
             try {
-                const response = await axios.get(`http://localhost:8000/api/v1/meetings/?token=${token}`);
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/meetings/?token=${token}`);
                 const now = new Date();
                 const filtered = response.data.filter(m => {
                     const end = new Date(m.endTime);

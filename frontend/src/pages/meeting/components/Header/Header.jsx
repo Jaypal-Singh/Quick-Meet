@@ -2,11 +2,41 @@ import React, { useState, useEffect } from 'react';
 import { Box, InputBase, IconButton, Button } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import AddIcon from '@mui/icons-material/Add';
+import Badge from '@mui/material/Badge';
 import ScheduleMeetingModal from './ScheduleMeetingModal';
+import NotificationPopover from './NotificationPopover';
+import axios from 'axios';
 
-export default function Header({ onSchedule, onUpdate, onDelete, editingMeeting, isEditModalOpen, onCloseEdit, autoOpenCreate }) {
+const API_URL = import.meta.env.VITE_API_URL;
+
+export default function Header({ onSchedule, onUpdate, onDelete, onRefresh, editingMeeting, isEditModalOpen, onCloseEdit, autoOpenCreate }) {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [notifications, setNotifications] = useState([]);
+    const [notificationAnchor, setNotificationAnchor] = useState(null);
+    const [loadingNotifications, setLoadingNotifications] = useState(false);
+
+    const fetchNotifications = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) return;
+            setLoadingNotifications(true);
+            const response = await axios.get(`${API_URL}/api/v1/notifications?token=${token}`);
+            setNotifications(response.data || []);
+        } catch (error) {
+            console.error('Error fetching notifications:', error);
+        } finally {
+            setLoadingNotifications(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchNotifications();
+        // Poll for notifications every 30 seconds
+        const interval = setInterval(fetchNotifications, 30000);
+        return () => clearInterval(interval);
+    }, []);
 
     useEffect(() => {
         if (autoOpenCreate) {
@@ -16,6 +46,14 @@ export default function Header({ onSchedule, onUpdate, onDelete, editingMeeting,
 
     const handleOpenCreateModal = () => setIsCreateModalOpen(true);
     const handleCloseCreateModal = () => setIsCreateModalOpen(false);
+
+    const handleOpenNotifications = (event) => {
+        setNotificationAnchor(event.currentTarget);
+    };
+
+    const handleCloseNotifications = () => {
+        setNotificationAnchor(null);
+    };
 
     const handleSchedule = async (meetingData) => {
         if (onSchedule) onSchedule(meetingData);
@@ -57,9 +95,10 @@ export default function Header({ onSchedule, onUpdate, onDelete, editingMeeting,
             {/* Right Actions */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                 <IconButton
+                    onClick={handleOpenNotifications}
                     sx={{
                         bgcolor: 'rgba(34, 43, 61, 0.6)',
-                        color: '#94A3B8',
+                        color: notifications.length > 0 ? '#6366F1' : '#94A3B8',
                         border: '1px solid rgba(255, 255, 255, 0.05)',
                         '&:hover': {
                             bgcolor: 'rgba(34, 43, 61, 0.9)',
@@ -69,8 +108,34 @@ export default function Header({ onSchedule, onUpdate, onDelete, editingMeeting,
                         transition: 'all 0.3s ease',
                     }}
                 >
-                    <NotificationsNoneIcon fontSize="small" />
+                    <Badge 
+                        badgeContent={notifications.length} 
+                        color="error"
+                        sx={{
+                            '& .MuiBadge-badge': {
+                                bgcolor: '#EF4444',
+                                color: 'white',
+                                fontWeight: 700,
+                                fontSize: '0.65rem',
+                                minWidth: '16px',
+                                height: '16px',
+                                padding: '0 4px'
+                            }
+                        }}
+                    >
+                        {notifications.length > 0 ? <NotificationsIcon fontSize="small" /> : <NotificationsNoneIcon fontSize="small" />}
+                    </Badge>
                 </IconButton>
+
+                <NotificationPopover 
+                    anchorEl={notificationAnchor}
+                    open={Boolean(notificationAnchor)}
+                    onClose={handleCloseNotifications}
+                    notifications={notifications}
+                    setNotifications={setNotifications}
+                    loading={loadingNotifications}
+                    refreshMeetings={onRefresh}
+                />
 
                 <Button
                     variant="contained"

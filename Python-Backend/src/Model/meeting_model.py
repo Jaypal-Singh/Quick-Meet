@@ -10,8 +10,11 @@ class Meeting(Document):
     description: str | None = None
     startTime: datetime = Field(default_factory=datetime.now)
     endTime: datetime = Field(default_factory=datetime.now)
-    participants: list[str] = []
+    # participants: list[dict] -> [{"username": "...", "status": "pending"}]
+    participants: list[dict] = []
     date: datetime = Field(default_factory=datetime.now)
+    reminded_24h: bool = False
+    reminded_30m: bool = False
 
     class Settings:
         name = "meetings"

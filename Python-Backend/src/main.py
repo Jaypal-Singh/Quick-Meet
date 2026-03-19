@@ -1,28 +1,32 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import socketio
+import socketio # This import is still needed for socketio.ASGIApp
 
+from src.core.config import settings
+from src.core.socket_instance import sio # Added this import
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=[settings.FRONTEND_URL],
     allow_headers=["*"],
     allow_credentials=True,        
     allow_methods=["*"],
 )
 
-sio = socketio.AsyncServer(cors_allowed_origins="*", async_mode='asgi')
+# SocketIO initialization moved to core/socket_instance.py
 socketio_app = socketio.ASGIApp(sio ,app)
 
 from src.controllers.Socket_Controller import register_socket_events
 register_socket_events(sio)
 
 from src.db.database import init_db
+from src.services.reminder_service import start_reminder_service
 @app.on_event("startup")
 async def startup_event():
     await init_db()
+    start_reminder_service()
 
 
 from src.routers import auth_router, meeting_router, friend_router, notification_router

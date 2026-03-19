@@ -42,8 +42,14 @@ const MeetingReadyPopup = ({ meetingUrl, username, onClose }) => {
 
     const sendInvite = async (friendUsername) => {
         const token = localStorage.getItem("token");
-        // Extract meeting code from URL (e.g., http://localhost:3000/CODE)
-        const meetingCode = meetingUrl.split('/').pop();
+        // Extract meeting code from URL robustly (handles both /CODE and ?roomID=CODE)
+        let meetingCode = "";
+        try {
+            const urlObj = new URL(meetingUrl);
+            meetingCode = urlObj.searchParams.get('roomID') || urlObj.pathname.split('/').pop();
+        } catch (e) {
+            meetingCode = meetingUrl.split('/').pop();
+        }
         
         try {
             const response = await axios.post(`${server}/api/v1/friends/invite`, {

@@ -11,6 +11,7 @@ const server = import.meta.env.VITE_API_URL;
 const TopHeader = () => {
     const [notifications, setNotifications] = useState([]);
     const [open, setOpen] = useState(false);
+    const [tick, setTick] = useState(0); // Numeric tick for guaranteed re-renders
     const ref = useRef(null);
     const navigate = useNavigate();
 
@@ -22,7 +23,8 @@ const TopHeader = () => {
         if (!token) return;
         try {
             const res = await axios.get(`${server}/api/v1/notifications/`, { params: { token } });
-            setNotifications(res.data || []);
+            const sorted = (res.data || []).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            setNotifications(sorted);
         } catch (e) {
             // silently ignore
         }
@@ -30,8 +32,20 @@ const TopHeader = () => {
 
     useEffect(() => {
         fetchNotifications();
+        
+        // Listen for real-time refresh event
+        const handleRefresh = () => {
+            console.log('TopHeader: Refreshing notifications due to real-time update');
+            fetchNotifications();
+        };
+
+        window.addEventListener('refreshMeetings', handleRefresh);
+        
         const interval = setInterval(fetchNotifications, 30000); // poll every 30s
-        return () => clearInterval(interval);
+        return () => {
+            clearInterval(interval);
+            window.removeEventListener('refreshMeetings', handleRefresh);
+        };
     }, []);
 
     // Close when clicking outside
@@ -61,14 +75,21 @@ const TopHeader = () => {
         } catch (e) {/* ignore */ }
     };
 
-    const timeAgo = (ts) => {
+    useEffect(() => {
+        const timer = setInterval(() => setTick(t => t + 1), 1000); 
+        return () => clearInterval(timer);
+    }, []);
+
+    const timeAgo = (ts, currentTick) => {
         if (!ts) return '';
         const now = new Date();
-        const past = new Date(ts);
+        // Force UTC if no timezone is present to prevent local time mismatch
+        const past = new Date(ts.includes('Z') || ts.includes('+') ? ts : ts + 'Z');
         const diffInSeconds = Math.floor((now - past) / 1000);
 
-        if (diffInSeconds < 0) return 'just now'; // Handle future dates/clock sync issues
-        if (diffInSeconds < 60) return 'just now';
+        // If clock skew makes it negative, or it's very fresh
+        if (diffInSeconds <= 5) return 'Just now'; 
+        if (diffInSeconds < 60) return `${diffInSeconds}s ago`;
 
         const diffInMinutes = Math.floor(diffInSeconds / 60);
         if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
@@ -120,7 +141,7 @@ const TopHeader = () => {
                             {/* Header */}
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2.5, py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
                                 <Typography sx={{ color: 'white', fontWeight: 700, fontSize: '14px' }}>
-                                    Notifications {unreadCount > 0 && <Box component="span" sx={{ ml: 1, px: '6px', py: '2px', bgcolor: '#8B5CF620', color: '#8B5CF6', borderRadius: '10px', fontSize: '11px' }}>{unreadCount}</Box>}
+                                    Notifications ({tick}s) {unreadCount > 0 && <Box component="span" sx={{ ml: 1, px: '6px', py: '2px', bgcolor: '#8B5CF620', color: '#8B5CF6', borderRadius: '10px', fontSize: '11px' }}>{unreadCount}</Box>}
                                 </Typography>
                                 {notifications.length > 0 && (
                                     <IconButton onClick={markAllRead} size="small" title="Clear all" sx={{ color: '#6B7280', '&:hover': { color: '#8B5CF6' } }}>
@@ -162,7 +183,7 @@ const TopHeader = () => {
                                                         {n.body}
                                                     </Typography>
                                                     <Typography sx={{ color: '#4B5563', fontSize: '11px', mt: '4px' }}>
-                                                        {timeAgo(n.timestamp)}
+                                                        {timeAgo(n.timestamp, tick)}
                                                     </Typography>
                                                 </Box>
                                                 {/* Action Buttons */}

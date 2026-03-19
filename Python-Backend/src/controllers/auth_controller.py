@@ -35,7 +35,7 @@ async def register(user_data: UserRegister):
     
     return {"message": "User registered successfully"}
 
-async def login(user_data: UserLogin): # Reusing UserRegister for now as it has username/password
+async def login(user_data: UserLogin):
     user = await User.find_one(User.username == user_data.username)
     if not user or not verify_password(user_data.password, user.password):
         raise HTTPException(
@@ -69,7 +69,6 @@ async def add_to_activity(user_data: AddToActivityRequest):
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
         
-    await new_meeting.create()
     return {"message": "Meeting added to activity"}
 
 async def get_all_activity(token: str):
@@ -79,3 +78,24 @@ async def get_all_activity(token: str):
     
     meetings = await Meeting.find(Meeting.user_id == user.username).to_list()
     return meetings
+
+async def update_profile_picture(data):
+    token = data.token
+    profile_picture = data.profile_picture
+    
+    user = await User.find_one(User.token == token)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+    
+    user.profile_picture = profile_picture
+    await user.save()
+    return {"message": "Profile picture updated successfully", "profile_picture": profile_picture}
+
+async def remove_profile_picture(token: str):
+    user = await User.find_one(User.token == token)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+    
+    user.profile_picture = None
+    await user.save()
+    return {"message": "Profile picture removed successfully"}
