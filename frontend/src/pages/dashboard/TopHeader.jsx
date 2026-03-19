@@ -103,7 +103,7 @@ const TopHeader = () => {
     };
 
     useEffect(() => {
-        const timer = setInterval(() => setTick(t => t + 1), 1000); 
+        const timer = setInterval(() => setTick(t => t + 1), 1000);
         return () => clearInterval(timer);
     }, []);
 
@@ -115,7 +115,7 @@ const TopHeader = () => {
         const diffInSeconds = Math.floor((now - past) / 1000);
 
         // If clock skew makes it negative, or it's very fresh
-        if (diffInSeconds <= 5) return 'Just now'; 
+        if (diffInSeconds <= 5) return 'Just now';
         if (diffInSeconds < 60) return `${diffInSeconds}s ago`;
 
         const diffInMinutes = Math.floor(diffInSeconds / 60);

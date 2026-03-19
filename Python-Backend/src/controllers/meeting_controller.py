@@ -50,6 +50,10 @@ async def schedule_meeting(meeting_data: MeetingCreate):
             parts = [p.strip() for p in parts.split(',') if p.strip()]
             
         async def send_to_participant(p_username: str):
+            # Do not send notification to the host
+            if p_username == user.username:
+                return
+
             try:
                 p_user = await User.find_one(User.username == p_username)
                 await notify_meeting_invite(
@@ -125,7 +129,7 @@ async def update_meeting(meeting_code: str, meeting_data: MeetingCreate):
         if isinstance(new_parts, str):
             new_parts = [p.strip() for p in new_parts.split(',') if p.strip()]
             
-        added_parts = [p for p in new_parts if p not in old_parts_list]
+        added_parts = [p for p in new_parts if p not in old_parts_list and p != user.username]
             
         if added_parts:
             async def send_to_participant(p_username: str):

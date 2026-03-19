@@ -37,6 +37,7 @@ export default function UserProfileView({ onBack }) {
                 });
                 setProfilePic(base64);
                 localStorage.setItem('profile_picture', base64);
+                window.dispatchEvent(new Event('profileUpdate'));
             } catch (err) {
                 console.error('Failed to upload profile picture:', err);
             } finally {
@@ -55,6 +56,7 @@ export default function UserProfileView({ onBack }) {
             });
             setProfilePic(null);
             localStorage.removeItem('profile_picture');
+            window.dispatchEvent(new Event('profileUpdate'));
         } catch (err) {
             console.error('Failed to remove profile picture:', err);
         } finally {

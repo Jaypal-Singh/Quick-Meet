@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import UserProfileView from './components/UserProfileView';
+import QuickSettings from './components/QuickSettings';
+import SupportLegal from './components/SupportLegal';
 import EditIcon from '@mui/icons-material/Edit';
-import StarIcon from '@mui/icons-material/Star';
-import LockIcon from '@mui/icons-material/Lock';
-import { Switch, Avatar, Box, Typography } from '@mui/material';
+import { Avatar, Box, Typography } from '@mui/material';
 
 export default function Settings() {
     const [showFullProfile, setShowFullProfile] = useState(false);
@@ -74,92 +74,11 @@ export default function Settings() {
                     </Box>
                 </div>
 
-                {/* Account & Security */}
-                <div style={{
-                    backgroundColor: '#1C2230',
-                    border: '1px solid rgba(255, 255, 255, 0.05)',
-                    borderRadius: '16px',
-                    padding: '32px',
-                }}>
-                    <h2 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 24px 0' }}>Account & Security</h2>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {/* Quick Settings Section */}
+                <QuickSettings />
 
-                        {/* Subscription Plan */}
-                        <div style={{
-                            backgroundColor: '#131722', border: '1px solid rgba(255, 255, 255, 0.05)',
-                            borderRadius: '12px', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between'
-                        }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                                <div style={{
-                                    backgroundColor: 'rgba(139, 92, 246, 0.1)', width: '40px', height: '40px', borderRadius: '50%',
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center'
-                                }}>
-                                    <StarIcon style={{ color: '#8B5CF6', fontSize: '20px' }} />
-                                </div>
-                                <div>
-                                    <p style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: 600, color: 'white' }}>Subscription Plan</p>
-                                    <p style={{ margin: 0, fontSize: '13px', color: '#9CA3AF' }}>Premium Plan — Active</p>
-                                </div>
-                            </div>
-                            <button style={{
-                                background: 'transparent', border: 'none', color: '#8B5CF6',
-                                fontSize: '14px', fontWeight: 700, cursor: 'pointer', padding: 0
-                            }}>
-                                Manage Plan
-                            </button>
-                        </div>
-
-                        {/* Password */}
-                        <div style={{
-                            backgroundColor: '#131722', border: '1px solid rgba(255, 255, 255, 0.05)',
-                            borderRadius: '12px', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between'
-                        }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                                <div style={{
-                                    backgroundColor: 'rgba(255, 255, 255, 0.04)', width: '40px', height: '40px', borderRadius: '50%',
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center'
-                                }}>
-                                    <LockIcon style={{ color: '#9CA3AF', fontSize: '20px' }} />
-                                </div>
-                                <div>
-                                    <p style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: 600, color: 'white' }}>Password</p>
-                                    <p style={{ margin: 0, fontSize: '13px', color: '#9CA3AF' }}>Last changed 3 months ago</p>
-                                </div>
-                            </div>
-                            <button style={{
-                                background: 'transparent', border: 'none', color: '#8B5CF6',
-                                fontSize: '14px', fontWeight: 700, cursor: 'pointer', padding: 0
-                            }}>
-                                Update
-                            </button>
-                        </div>
-
-                    </div>
-                </div>
-
-                {/* Notifications */}
-                <div style={{
-                    backgroundColor: '#1C2230',
-                    border: '1px solid rgba(255, 255, 255, 0.05)',
-                    borderRadius: '16px',
-                    padding: '32px',
-                }}>
-                    <h2 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 24px 0' }}>Notifications</h2>
-
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <div>
-                            <p style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: 600, color: 'white' }}>Email Notifications</p>
-                            <p style={{ margin: 0, fontSize: '13px', color: '#9CA3AF' }}>Get summaries of missed meetings and chats</p>
-                        </div>
-                        <Switch
-                            defaultChecked
-                            sx={{
-                                '& .MuiSwitch-switchBase.Mui-checked': { color: '#8B5CF6' },
-                                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { backgroundColor: '#8B5CF6' }
-                            }}
-                        />
-                    </div>
-                </div>
+                {/* Support & Legal Section */}
+                <SupportLegal />
 
             </div>
         </div>
