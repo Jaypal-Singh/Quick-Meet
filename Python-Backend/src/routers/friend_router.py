@@ -12,6 +12,14 @@ async def search_users(query: str = Query(...)):
 async def add_friend(data: AddFriendRequest):
     return await friend_controller.add_friend(data)
 
+@router.post("/accept")
+async def accept_friend(data: AddFriendRequest):
+    return await friend_controller.accept_friend_request(data)
+
+@router.post("/reject")
+async def reject_friend(data: AddFriendRequest):
+    return await friend_controller.reject_friend_request(data)
+
 @router.post("/invite")
 async def invite_friend(data: InviteRequest):
     return await friend_controller.invite_to_meeting(data)

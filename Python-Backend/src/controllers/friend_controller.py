@@ -1,4 +1,4 @@
-from src.utils.notification_util import notify_meeting_invite
+from src.utils.notification_util import notify_meeting_invite, notify_friend_request, notify_friend_accept
 from pydantic import BaseModel
 from typing import List, Optional
 from fastapi import HTTPException, status
@@ -38,19 +38,98 @@ async def add_friend(data: AddFriendRequest):
     if friend_user.username == user.username:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You cannot add yourself as a friend")
 
-    # Get or create friend record
-    friend_record = await Friend.find_one(Friend.user_id == user.username)
-    if not friend_record:
-        friend_record = Friend(user_id=user.username, friends=[])
-        await friend_record.create()
+    # Get records for both
+    my_record = await Friend.find_one(Friend.user_id == user.username)
+    if not my_record:
+        my_record = Friend(user_id=user.username)
+        await my_record.create()
+
+    their_record = await Friend.find_one(Friend.user_id == friend_user.username)
+    if not their_record:
+        their_record = Friend(user_id=friend_user.username)
+        await their_record.create()
     
-    if data.friend_username in friend_record.friends:
+    if data.friend_username in my_record.friends:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User is already in your friend list")
     
-    friend_record.friends.append(data.friend_username)
-    await friend_record.save()
+    if data.friend_username in my_record.sent_requests:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Friend request already sent")
+
+    # Add to my sent and their pending
+    my_record.sent_requests.append(data.friend_username)
+    their_record.pending_requests.append(user.username)
     
-    return {"message": "Friend added successfully"}
+    await my_record.save()
+    await their_record.save()
+    
+    # Notify
+    await notify_friend_request(
+        token=friend_user.fcm_token,
+        sender_name=user.name,
+        sender_username=user.username,
+        recipient_username=friend_user.username
+    )
+    
+    return {"message": "Friend request sent successfully"}
+
+async def accept_friend_request(data: AddFriendRequest):
+    user = await User.find_one(User.token == data.token)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+    
+    # 'friend_username' in data is the person who SENT the request
+    requester = await User.find_one(User.username == data.friend_username)
+    if not requester:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Requester not found")
+
+    my_record = await Friend.find_one(Friend.user_id == user.username)
+    their_record = await Friend.find_one(Friend.user_id == requester.username)
+
+    if not my_record or data.friend_username not in my_record.pending_requests:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No pending request from this user")
+
+    # Add to friends list
+    if data.friend_username not in my_record.friends:
+        my_record.friends.append(data.friend_username)
+    if user.username not in their_record.friends:
+        their_record.friends.append(user.username)
+
+    # Remove from requests
+    if data.friend_username in my_record.pending_requests:
+        my_record.pending_requests.remove(data.friend_username)
+    if user.username in their_record.sent_requests:
+        their_record.sent_requests.remove(user.username)
+
+    await my_record.save()
+    await their_record.save()
+
+    # Notify requester
+    await notify_friend_accept(
+        token=requester.fcm_token,
+        acceptor_name=user.name,
+        acceptor_username=user.username,
+        recipient_username=requester.username
+    )
+
+    return {"message": "Friend request accepted"}
+
+async def reject_friend_request(data: AddFriendRequest):
+    user = await User.find_one(User.token == data.token)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+
+    my_record = await Friend.find_one(Friend.user_id == user.username)
+    their_record = await Friend.find_one(Friend.user_id == data.friend_username)
+
+    if my_record and data.friend_username in my_record.pending_requests:
+        my_record.pending_requests.remove(data.friend_username)
+        await my_record.save()
+    
+    if their_record and user.username in their_record.sent_requests:
+        their_record.sent_requests.remove(user.username)
+        await their_record.save()
+
+    return {"message": "Friend request rejected"}
 
 async def get_friends_list(token: str):
     user = await User.find_one(User.token == token)
@@ -59,16 +138,21 @@ async def get_friends_list(token: str):
     
     friend_record = await Friend.find_one(Friend.user_id == user.username)
     if not friend_record:
-        return []
+        return {"friends": [], "pending": [], "sent": []}
     
-    # Get details of each friend
-    friends_details = []
-    for f_username in friend_record.friends:
-        f_user = await User.find_one(User.username == f_username)
-        if f_user:
-            friends_details.append({"name": f_user.name, "username": f_user.username})
+    async def get_details(usernames):
+        details = []
+        for uname in usernames:
+            u = await User.find_one(User.username == uname)
+            if u:
+                details.append({"name": u.name, "username": u.username})
+        return details
+
+    friends = await get_details(friend_record.friends)
+    pending = await get_details(friend_record.pending_requests)
+    sent = await get_details(friend_record.sent_requests)
             
-    return friends_details
+    return {"friends": friends, "pending": pending, "sent": sent}
 
 async def invite_to_meeting(data: InviteRequest):
     # Verify sender

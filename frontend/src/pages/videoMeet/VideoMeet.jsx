@@ -5,12 +5,13 @@ import CloseIcon from '@mui/icons-material/Close';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import { useLocation, useParams } from 'react-router-dom';
 import MeetingReadyPopup from '../../components/meetingReadyPopup/MeetingReadyPopup';
-const server = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 import VideoControls from './components/VideoControls';
 import VideoTile from './components/VideoTile';
 import ChatSidebar from './components/ChatSidebar';
 
-const server_url = server;
+const server_url = API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:8000' : window.location.origin);
+console.log('[Init] Server URL:', server_url);
 
 var connections = {};
 
@@ -68,6 +69,7 @@ export default function VideoMeetComponent() {
     let [showMeetingReady, setShowMeetingReady] = useState(true);
 
     let [username, setUsername] = useState("");
+    let [profilePicture, setProfilePicture] = useState(null);
 
     const videoRef = useRef([])
 
@@ -96,7 +98,9 @@ export default function VideoMeetComponent() {
         }, 10000);
 
         let localUsername = localStorage.getItem('username') || localStorage.getItem('name') || ('User_' + Math.floor(Math.random() * 1000));
+        let localProfilePic = localStorage.getItem('profile_picture') || null;
         setUsername(localUsername);
+        setProfilePicture(localProfilePic);
         getPermissions();
 
         if (location.state?.inviteSent) {
@@ -453,7 +457,22 @@ export default function VideoMeetComponent() {
             return;
         }
 
-        socketRef.current = io.connect(server_url, { secure: false })
+        socketRef.current = io.connect(server_url, { 
+            secure: server_url.startsWith('https'),
+            transports: ['websocket', 'polling'] // Allow fallback
+        })
+
+        socketRef.current.on('connect_error', (err) => {
+            console.error('[Socket] Connection Error:', err);
+            setGlobalError(`Failed to connect to signaling server at ${server_url}. ${err.message}`);
+            setIsConnecting(false);
+        });
+
+        socketRef.current.on('connect_timeout', () => {
+            console.error('[Socket] Connection Timeout');
+            setGlobalError(`Connection to ${server_url} timed out.`);
+            setIsConnecting(false);
+        });
 
         socketRef.current.on('signal', gotMessageFromServer)
 
@@ -475,7 +494,8 @@ export default function VideoMeetComponent() {
             }
 
             const currentUsername = username || localStorage.getItem('username') || localStorage.getItem('name') || "Guest";
-            socketRef.current.emit('join-call', roomID, currentUsername, currentClientId)
+            const currentProfilePic = profilePicture || localStorage.getItem('profile_picture') || null;
+            socketRef.current.emit('join-call', roomID, currentUsername, currentClientId, currentProfilePic)
             socketIdRef.current = socketRef.current.id
         })
 
@@ -529,6 +549,10 @@ export default function VideoMeetComponent() {
                         }
                         if (vid.videoEnabled !== roomUsers[vid.socketId].video) {
                             newVid.videoEnabled = roomUsers[vid.socketId].video;
+                            updated = true;
+                        }
+                        if (vid.profile_picture !== roomUsers[vid.socketId].profile_picture) {
+                            newVid.profile_picture = roomUsers[vid.socketId].profile_picture;
                             updated = true;
                         }
                     }
@@ -594,7 +618,8 @@ export default function VideoMeetComponent() {
                                 autoplay: true,
                                 playsinline: true,
                                 username: roomUsers && roomUsers[socketListId] ? roomUsers[socketListId].name : "Guest",
-                                videoEnabled: roomUsers && roomUsers[socketListId] ? roomUsers[socketListId].video : true
+                                videoEnabled: roomUsers && roomUsers[socketListId] ? roomUsers[socketListId].video : true,
+                                profile_picture: roomUsers && roomUsers[socketListId] ? roomUsers[socketListId].profile_picture : null
                             }];
                         }
                     });
@@ -867,8 +892,8 @@ export default function VideoMeetComponent() {
 
     // All tiles: remote videos + local (append isLocal flag to local streams)
     const allTiles = videos.length === 0
-        ? [{ socketId: 'local', stream: localStream, username: username, isLocal: true }]
-        : [...videos, { socketId: 'local', stream: localStream, username: username, isLocal: true }];
+        ? [{ socketId: 'local', stream: localStream, username: username, isLocal: true, profile_picture: profilePicture }]
+        : [...videos, { socketId: 'local', stream: localStream, username: username, isLocal: true, profile_picture: profilePicture }];
 
     const pinnedTile = allTiles.find(t => t.socketId === pinnedSocketId) || null;
     const unpinnedTiles = pinnedTile ? allTiles.filter(t => t.socketId !== pinnedSocketId) : allTiles;
