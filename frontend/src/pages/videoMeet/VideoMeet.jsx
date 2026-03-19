@@ -16,7 +16,11 @@ var connections = {};
 
 const peerConfigConnections = {
     "iceServers": [
-        { "urls": "stun:stun.l.google.com:19302" }
+        { "urls": "stun:stun.l.google.com:19302" },
+        { "urls": "stun:stun1.l.google.com:19302" },
+        { "urls": "stun:stun2.l.google.com:19302" },
+        { "urls": "stun:stun3.l.google.com:19302" },
+        { "urls": "stun:stun4.l.google.com:19302" }
     ]
 }
 
@@ -40,9 +44,8 @@ export default function VideoMeetComponent() {
 
     let [audioAvailable, setAudioAvailable] = useState(true);
 
-    let [video, setVideo] = useState(false);
-
-    let [audio, setAudio] = useState();
+    let [video, setVideo] = useState(true); // Default to ON for better UX while loading
+    let [audio, setAudio] = useState(true); // Default to ON
 
     let [screen, setScreen] = useState();
 
@@ -129,9 +132,20 @@ export default function VideoMeetComponent() {
             if (navigator.mediaDevices.getDisplayMedia) {
                 navigator.mediaDevices.getDisplayMedia({ video: true, audio: true })
                     .then(getDislayMediaSuccess)
-                    .then((stream) => { })
-                    .catch((e) => console.log(e))
+                    .catch((e) => {
+                        console.log(e);
+                        setScreen(false); // Reset if user cancels browser dialog
+                    })
             }
+        } else if (screen === false) {
+            // STOP SCREEN SHARE manually when UI button clicked
+            try {
+                if (window.localStream) {
+                    window.localStream.getTracks().forEach(track => track.stop());
+                }
+            } catch (e) { console.log(e) }
+
+            getUserMedia(); // Switch back to camera
         }
     }
 
@@ -139,9 +153,28 @@ export default function VideoMeetComponent() {
     const isInitializing = useRef(false);
 
     const getPermissions = async () => {
-        if (isInitializing.current || didInitialSetup.current) {
-            console.log('[Init] Skipping: isInitializing=', isInitializing.current, 'didInitialSetup=', didInitialSetup.current);
+        // Skip if already initializing (prevents concurrent calls)
+        if (isInitializing.current) {
+            console.log('[Init] Skipping: already initializing');
             return;
+        }
+
+        // Skip if we already have a working stream with live tracks
+        if (didInitialSetup.current && window.localStream) {
+            const hasLiveVideo = window.localStream.getVideoTracks().some(t => t.readyState === 'live');
+            const hasLiveAudio = window.localStream.getAudioTracks().some(t => t.readyState === 'live');
+            
+            if (hasLiveVideo || hasLiveAudio) {
+                console.log('[Init] Skipping: stream already has live tracks. Syncing states.');
+                setLocalStream(window.localStream);
+                setVideo(hasLiveVideo);
+                setAudio(hasLiveAudio);
+                setVideoAvailable(hasLiveVideo);
+                setAudioAvailable(hasLiveAudio);
+                setIsConnecting(false);
+                return;
+            }
+            console.log('[Init] Tracks are dead. Re-fetching camera...');
         }
 
         isInitializing.current = true;
@@ -165,25 +198,45 @@ export default function VideoMeetComponent() {
             // 2. Perform ONE unified request for whatever is available
             // This is the most stable pattern across all modern browsers
             let stream;
-            try {
-                stream = await navigator.mediaDevices.getUserMedia({
-                    video: hasVideo,
-                    audio: hasAudio
-                });
-                console.log('[Init] Stream captured successfully');
-            } catch (err) {
-                console.warn('[Init] Initial capture failed, trying fallback:', err.message);
-                // Fallback: try video only if audio failed, or vice versa
-                if (hasVideo && hasAudio) {
-                    try {
-                        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-                        console.log('[Init] Fallback: Video only success');
-                    } catch (err2) {
-                        stream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
-                        console.log('[Init] Fallback: Audio only success');
+            let attempts = 0;
+            const maxAttempts = 3;
+
+            while (attempts < maxAttempts) {
+                try {
+                    console.log(`[Init] getUserMedia attempt ${attempts + 1}/${maxAttempts}`);
+                    stream = await navigator.mediaDevices.getUserMedia({
+                        video: hasVideo,
+                        audio: hasAudio
+                    });
+                    console.log('[Init] Stream captured successfully');
+                    break; // Success!
+                } catch (err) {
+                    attempts++;
+                    console.warn(`[Init] Capture attempt ${attempts} failed:`, err.name, err.message);
+                    
+                    if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
+                        // Hardware lock - wait 1s and retry
+                        console.log('[Init] Hardware lock detected, waiting 1s before retry...');
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        continue;
                     }
-                } else {
-                    throw err;
+                    
+                    // Not a lock - try fallback if first attempt failed for other reasons
+                    if (attempts === 1 && hasVideo && hasAudio) {
+                        try {
+                            console.log('[Init] Trying video-only fallback...');
+                            stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                            console.log('[Init] Fallback: Video only success');
+                            break;
+                        } catch (err2) {
+                            console.log('[Init] Trying audio-only fallback...');
+                            stream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
+                            console.log('[Init] Fallback: Audio only success');
+                            break;
+                        }
+                    }
+                    
+                    if (attempts >= maxAttempts) throw err;
                 }
             }
 
@@ -194,14 +247,20 @@ export default function VideoMeetComponent() {
                 const vTrack = stream.getVideoTracks()[0];
                 const aTrack = stream.getAudioTracks()[0];
 
-                setVideo(!!vTrack);
-                setAudio(!!aTrack);
+                // Initial state capture
                 setVideoAvailable(!!vTrack);
                 setAudioAvailable(!!aTrack);
+                setVideo(!!vTrack); // This will trigger the track-enable useEffect
+                setAudio(!!aTrack);
 
                 if (localVideoref.current) {
                     localVideoref.current.srcObject = stream;
                 }
+
+                console.log('[Init] Tracks obtained:', {
+                    video: vTrack ? { label: vTrack.label, state: vTrack.readyState } : 'none',
+                    audio: aTrack ? { label: aTrack.label, state: aTrack.readyState } : 'none'
+                });
             }
 
             connectToSocketServer();
@@ -216,17 +275,13 @@ export default function VideoMeetComponent() {
     };
 
     useEffect(() => {
-        // Skip the first call - getPermissions already set up the stream
-        if (!didInitialSetup.current) return;
-
-        // Instead of restarting the camera (which drops the WebRTC connection), 
-        // cleanly toggle the track's enabled state.
+        // Sync track enablement with the booleans
         if (window.localStream) {
             window.localStream.getVideoTracks().forEach(track => {
-                track.enabled = video;
+                track.enabled = !!video;
             });
             window.localStream.getAudioTracks().forEach(track => {
-                track.enabled = audio;
+                track.enabled = !!audio;
             });
         }
     }, [video, audio])
@@ -363,20 +418,28 @@ export default function VideoMeetComponent() {
         var signal = JSON.parse(message)
 
         if (fromId !== socketIdRef.current) {
+            if (!connections[fromId]) {
+                console.warn(`[WebRTC] Signal received for unknown connection: ${fromId}`);
+                return;
+            }
+
             if (signal.sdp) {
+                console.log(`[WebRTC] SDP ${signal.sdp.type} from: ${fromId}`);
                 connections[fromId].setRemoteDescription(new RTCSessionDescription(signal.sdp)).then(() => {
                     if (signal.sdp.type === 'offer') {
                         connections[fromId].createAnswer().then((description) => {
                             connections[fromId].setLocalDescription(description).then(() => {
+                                console.log(`[WebRTC] Sending answer to: ${fromId}`);
                                 socketRef.current.emit('signal', fromId, JSON.stringify({ 'sdp': connections[fromId].localDescription }))
-                            }).catch(e => console.log(e))
-                        }).catch(e => console.log(e))
+                            }).catch(e => console.error(`[WebRTC] setLocalDescription Error:`, e))
+                        }).catch(e => console.error(`[WebRTC] createAnswer Error:`, e))
                     }
-                }).catch(e => console.log(e))
+                }).catch(e => console.error(`[WebRTC] setRemoteDescription Error from ${fromId}:`, e))
             }
 
             if (signal.ice) {
-                connections[fromId].addIceCandidate(new RTCIceCandidate(signal.ice)).catch(e => console.log(e))
+                console.log(`[WebRTC] ICE candidate from: ${fromId}`);
+                connections[fromId].addIceCandidate(new RTCIceCandidate(signal.ice)).catch(e => console.error(`[WebRTC] addIceCandidate Error:`, e))
             }
         }
     }
@@ -396,7 +459,23 @@ export default function VideoMeetComponent() {
 
         socketRef.current.on('connect', () => {
             console.log('[Socket] Connected with id:', socketRef.current.id);
-            socketRef.current.emit('join-call', roomID)
+            // Reconnect ghost cleanup
+            for (let id in connections) {
+                if (connections[id]) {
+                    connections[id].close();
+                    delete connections[id];
+                }
+            }
+            setVideos([]);
+
+            let currentClientId = localStorage.getItem('clientID');
+            if (!currentClientId) {
+                currentClientId = 'client_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('clientID', currentClientId);
+            }
+
+            const currentUsername = username || localStorage.getItem('username') || localStorage.getItem('name') || "Guest";
+            socketRef.current.emit('join-call', roomID, currentUsername, currentClientId)
             socketIdRef.current = socketRef.current.id
         })
 
@@ -409,6 +488,13 @@ export default function VideoMeetComponent() {
             }));
         })
 
+        socketRef.current.on('video-toggle', (socketId, state) => {
+            console.log('[Socket] video-toggle from', socketId, 'state:', state);
+            setVideos(prevVideos => prevVideos.map(vid => 
+                vid.socketId === socketId ? { ...vid, videoEnabled: state } : vid
+            ));
+        })
+
         socketRef.current.on('user-left', (id) => {
             setVideos((videos) => videos.filter((video) => video.socketId !== id))
             if (connections[id]) {
@@ -417,9 +503,38 @@ export default function VideoMeetComponent() {
             }
         })
 
-        socketRef.current.on('user-joined', (id, clients) => { // tell new user is comming (iam connected to you)
+        socketRef.current.on('user-joined', (...args) => {
+            // Robust parsing of multiple arguments or single array
+            let id, clients, roomUsers;
+            if (args.length === 1 && Array.isArray(args[0])) {
+                [id, clients, roomUsers] = args[0];
+            } else {
+                [id, clients, roomUsers] = args;
+            }
 
-            console.log('[Socket] user-joined event:', id, 'clients:', clients);
+            console.log('[Socket] user-joined event:', { id, clients, roomUsers });
+            
+            if (!id || !clients) {
+                console.warn('[Socket] Malformed user-joined data:', { id, clients, roomUsers });
+                return;
+            }
+            if (roomUsers) {
+                setVideos(prevVideos => prevVideos.map(vid => {
+                    let updated = false;
+                    let newVid = { ...vid };
+                    if (roomUsers[vid.socketId]) {
+                        if (vid.username !== roomUsers[vid.socketId].name) {
+                            newVid.username = roomUsers[vid.socketId].name;
+                            updated = true;
+                        }
+                        if (vid.videoEnabled !== roomUsers[vid.socketId].video) {
+                            newVid.videoEnabled = roomUsers[vid.socketId].video;
+                            updated = true;
+                        }
+                    }
+                    return updated ? newVid : vid;
+                }));
+            }
 
             // Play join sound when a DIFFERENT user joins (not self)
             if (id !== socketIdRef.current) {
@@ -437,6 +552,11 @@ export default function VideoMeetComponent() {
                 }
 
                 connections[socketListId] = new RTCPeerConnection(peerConfigConnections)
+                
+                connections[socketListId].onconnectionstatechange = (event) => {
+                    console.log(`[WebRTC] Connection state with ${socketListId}:`, connections[socketListId].connectionState);
+                };
+
                 // Wait for their ice candidate       
                 connections[socketListId].onicecandidate = function (event) {
                     if (event.candidate != null) {
@@ -444,43 +564,55 @@ export default function VideoMeetComponent() {
                     }
                 }
 
-                // Wait for their video stream
-                connections[socketListId].onaddstream = (event) => {
-                    console.log("[WebRTC] onaddstream for:", socketListId);
+                // Wait for their video track
+                connections[socketListId].ontrack = (event) => {
+                    console.log(`[WebRTC] ontrack from: ${socketListId}`, event.streams);
+                    const remoteStream = event.streams[0];
+                    if (!remoteStream) {
+                        console.warn(`[WebRTC] No stream found in ontrack for: ${socketListId}`);
+                        return;
+                    }
 
                     // Atomic update - check and add/update inside setVideos to avoid race conditions
                     setVideos(prevVideos => {
                         let videoExists = prevVideos.find(video => video.socketId === socketListId);
                         if (videoExists) {
-                            console.log("FOUND EXISTING - updating stream");
-                            const updatedVideos = prevVideos.map(video =>
-                                video.socketId === socketListId ? { ...video, stream: event.stream } : video
+                            console.log(`[WebRTC] Updating existing stream for: ${socketListId}`);
+                            return prevVideos.map(video =>
+                                video.socketId === socketListId ? { 
+                                    ...video, 
+                                    stream: new MediaStream(remoteStream.getTracks()), // Force new reference to trigger rendering
+                                    username: roomUsers && roomUsers[socketListId] ? roomUsers[socketListId].name : video.username, 
+                                    videoEnabled: roomUsers && roomUsers[socketListId] ? roomUsers[socketListId].video : video.videoEnabled 
+                                } : video
                             );
-                            videoRef.current = updatedVideos;
-                            return updatedVideos;
                         } else {
-                            console.log("CREATING NEW video tile");
-                            let newVideo = {
+                            console.log(`[WebRTC] Creating new video tile for: ${socketListId}`);
+                            return [...prevVideos, {
                                 socketId: socketListId,
-                                stream: event.stream,
+                                stream: new MediaStream(remoteStream.getTracks()), // Force new reference
                                 autoplay: true,
-                                playsinline: true
-                            };
-                            const updatedVideos = [...prevVideos, newVideo];
-                            videoRef.current = updatedVideos;
-                            return updatedVideos;
+                                playsinline: true,
+                                username: roomUsers && roomUsers[socketListId] ? roomUsers[socketListId].name : "Guest",
+                                videoEnabled: roomUsers && roomUsers[socketListId] ? roomUsers[socketListId].video : true
+                            }];
                         }
                     });
                 };
 
-
-                // Add the local video stream
-                if (window.localStream !== undefined && window.localStream !== null) {
-                    connections[socketListId].addStream(window.localStream)
+                // Add the local video stream tracks
+                if (window.localStream) {
+                    console.log(`[WebRTC] Adding local tracks to connection for: ${socketListId}`);
+                    window.localStream.getTracks().forEach(track => {
+                        connections[socketListId].addTrack(track, window.localStream);
+                    });
                 } else {
+                    console.warn(`[WebRTC] No localStream to add for: ${socketListId}. Creating fallback.`);
                     let blackSilence = (...args) => new MediaStream([black(...args), silence()])
                     window.localStream = blackSilence()
-                    connections[socketListId].addStream(window.localStream)
+                    window.localStream.getTracks().forEach(track => {
+                        connections[socketListId].addTrack(track, window.localStream);
+                    });
                 }
             })
 
@@ -520,8 +652,18 @@ export default function VideoMeetComponent() {
 
     // Phase 5: Features (Butttons Logic)
     let handleVideo = () => {
-        setVideo(!video);
-        // getUserMedia();
+        // If video was never captured (e.g. busy hardware), try to re-acquire permissions
+        if (!videoAvailable && !isInitializing.current) {
+            console.log('[Video] Video unavailable, attempting re-capture...');
+            getPermissions();
+            return;
+        }
+        
+        const newState = !video;
+        setVideo(newState);
+        if (socketRef.current) {
+            socketRef.current.emit('video-toggle', newState);
+        }
     }
     let handleAudio = () => {
         setAudio(!audio)
@@ -535,6 +677,24 @@ export default function VideoMeetComponent() {
     }, [screen])
     let handleScreen = () => {
         setScreen(!screen);
+    }
+
+    let handleReconnect = () => {
+        console.log('[WebRTC] Manual reconnect triggered');
+        // Clear all existing connections
+        for (let id in connections) {
+            if (connections[id]) {
+                connections[id].close();
+                delete connections[id];
+            }
+        }
+        setVideos([]);
+        // Re-join the call to trigger new handshakes
+        if (socketRef.current) {
+            const currentClientId = localStorage.getItem('clientID');
+            const currentUsername = username || localStorage.getItem('username') || "Guest";
+            socketRef.current.emit('join-call', roomID, currentUsername, currentClientId);
+        }
     }
 
     let handleCaptions = () => {
@@ -630,6 +790,12 @@ export default function VideoMeetComponent() {
         return () => clearInterval(interval);
     }, []);
 
+    useEffect(() => {
+        if (showModal) {
+            setNewMessages(0);
+        }
+    }, [showModal]);
+
     //Phase 6: Exit (Call Khatam)
     let handleEndCall = () => {
         try {
@@ -653,9 +819,9 @@ export default function VideoMeetComponent() {
     const addMessage = (data, sender, socketIdSender) => {
         setMessages((prevMessages) => [
             ...prevMessages,
-            { sender: sender, data: data }
+            { sender: sender, data: data, isLocal: socketIdSender === socketIdRef.current }
         ]);
-        if (socketIdSender !== socketIdRef.current) {
+        if (socketIdSender !== socketIdRef.current && !showModal) {
             setNewMessages((prevNewMessages) => prevNewMessages + 1);
         }
     };
@@ -776,13 +942,14 @@ export default function VideoMeetComponent() {
                         handleEndCall={handleEndCall}
                         setModal={setModal}
                         handleCaptions={handleCaptions}
+                        handleReconnect={handleReconnect}
                     />
 
                     {/* Main Content Area: Video Grid + Chat Side by Side */}
                     <div className="flex-1 flex overflow-hidden">
 
                         {/* Video Area */}
-                        <div className={`flex-1 relative p-4 pb-24 transition-all duration-350 ease-[cubic-bezier(0.4,0,0.2,1)] flex gap-4 ${showModal ? 'pr-[360px]' : 'pr-0'
+                        <div className={`flex-1 relative p-4 pb-24 transition-all duration-350 ease-[cubic-bezier(0.4,0,0.2,1)] flex gap-4 ${showModal ? 'pr-[360px]' : 'pr-4'
                             }`}>
 
                             {pinnedTile ? (
@@ -793,7 +960,7 @@ export default function VideoMeetComponent() {
                                         <VideoTile
                                             videoObj={pinnedTile}
                                             isLocal={pinnedTile.isLocal || false}
-                                            videoEnabled={pinnedTile.isLocal ? video : true}
+                                            videoEnabled={pinnedTile.isLocal ? video : pinnedTile.videoEnabled}
                                             isPinned={true}
                                             isScreenShare={pinnedTile.isLocal && screen}
                                             onPin={() => setPinnedSocketId(null)}
@@ -811,7 +978,7 @@ export default function VideoMeetComponent() {
                                                     <VideoTile
                                                         videoObj={vid}
                                                         isLocal={vid.isLocal || false}
-                                                        videoEnabled={vid.isLocal ? video : true}
+                                                        videoEnabled={vid.isLocal ? video : vid.videoEnabled !== false}
                                                         isPinned={false}
                                                         isScreenShare={vid.isLocal && screen}
                                                         onPin={() => setPinnedSocketId(vid.socketId)}
@@ -839,7 +1006,7 @@ export default function VideoMeetComponent() {
                                             <VideoTile
                                                 videoObj={vid}
                                                 isLocal={vid.isLocal || false}
-                                                videoEnabled={vid.isLocal ? video : true}
+                                                videoEnabled={vid.isLocal ? video : vid.videoEnabled !== false}
                                                 isPinned={false}
                                                 isScreenShare={vid.isLocal && screen}
                                                 onPin={() => setPinnedSocketId(vid.socketId)}

@@ -1,18 +1,24 @@
 import React from 'react';
 
 const VideoTile = ({ videoObj, isLocal, videoEnabled, isPinned, onPin, isScreenShare }) => {
-    // For local video: use the videoEnabled prop passed from parent
-    // For remote video: check the stream's track state
     let hasActiveVideo = false;
     
     if (isLocal) {
-        // Local video: rely on the parent's video state
+        // Local: Trust the button state primarily
         hasActiveVideo = videoEnabled === true;
     } else {
-        // Remote video: check the actual stream
-        hasActiveVideo = videoObj?.stream && 
-            videoObj.stream.getVideoTracks().length > 0 && 
-            videoObj.stream.getVideoTracks()[0].enabled;
+        // Remote: If signal is explicitly OFF, show avatar.
+        // Otherwise, if we have a stream, try to show video.
+        if (videoEnabled === false) {
+            hasActiveVideo = false;
+        } else {
+            hasActiveVideo = !!videoObj?.stream && videoObj.stream.getVideoTracks().length > 0;
+        }
+    }
+    
+    // Final safety: if no stream at all, can't show video
+    if (hasActiveVideo && (!videoObj?.stream || videoObj.stream.getVideoTracks().length === 0)) {
+        hasActiveVideo = false;
     }
 
     const username = videoObj?.username || "Guest";
@@ -28,6 +34,11 @@ const VideoTile = ({ videoObj, isLocal, videoEnabled, isPinned, onPin, isScreenS
             if (videoRef.current.srcObject !== videoObj.stream) {
                 videoRef.current.srcObject = videoObj.stream;
                 console.log(`[VideoTile] Assigned stream to video: socket=${videoObj.socketId}`);
+                
+                // Safety play call: ensure it starts playing even if autoPlay was throttled
+                videoRef.current.play().catch(e => {
+                    console.warn(`[VideoTile] Play failed:`, e);
+                });
             }
         }
     }, [videoObj?.stream, videoObj?.socketId, hasActiveVideo]);
