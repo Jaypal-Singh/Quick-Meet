@@ -8,11 +8,9 @@ import { SocketProvider } from './context/SocketContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <GoogleOAuthProvider clientId="633648839736-ssff3lp73su4pjgg9ubfo35vobp9ve2e.apps.googleusercontent.com">
-      <SocketProvider>
-        <App />
-      </SocketProvider>
-    </GoogleOAuthProvider>
-  </React.StrictMode>
+  <GoogleOAuthProvider clientId="633648839736-ssff3lp73su4pjgg9ubfo35vobp9ve2e.apps.googleusercontent.com">
+    <SocketProvider>
+      <App />
+    </SocketProvider>
+  </GoogleOAuthProvider>
 );
