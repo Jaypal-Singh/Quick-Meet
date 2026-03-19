@@ -19,7 +19,7 @@ const VideoControls = ({
     handleReconnect
 }) => {
     return (
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-3 bg-[#1C2230] px-6 py-3 rounded-full z-50 shadow-2xl">
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center flex-wrap gap-1 md:gap-3 bg-[#1C2230] px-4 md:px-6 py-2 md:py-3 rounded-full md:rounded-full z-50 shadow-2xl max-w-[95vw] md:max-w-none">
 
             <IconButton onClick={handleAudio} sx={{ color: audio ? '#ffffff' : '#ef4444', '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' } }}>
                 {audio ? <MicIcon /> : <MicOffIcon />}

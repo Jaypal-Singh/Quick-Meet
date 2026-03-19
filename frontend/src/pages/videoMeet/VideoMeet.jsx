@@ -76,6 +76,13 @@ export default function VideoMeetComponent() {
     let [videos, setVideos] = useState([])
     let [localStream, setLocalStream] = useState(null);
     let [pinnedSocketId, setPinnedSocketId] = useState(null);
+    let [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     // TODO
     // if(isChrome() === false) {
@@ -864,6 +871,12 @@ export default function VideoMeetComponent() {
 
     // Helper: compute grid layout (cols x rows) based on participant count
     const getGridLayout = (count) => {
+        if (isMobile) {
+            if (count <= 1) return { cols: 1, rows: 1 };
+            if (count <= 2) return { cols: 1, rows: 2 };
+            if (count <= 4) return { cols: 2, rows: 2 };
+            return { cols: 2, rows: Math.ceil(count / 2) };
+        }
         if (count <= 1) return { cols: 1, rows: 1 };
         if (count === 2) return { cols: 2, rows: 1 };
         if (count <= 4) return { cols: 2, rows: 2 };
@@ -974,8 +987,9 @@ export default function VideoMeetComponent() {
                     <div className="flex-1 flex overflow-hidden">
 
                         {/* Video Area */}
-                        <div className={`flex-1 relative p-4 pb-24 transition-all duration-350 ease-[cubic-bezier(0.4,0,0.2,1)] flex gap-4 ${showModal ? 'pr-[360px]' : 'pr-4'
-                            }`}>
+                        <div className={`flex-1 relative p-2 md:p-4 pb-24 transition-all duration-350 ease-[cubic-bezier(0.4,0,0.2,1)] flex flex-col md:flex-row gap-2 md:gap-4 ${
+                            !isMobile && showModal ? 'pr-[360px]' : 'pr-0'
+                        }`}>
 
                             {pinnedTile ? (
                                 // --- PINNED LAYOUT (Main Area + Sidebar) ---
@@ -992,13 +1006,13 @@ export default function VideoMeetComponent() {
                                         />
                                     </div>
 
-                                    {/* Right vertical sidebar for unpinned videos */}
+                                    {/* Sidebar for unpinned videos */}
                                     {unpinnedTiles.length > 0 && (
-                                        <div className="w-[240px] h-full overflow-y-auto flex flex-col gap-3 pr-1 hide-scrollbar">
+                                        <div className="w-full md:w-[240px] h-[120px] md:h-full overflow-x-auto md:overflow-y-auto flex flex-row md:flex-col gap-2 md:gap-3 pr-1 hide-scrollbar">
                                             {unpinnedTiles.map((vid) => (
                                                 <div
                                                     key={vid.socketId}
-                                                    className="w-full aspect-video shrink-0 rounded-xl overflow-hidden transition-all duration-300 ease-in-out bg-[#131722] border border-white/5"
+                                                    className="h-full md:h-auto aspect-video md:w-full shrink-0 rounded-xl overflow-hidden transition-all duration-300 ease-in-out bg-[#131722] border border-white/5"
                                                 >
                                                     <VideoTile
                                                         videoObj={vid}

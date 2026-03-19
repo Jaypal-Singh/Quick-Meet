@@ -20,7 +20,7 @@ class Meeting(Document):
         name = "meetings"
 
 class MeetingCreate(BaseModel):
-    token: str
+    token: Optional[str] = None
     title: str
     description: Optional[str] = None
     startTime: datetime

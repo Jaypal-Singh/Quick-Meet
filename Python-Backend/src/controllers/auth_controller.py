@@ -1,6 +1,6 @@
 from src.Model.user_model import User, UserRegister, UserLogin, AddToActivityRequest
 from src.Model.meeting_model import Meeting
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Response
 from passlib.context import CryptContext
 import uuid
 
@@ -35,7 +35,7 @@ async def register(user_data: UserRegister):
     
     return {"message": "User registered successfully"}
 
-async def login(user_data: UserLogin):
+async def login(user_data: UserLogin, response: Response):
     user = await User.find_one(User.username == user_data.username)
     if not user or not verify_password(user_data.password, user.password):
         raise HTTPException(
@@ -47,7 +47,17 @@ async def login(user_data: UserLogin):
     user.token = token
     await user.save()
     
-    return {"message": "Login successful", "token": token, "name": user.name, "profile_picture": user.profile_picture}
+    # Set the cookie
+    response.set_cookie(
+        key="token",
+        value=token,
+        httponly=True,
+        max_age=60 * 60 * 24 * 7, # 7 days
+        samesite="lax", # or "none" with secure=True for cross-site
+        secure=False # Set to True in production with HTTPS
+    )
+    
+    return {"message": "Login successful", "name": user.name, "profile_picture": user.profile_picture}
 
 async def update_fcm_token(token: str, fcm_token: str):
     user = await User.find_one(User.token == token)
@@ -99,3 +109,24 @@ async def remove_profile_picture(token: str):
     user.profile_picture = None
     await user.save()
     return {"message": "Profile picture removed successfully"}
+
+async def check_auth(token: str):
+    if not token:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
+    
+    user = await User.find_one(User.token == token)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid session")
+    
+    return {
+        "authenticated": True, 
+        "user": {
+            "name": user.name, 
+            "username": user.username,
+            "profile_picture": user.profile_picture
+        }
+    }
+
+async def logout(response: Response):
+    response.delete_cookie("token")
+    return {"message": "Logged out successfully"}

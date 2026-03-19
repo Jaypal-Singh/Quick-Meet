@@ -7,12 +7,12 @@ from src.Model.friend_model import Friend
 from src.core.config import settings
 
 class InviteRequest(BaseModel):
-    token: str
+    token: Optional[str] = None
     friend_username: str
     meeting_code: str
 
 class AddFriendRequest(BaseModel):
-    token: str
+    token: Optional[str] = None
     friend_username: str
 
 async def search_users(query: str):

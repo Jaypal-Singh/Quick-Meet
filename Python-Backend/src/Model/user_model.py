@@ -24,12 +24,12 @@ class UserLogin(BaseModel):
     password: str
 
 class AddToActivityRequest(BaseModel):
-    token: str
+    token: Optional[str] = None
     meeting_code: str
 
 class GoogleLoginRequest(BaseModel):
     access_token: str
 
 class UpdateProfilePictureRequest(BaseModel):
-    token: str
+    token: Optional[str] = None
     profile_picture: str # Base64 string
