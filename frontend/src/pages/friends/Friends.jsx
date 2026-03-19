@@ -12,7 +12,9 @@ import {
     Paper,
     Snackbar,
     Alert,
-    Tooltip
+    Tooltip,
+    useTheme,
+    useMediaQuery
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
@@ -33,6 +35,8 @@ export default function Friends() {
     const [loading, setLoading] = useState(false);
     const [searching, setSearching] = useState(false);
     const [notification, setNotification] = useState({ open: false, message: "", severity: "success" });
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const navigate = useNavigate();
 
     const token = localStorage.getItem("token");
@@ -241,19 +245,20 @@ export default function Friends() {
                                     <Button 
                                         variant="contained" 
                                         size="small"
-                                        startIcon={sentRequests.some(r => r.username === user.username) ? null : <PersonAddIcon />}
+                                        startIcon={sentRequests.some(r => r.username === user.username) ? null : (!isMobile && <PersonAddIcon />)}
                                         onClick={() => addFriend(user.username)}
                                         disabled={friends.some(f => f.username === user.username) || sentRequests.some(r => r.username === user.username) || pendingRequests.some(r => r.username === user.username)}
                                         sx={{ 
                                             borderRadius: '8px', 
                                             textTransform: 'none',
                                             bgcolor: '#6366F1',
+                                            minWidth: isMobile ? '80px' : 'auto',
                                             '&:hover': { bgcolor: '#4F46E5' }
                                         }}
                                     >
                                         {friends.some(f => f.username === user.username) ? 'Friend' : 
-                                         sentRequests.some(r => r.username === user.username) ? 'Pending' :
-                                         pendingRequests.some(r => r.username === user.username) ? 'Requested You' : 'Add'}
+                                         sentRequests.some(r => r.username === user.username) ? (isMobile ? 'Pend' : 'Pending') :
+                                         pendingRequests.some(r => r.username === user.username) ? (isMobile ? 'Req' : 'Requested You') : 'Add'}
                                     </Button>
                                 </Box>
                             ))
@@ -282,8 +287,10 @@ export default function Friends() {
                                     borderRadius: '16px',
                                     p: 2,
                                     display: 'flex',
-                                    alignItems: 'center',
+                                    flexDirection: isMobile ? 'column' : 'row',
+                                    alignItems: isMobile ? 'stretch' : 'center',
                                     justifyContent: 'space-between',
+                                    gap: 2,
                                     backdropFilter: 'blur(10px)',
                                 }}>
                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2.5 }}>
@@ -294,10 +301,11 @@ export default function Friends() {
                                         </Box>
                                     </Box>
                                     
-                                    <Box sx={{ display: 'flex', gap: 1.5 }}>
+                                    <Box sx={{ display: 'flex', gap: 1.5, width: isMobile ? '100%' : 'auto' }}>
                                         <Button 
                                             variant="contained" 
                                             size="small"
+                                            fullWidth={isMobile}
                                             onClick={() => acceptFriend(req.username)}
                                             sx={{ borderRadius: '10px', bgcolor: '#10B981', '&:hover': { bgcolor: '#059669' }, textTransform: 'none', px: 3 }}
                                         >
@@ -306,6 +314,7 @@ export default function Friends() {
                                         <Button 
                                             variant="outlined" 
                                             size="small"
+                                            fullWidth={isMobile}
                                             onClick={() => rejectFriend(req.username)}
                                             sx={{ borderRadius: '10px', color: '#EF4444', borderColor: 'rgba(239, 68, 68, 0.3)', '&:hover': { borderColor: '#EF4444', bgcolor: 'rgba(239, 68, 68, 0.05)' }, textTransform: 'none' }}
                                         >
@@ -337,10 +346,12 @@ export default function Friends() {
                                     bgcolor: 'rgba(30, 41, 59, 0.4)', 
                                     border: '1px solid rgba(255, 255, 255, 0.05)',
                                     borderRadius: '16px',
-                                    p: 2,
+                                    p: isMobile ? 1.5 : 2,
                                     display: 'flex',
-                                    alignItems: 'center',
+                                    flexDirection: isMobile ? 'column' : 'row',
+                                    alignItems: isMobile ? 'stretch' : 'center',
                                     justifyContent: 'space-between',
+                                    gap: isMobile ? 2 : 0,
                                     transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                                     backdropFilter: 'blur(10px)',
                                     '&:hover': {
@@ -374,9 +385,10 @@ export default function Friends() {
                                         </Box>
                                     </Box>
 
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: isMobile ? 'space-between' : 'flex-end', gap: 1.5 }}>
                                         <Button 
                                             variant="contained" 
+                                            fullWidth={isMobile}
                                             startIcon={<VideocamIcon style={{ fontSize: 18 }} />}
                                             onClick={() => handleMeet(friend.username)}
                                             sx={{ 
@@ -396,19 +408,21 @@ export default function Friends() {
                                         >
                                             Meet
                                         </Button>
-                                        <IconButton 
-                                            sx={{ 
-                                                bgcolor: 'rgba(255,255,255,0.03)', 
-                                                borderRadius: '10px',
-                                                color: '#94A3B8',
-                                                '&:hover': { color: 'white', bgcolor: 'rgba(99, 102, 241, 0.15)' }
-                                            }}
-                                        >
-                                            <ChatBubbleOutlineIcon fontSize="small" />
-                                        </IconButton>
-                                        <IconButton size="small" sx={{ color: '#475569' }}>
-                                            <MoreVertIcon fontSize="small" />
-                                        </IconButton>
+                                        <Box sx={{ display: 'flex', gap: 1 }}>
+                                            <IconButton 
+                                                sx={{ 
+                                                    bgcolor: 'rgba(255,255,255,0.03)', 
+                                                    borderRadius: '10px',
+                                                    color: '#94A3B8',
+                                                    '&:hover': { color: 'white', bgcolor: 'rgba(99, 102, 241, 0.15)' }
+                                                }}
+                                            >
+                                                <ChatBubbleOutlineIcon fontSize="small" />
+                                            </IconButton>
+                                            <IconButton size="small" sx={{ color: '#475569' }}>
+                                                <MoreVertIcon fontSize="small" />
+                                            </IconButton>
+                                        </Box>
                                     </Box>
                                 </Paper>
                             </Fade>

@@ -69,9 +69,9 @@ export default function ScheduleSidebar({ meetings = [], onEdit }) {
         const name = typeof p === 'object' ? p.name : (p.includes('(') ? p.split('(')[0].trim() : (p.includes('@') ? p.split('@')[0] : p));
         const email = typeof p === 'object' ? p.username : (p.includes('(') ? p.split('(')[1].replace(')', '').trim() : (p.includes('@') ? p : ''));
         const status = typeof p === 'object' ? (p.status || 'pending') : 'pending';
-        
+
         const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-        
+
         // Map status to UI properties
         let statusLabel = status.charAt(0).toUpperCase() + status.slice(1);
         let statusColor = 'default';
@@ -235,9 +235,9 @@ export default function ScheduleSidebar({ meetings = [], onEdit }) {
                             label={p.status}
                             size="small"
                             color={p.color}
-                            sx={{ 
-                                height: 20, 
-                                fontSize: '0.65rem', 
+                            sx={{
+                                height: 20,
+                                fontSize: '0.65rem',
                                 fontWeight: 700,
                                 bgcolor: p.status === 'Confirmed' ? 'rgba(34, 197, 94, 0.15)' :
                                     p.status === 'Pending' ? 'rgba(234, 179, 8, 0.15)' :
@@ -269,30 +269,62 @@ export default function ScheduleSidebar({ meetings = [], onEdit }) {
 
             {/* Action Buttons */}
             <Box sx={{ mt: 3, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                {nextMeeting.isToday && (
-                    <Button
-                        variant="contained"
-                        onClick={() => navigate(`/${nextMeeting.meetingCode || nextMeeting.id}`)}
-                        sx={{
-                            bgcolor: '#6366F1',
-                            color: '#FFFFFF',
-                            borderRadius: '12px',
-                            textTransform: 'none',
-                            fontWeight: 700,
-                            fontSize: '1rem',
-                            py: 1.5,
-                            boxShadow: '0 4px 14px 0 rgba(99, 102, 241, 0.4)',
-                            transition: 'all 0.3s ease',
-                            '&:hover': {
-                                bgcolor: '#4F46E5',
-                                boxShadow: '0 6px 20px rgba(99, 102, 241, 0.6)',
-                                transform: 'translateY(-2px)',
-                            }
-                        }}
-                    >
-                        Join Meeting
-                    </Button>
-                )}
+                {nextMeeting.isToday && (() => {
+                    const hostEmail = nextMeeting.user_id;
+                    const isHost = hostEmail === currentUserEmail;
+
+                    // Check if there are any pending participants (excluding the host)
+                    const hasPendingParticipants = nextMeeting.participants?.some(p => {
+                        const pEmail = typeof p === 'object' ? p.username : p;
+                        const pStatus = typeof p === 'object' ? p.status : 'pending';
+                        return pEmail !== hostEmail && pStatus === 'pending';
+                    });
+
+                    // Check if current user is confirmed (for participants)
+                    const isConfirmedParticipant = nextMeeting.participants?.some(p => {
+                        const pEmail = typeof p === 'object' ? p.username : p;
+                        const pStatus = typeof p === 'object' ? p.status : 'pending';
+                        return pEmail === currentUserEmail && pStatus === 'confirmed';
+                    });
+
+                    // Check if at least one participant has confirmed
+                    const atLeastOneConfirmed = nextMeeting.participants?.some(p => {
+                        const pEmail = typeof p === 'object' ? p.username : p;
+                        const pStatus = typeof p === 'object' ? p.status : 'pending';
+                        return pEmail !== hostEmail && pStatus === 'confirmed';
+                    });
+
+                    if (isHost) {
+                        // Host sees button ONLY if at least one person confirmed AND no one is pending
+                        return atLeastOneConfirmed && !hasPendingParticipants;
+                    } else {
+                        // Participant sees button ONLY if they have confirmed
+                        return isConfirmedParticipant;
+                    }
+                })() && (
+                        <Button
+                            variant="contained"
+                            onClick={() => navigate(`/${nextMeeting.meetingCode || nextMeeting.id}`)}
+                            sx={{
+                                bgcolor: '#6366F1',
+                                color: '#FFFFFF',
+                                borderRadius: '12px',
+                                textTransform: 'none',
+                                fontWeight: 700,
+                                fontSize: '1rem',
+                                py: 1.5,
+                                boxShadow: '0 4px 14px 0 rgba(99, 102, 241, 0.4)',
+                                transition: 'all 0.3s ease',
+                                '&:hover': {
+                                    bgcolor: '#4F46E5',
+                                    boxShadow: '0 6px 20px rgba(99, 102, 241, 0.6)',
+                                    transform: 'translateY(-2px)',
+                                }
+                            }}
+                        >
+                            Join Meeting
+                        </Button>
+                    )}
 
                 {nextMeeting.isHost && (
                     <Button
