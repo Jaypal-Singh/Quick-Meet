@@ -32,6 +32,8 @@ export default function Login() {
 
             if (request.status === 200) {
                 // Token is now set in HttpOnly cookie by server
+                // AND returned in JSON for explicit localStorage storage
+                localStorage.setItem('token', request.data.token);
                 localStorage.setItem('email', email);
                 if (request.data.name) {
                     localStorage.setItem('username', request.data.name);
@@ -62,6 +64,8 @@ export default function Login() {
 
                 if (response.status === 200) {
                     // Token is now set in HttpOnly cookie by server
+                    // AND returned in JSON for explicit localStorage storage
+                    localStorage.setItem('token', response.data.token);
                     localStorage.setItem('email', response.data.email);
                     localStorage.setItem('username', response.data.name);
                     localStorage.setItem('name', response.data.name);
