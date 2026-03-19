@@ -4,6 +4,7 @@ import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNone
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import VideocamOutlinedIcon from '@mui/icons-material/VideocamOutlined';
+import CloseIcon from '@mui/icons-material/Close';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 const server = import.meta.env.VITE_API_URL;
@@ -19,6 +20,8 @@ const TopHeader = () => {
     const name = localStorage.getItem('name') || 'User';
     const username = localStorage.getItem('username') || '';
 
+    const [profilePic, setProfilePic] = useState(localStorage.getItem('profile_picture') || null);
+
     const fetchNotifications = async () => {
         if (!token) return;
         try {
@@ -33,7 +36,12 @@ const TopHeader = () => {
     useEffect(() => {
         fetchNotifications();
 
-
+        // Listen for profile updates
+        const handleProfileUpdate = () => {
+            setProfilePic(localStorage.getItem('profile_picture') || null);
+        };
+        window.addEventListener('profileUpdate', handleProfileUpdate);
+        
         // Listen for real-time refresh event
         const handleRefresh = () => {
             console.log('TopHeader: Refreshing notifications due to real-time update');
@@ -42,10 +50,12 @@ const TopHeader = () => {
 
         window.addEventListener('refreshMeetings', handleRefresh);
 
+        
         const interval = setInterval(fetchNotifications, 30000); // poll every 30s
         return () => {
             clearInterval(interval);
             window.removeEventListener('refreshMeetings', handleRefresh);
+            window.removeEventListener('profileUpdate', handleProfileUpdate);
         };
     }, []);
 
@@ -74,6 +84,22 @@ const TopHeader = () => {
             await axios.put(`${server}/api/v1/notifications/read-all`, null, { params: { token } });
             setNotifications([]);
         } catch (e) {/* ignore */ }
+    };
+
+    const respondToFriendRequest = async (id, requesterUsername, action) => {
+        try {
+            await axios.post(`${server}/api/v1/friends/${action}`, {
+                token,
+                friend_username: requesterUsername
+            });
+            markRead(id);
+            // If we are on the friends page, refresh it
+            if (window.location.pathname === '/friends') {
+                window.dispatchEvent(new CustomEvent('refreshFriends'));
+            }
+        } catch (e) {
+            console.error(`Error ${action}ing friend request:`, e);
+        }
     };
 
     useEffect(() => {
@@ -194,7 +220,9 @@ const TopHeader = () => {
                                                             onClick={() => {
                                                                 markRead(id);
                                                                 navigate(`/video-meet?roomID=${n.data.meeting_code}`);
+
                                                             }}
+                                                        
                                                             size="small"
                                                             title="Join Meeting"
                                                             sx={{
@@ -206,7 +234,35 @@ const TopHeader = () => {
                                                             <VideocamOutlinedIcon fontSize="small" />
                                                         </IconButton>
                                                     )}
-                                                    {!n.read && (
+                                                    {n.type === 'friend_request' && n.data?.sender_username && (
+                                                        <Box sx={{ display: 'flex', gap: 0.5 }}>
+                                                            <IconButton
+                                                                onClick={() => respondToFriendRequest(id, n.data.sender_username, 'accept')}
+                                                                size="small"
+                                                                title="Accept Request"
+                                                                sx={{
+                                                                    color: '#10B981',
+                                                                    bgcolor: 'rgba(16,185,129,0.1)',
+                                                                    '&:hover': { bgcolor: 'rgba(16,185,129,0.2)' }
+                                                                }}
+                                                            >
+                                                                <CheckCircleOutlineIcon fontSize="small" />
+                                                            </IconButton>
+                                                            <IconButton
+                                                                onClick={() => respondToFriendRequest(id, n.data.sender_username, 'reject')}
+                                                                size="small"
+                                                                title="Reject Request"
+                                                                sx={{
+                                                                    color: '#EF4444',
+                                                                    bgcolor: 'rgba(239,68,68,0.1)',
+                                                                    '&:hover': { bgcolor: 'rgba(239,68,68,0.2)' }
+                                                                }}
+                                                            >
+                                                                <CloseIcon fontSize="small" />
+                                                            </IconButton>
+                                                        </Box>
+                                                    )}
+                                                    {!n.read && n.type !== 'friend_request' && (
                                                         <IconButton onClick={() => markRead(id)} size="small" title="Delete" sx={{ color: '#4B5563', '&:hover': { color: '#ef4444' } }}>
                                                             <CheckCircleOutlineIcon fontSize="small" />
                                                         </IconButton>
@@ -229,6 +285,11 @@ const TopHeader = () => {
                     </Box>
                     <Box
                         component="img"
+                        // src={`https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=8B5CF6&color=FFFFFF&bold=true&size=36`}
+
+                        // src={profilePic || https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=8B5CF6&color=FFFFFF&bold=true&size=36}
+                        src={profilePic || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=8B5CF6&color=FFFFFF&bold=true&size=36`}
+                        
                         alt={name}
                         sx={{ width: { xs: '32px', sm: '36px' }, height: { xs: '32px', sm: '36px' }, borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(139, 92, 246, 0.3)' }}
                     />

@@ -156,3 +156,81 @@ async def notify_meeting_reminder(token: Optional[str], username: str, title: st
         print(f"Error saving reminder to DB: {e}")
         
     return success
+
+async def notify_friend_request(token: Optional[str], sender_name: str, sender_username: str, recipient_username: str):
+    """
+    Utility for friend request notifications.
+    """
+    title = "New Friend Request"
+    body = f"{sender_name} (@{sender_username}) wants to be your friend."
+    
+    success = False
+    if token:
+        success = await send_push_notification(
+            token=token,
+            title=title,
+            body=body,
+            data={
+                "type": "friend_request",
+                "sender_username": sender_username,
+                "click_action": "FLUTTER_NOTIFICATION_CLICK"
+            }
+        )
+    
+    # Save to database
+    try:
+        notification_record = Notification(
+            recipient_username=recipient_username,
+            sender_username=sender_username,
+            title=title,
+            body=body,
+            type="friend_request",
+            data={
+                "sender_username": sender_username,
+                "sender_name": sender_name
+            }
+        )
+        await notification_record.create()
+    except Exception as e:
+        print(f"Error saving notification to DB: {e}")
+        
+    return success
+
+async def notify_friend_accept(token: Optional[str], acceptor_name: str, acceptor_username: str, recipient_username: str):
+    """
+    Utility for friend request acceptance notifications.
+    """
+    title = "Friend Request Accepted"
+    body = f"{acceptor_name} accepted your friend request!"
+    
+    success = False
+    if token:
+        success = await send_push_notification(
+            token=token,
+            title=title,
+            body=body,
+            data={
+                "type": "friend_accepted",
+                "acceptor_username": acceptor_username,
+                "click_action": "FLUTTER_NOTIFICATION_CLICK"
+            }
+        )
+    
+    # Save to database
+    try:
+        notification_record = Notification(
+            recipient_username=recipient_username,
+            sender_username=acceptor_username,
+            title=title,
+            body=body,
+            type="friend_accepted",
+            data={
+                "acceptor_username": acceptor_username,
+                "acceptor_name": acceptor_name
+            }
+        )
+        await notification_record.create()
+    except Exception as e:
+        print(f"Error saving notification to DB: {e}")
+        
+    return success
