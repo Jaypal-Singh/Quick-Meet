@@ -111,13 +111,17 @@ async def remove_profile_picture(token: str):
     return {"message": "Profile picture removed successfully"}
 
 async def check_auth(token: str):
+    print(f"[Auth] Checking token from cookie: {token}")
     if not token:
+        print("[Auth] No token found in cookie")
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
     
     user = await User.find_one(User.token == token)
     if not user:
+        print(f"[Auth] No user found for token: {token}")
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid session")
     
+    print(f"[Auth] User authenticated: {user.username}")
     return {
         "authenticated": True, 
         "user": {
