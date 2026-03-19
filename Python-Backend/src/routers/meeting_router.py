@@ -19,3 +19,7 @@ async def delete_meeting(meeting_code: str, token: str):
 @router.get("/")
 async def get_user_meetings(token: str):
     return await meeting_controller.get_user_meetings(token)
+
+@router.post("/{meeting_code}/respond")
+async def respond_to_meeting(meeting_code: str, action: str, token: str):
+    return await meeting_controller.respond_to_meeting(meeting_code, action, token)

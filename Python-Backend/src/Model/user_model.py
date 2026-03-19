@@ -9,6 +9,7 @@ class User(Document):
     password: str
     token: Optional[str] = None
     fcm_token: Optional[str] = None
+    profile_picture: Optional[str] = None
 
     class Settings:
         name = "users"
@@ -28,3 +29,7 @@ class AddToActivityRequest(BaseModel):
 
 class GoogleLoginRequest(BaseModel):
     access_token: str
+
+class UpdateProfilePictureRequest(BaseModel):
+    token: str
+    profile_picture: str # Base64 string

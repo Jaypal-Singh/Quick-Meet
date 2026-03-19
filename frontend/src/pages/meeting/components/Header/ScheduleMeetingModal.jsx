@@ -44,7 +44,7 @@ const ScheduleMeetingModal = ({ open, onClose, onSchedule, onDelete, initialData
             const token = localStorage.getItem('token');
             if (open && token) {
                 try {
-                    const response = await axios.get(`http://localhost:8000/api/v1/friends/list?token=${token}`);
+                    const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/friends/list?token=${token}`);
                     const data = Array.isArray(response.data) ? response.data : [];
                     setFriends(data.map(f => ({ name: f.name, email: f.username })));
                 } catch (error) {
@@ -68,8 +68,14 @@ const ScheduleMeetingModal = ({ open, onClose, onSchedule, onDelete, initialData
                     endTime: initialData.endTime || '',
                     participants: initialData.participants
                         ? (Array.isArray(initialData.participants)
-                            ? initialData.participants
-                            : initialData.participants.split(',').map(p => p.trim()).filter(Boolean))
+                            ? initialData.participants.map(p => {
+                                if (typeof p === 'object') return p.username;
+                                return p.includes('(') ? p.split('(')[1].replace(')', '').trim() : p;
+                            })
+                            : initialData.participants.split(',').map(p => {
+                                const trimmed = p.trim();
+                                return trimmed.includes('(') ? trimmed.split('(')[1].replace(')', '').trim() : trimmed;
+                            }).filter(Boolean))
                         : []
                 });
             } else {
@@ -108,8 +114,8 @@ const ScheduleMeetingModal = ({ open, onClose, onSchedule, onDelete, initialData
         const payload = {
             ...meetingData,
             participants: Array.isArray(meetingData.participants)
-                ? meetingData.participants.join(', ')
-                : meetingData.participants
+                ? meetingData.participants
+                : meetingData.participants.split(',').map(p => p.trim()).filter(Boolean)
         };
         onSchedule(payload);
         onClose();

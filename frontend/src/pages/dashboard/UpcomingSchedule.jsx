@@ -17,10 +17,19 @@ const UpcomingSchedule = () => {
         const fetchMeetings = async () => {
             if (!token) return;
             try {
-                const response = await axios.get(`http://localhost:8000/api/v1/meetings/?token=${token}`);
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/meetings/?token=${token}`);
                 const now = new Date();
+                const email = localStorage.getItem('email');
                 const data = Array.isArray(response.data) ? response.data : [];
-                const filtered = data.filter(m => new Date(m.startTime) > now)
+                const filtered = data.filter(m => {
+                    const isFuture = new Date(m.startTime) > now;
+                    if (!isFuture) return false;
+                    if (m.user_id === email) return true;
+                    const myParticipant = Array.isArray(m.participants) 
+                        ? m.participants.find(p => (typeof p === 'object' ? p.username : p) === email)
+                        : null;
+                    return !myParticipant || myParticipant.status !== 'rejected';
+                })
                     .map(m => {
                         const start = new Date(m.startTime);
                         const end = new Date(m.endTime);
@@ -33,6 +42,11 @@ const UpcomingSchedule = () => {
                             date: start.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
                             time: `${start.getHours()}:${start.getMinutes().toString().padStart(2, '0')}`,
                             duration: durationInMinutes > 60 ? `${(durationInMinutes / 60).toFixed(1)} hours` : `${durationInMinutes} mins`,
+                            participants: Array.isArray(m.participants) 
+                                ? m.participants.map(p => typeof p === 'object' ? p : { name: p, username: p, status: 'pending' })
+                                : (m.participants && typeof m.participants === 'string' 
+                                    ? m.participants.split(',').map(p => ({ name: p.trim(), username: p.trim(), status: 'pending' })) 
+                                    : []),
                             participantCount: Array.isArray(m.participants) ? m.participants.length : 0
                         };
                     })

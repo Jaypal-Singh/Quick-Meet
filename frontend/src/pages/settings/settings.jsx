@@ -1,12 +1,20 @@
 import React, { useState } from 'react';
+import UserProfileView from './components/UserProfileView';
 import EditIcon from '@mui/icons-material/Edit';
 import StarIcon from '@mui/icons-material/Star';
 import LockIcon from '@mui/icons-material/Lock';
-import { Switch } from '@mui/material';
+import { Switch, Avatar, Box, Typography } from '@mui/material';
 
 export default function Settings() {
-    const [activeTab, setActiveTab] = useState('Profile');
-    const tabs = ['Profile', 'Account', 'Notifications', 'Meetings'];
+    const [showFullProfile, setShowFullProfile] = useState(false);
+    
+    const name = localStorage.getItem('name') || 'User';
+    const email = localStorage.getItem('email') || '';
+    const profilePic = localStorage.getItem('profile_picture') || null;
+
+    if (showFullProfile) {
+        return <UserProfileView onBack={() => setShowFullProfile(false)} />;
+    }
 
     return (
         <div style={{ color: 'white', maxWidth: '900px', width: '100%', paddingBottom: '40px' }}>
@@ -19,120 +27,51 @@ export default function Settings() {
             }}>Settings</h1>
             <p style={{ color: '#9CA3AF', fontSize: '14px', margin: '0 0 32px 0' }}>Manage your account, preferences, and meeting experience.</p>
 
-            {/* Tabs */}
-            <div style={{ 
-                display: 'flex', 
-                borderBottom: '1px solid rgba(255, 255, 255, 0.05)', 
-                marginBottom: '32px',
-                overflowX: 'auto',
-                whiteSpace: 'nowrap',
-                msOverflowStyle: 'none',
-                scrollbarWidth: 'none',
-                WebkitOverflowScrolling: 'touch'
-            }}>
-                <style>
-                    {`
-                        div::-webkit-scrollbar {
-                            display: none;
-                        }
-                    `}
-                </style>
-                {tabs.map((tab) => (
-                    <div
-                        key={tab}
-                        onClick={() => setActiveTab(tab)}
-                        style={{
-                            padding: '0 24px 16px 24px',
-                            cursor: 'pointer',
-                            color: activeTab === tab ? 'white' : '#9CA3AF',
-                            fontWeight: activeTab === tab ? 600 : 500,
-                            position: 'relative',
-                            transition: 'color 0.2s',
-                            flexShrink: 0
-                        }}
-                    >
-                        {tab}
-                        {activeTab === tab && (
-                            <div style={{
-                                position: 'absolute',
-                                bottom: '-1px',
-                                left: 0,
-                                right: 0,
-                                height: '2px',
-                                background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)',
-                            }} />
-                        )}
-                    </div>
-                ))}
-            </div>
 
             {/* Content blocks */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
 
-                {/* Profile Information */}
+                {/* Compact Profile Header */}
                 <div style={{
                     backgroundColor: '#1C2230',
                     border: '1px solid rgba(255, 255, 255, 0.05)',
                     borderRadius: '16px',
-                    padding: '32px',
+                    padding: '24px 32px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '20px'
                 }}>
-                    <h2 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 24px 0' }}>Profile Information</h2>
-                    <div style={{ display: 'flex', gap: '32px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
-                        {/* Avatar */}
-                        <div style={{ position: 'relative' }}>
-                            <img
-                                src="https://ui-avatars.com/api/?name=Alex+Johnson&background=8B5CF6&color=FFFFFF&size=100&bold=true"
-                                alt="Profile"
-                                style={{
-                                    width: '100px', height: '100px', borderRadius: '50%',
-                                    objectFit: 'cover', border: '3px solid #131722'
-                                }}
-                            />
-                            <div style={{
-                                position: 'absolute', bottom: 0, right: 0,
-                                background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)',
-                                borderRadius: '50%', width: '32px', height: '32px',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                cursor: 'pointer', border: '3px solid #1C2230'
-                            }}>
-                                <EditIcon style={{ fontSize: '16px', color: 'white' }} />
-                            </div>
-                        </div>
-
-                        {/* Form Fields */}
-                        <div style={{ flex: 1, minWidth: '300px', display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-                            <div style={{ flex: 1, minWidth: '200px' }}>
-                                <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#9CA3AF', marginBottom: '8px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>Full Name</label>
-                                <input
-                                    type="text"
-                                    defaultValue="Alex Johnson"
-                                    style={{
-                                        width: '100%', boxSizing: 'border-box',
-                                        backgroundColor: '#131722', border: '1px solid rgba(255, 255, 255, 0.05)',
-                                        borderRadius: '8px', padding: '14px 16px', color: 'white',
-                                        fontSize: '14px', outline: 'none', transition: 'border-color 0.2s'
-                                    }}
-                                    onFocus={(e) => e.target.style.borderColor = '#8B5CF6'}
-                                    onBlur={(e) => e.target.style.borderColor = 'rgba(255, 255, 255, 0.05)'}
-                                />
-                            </div>
-                            <div style={{ flex: 1, minWidth: '200px' }}>
-                                <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#9CA3AF', marginBottom: '8px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>Email Address</label>
-                                <input
-                                    type="email"
-                                    defaultValue="alex.johnson@meetnext.io"
-                                    style={{
-                                        width: '100%', boxSizing: 'border-box',
-                                        backgroundColor: '#131722', border: '1px solid rgba(255, 255, 255, 0.05)',
-                                        borderRadius: '8px', padding: '14px 16px', color: 'white',
-                                        fontSize: '14px', outline: 'none', transition: 'border-color 0.2s'
-                                    }}
-                                    onFocus={(e) => e.target.style.borderColor = '#8B5CF6'}
-                                    onBlur={(e) => e.target.style.borderColor = 'rgba(255, 255, 255, 0.05)'}
-                                />
-                            </div>
-                        </div>
-                    </div>
+                    <Avatar 
+                        src={profilePic || undefined}
+                        sx={{ 
+                            width: 64, 
+                            height: 64, 
+                            bgcolor: '#8B5CF6',
+                            fontSize: '24px',
+                            fontWeight: 700,
+                            boxShadow: '0 0 20px rgba(139, 92, 246, 0.3)'
+                        }}
+                    >
+                        {!profilePic && name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                    </Avatar>
+                    <Box sx={{ flex: 1 }}>
+                        <Typography sx={{ fontSize: '18px', fontWeight: 700, color: 'white', mb: 0.5 }}>
+                            {name}
+                        </Typography>
+                        <Typography 
+                            onClick={() => setShowFullProfile(true)}
+                            sx={{ 
+                                fontSize: '12px', 
+                                fontWeight: 700, 
+                                color: '#6366F1', 
+                                cursor: 'pointer',
+                                letterSpacing: '0.5px',
+                                '&:hover': { textDecoration: 'underline' }
+                            }}
+                        >
+                            VIEW PROFILE
+                        </Typography>
+                    </Box>
                 </div>
 
                 {/* Account & Security */}
@@ -159,7 +98,7 @@ export default function Settings() {
                                 </div>
                                 <div>
                                     <p style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: 600, color: 'white' }}>Subscription Plan</p>
-                                    <p style={{ margin: 0, fontSize: '13px', color: '#9CA3AF' }}>MeetNext Pro — $15/month</p>
+                                    <p style={{ margin: 0, fontSize: '13px', color: '#9CA3AF' }}>Premium Plan — Active</p>
                                 </div>
                             </div>
                             <button style={{

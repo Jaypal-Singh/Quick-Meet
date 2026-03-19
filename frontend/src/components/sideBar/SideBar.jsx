@@ -42,6 +42,7 @@ export default function SideBar() {
     };
 
     const username = localStorage.getItem('username') || 'User';
+    const profilePic = localStorage.getItem('profile_picture') || null;
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -286,8 +287,14 @@ export default function SideBar() {
                         </MenuItem>
                     </Menu>
                     <Box sx={{ bgcolor: 'rgba(34, 43, 61, 0.6)', border: '1px solid rgba(255, 255, 255, 0.05)', backdropFilter: 'blur(10px)', borderRadius: '16px', p: 1.5, display: 'flex', alignItems: 'center', gap: 1.5, transition: 'all 0.3s ease', cursor: 'pointer', '&:hover': { bgcolor: 'rgba(34, 43, 61, 0.9)', borderColor: 'rgba(255, 255, 255, 0.1)', transform: 'translateY(-2px)', boxShadow: '0 8px 24px rgba(0,0,0,0.2)', '& .profile-icon': { color: '#FFFFFF', bgcolor: '#6366F1' } } }}>
-                        <Box className="profile-icon" sx={{ bgcolor: '#171C28', borderRadius: '12px', width: 38, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s ease' }}>
-                            <PersonOutlineIcon sx={{ color: '#94A3B8', fontSize: 20, transition: 'color 0.3s ease' }} />
+                        <Box className="profile-icon" sx={{ bgcolor: '#171C28', borderRadius: '12px', width: 38, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s ease', overflow: 'hidden', flexShrink: 0 }}>
+                            {profilePic ? (
+                                <img src={profilePic} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px' }} />
+                            ) : (
+                                <Typography sx={{ fontSize: '13px', fontWeight: 700, color: '#94A3B8' }}>
+                                    {username.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                </Typography>
+                            )}
                         </Box>
                         <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
                             <Typography variant="body2" sx={{ fontWeight: 600, color: 'white', lineHeight: 1.2 }}>{username}</Typography>

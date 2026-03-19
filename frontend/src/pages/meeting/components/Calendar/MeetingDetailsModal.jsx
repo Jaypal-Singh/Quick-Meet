@@ -19,9 +19,30 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import EventIcon from '@mui/icons-material/Event';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import GroupIcon from '@mui/icons-material/Group';
+import ActionConfirmModal from './ActionConfirmModal';
 
-const MeetingDetailsModal = ({ open, onClose, meeting, onEdit }) => {
+const MeetingDetailsModal = ({ open, onClose, meeting, onEdit, onAccept, onReject }) => {
+    const [isConfirmOpen, setIsConfirmOpen] = React.useState(false);
+    const currentUserEmail = localStorage.getItem('email');
+
     if (!meeting) return null;
+
+    // Find current user's status
+    const myParticipant = Array.isArray(meeting.participants) 
+        ? meeting.participants.find(p => p.username === currentUserEmail)
+        : null;
+    
+    const isPending = myParticipant?.status === 'pending';
+    const isConfirmed = myParticipant?.status === 'confirmed';
+
+    const handleRejectClick = () => {
+        setIsConfirmOpen(true);
+    };
+
+    const handleConfirmReject = () => {
+        if (onReject) onReject(meeting.meetingCode);
+        onClose();
+    };
 
     return (
         <Dialog
@@ -102,7 +123,20 @@ const MeetingDetailsModal = ({ open, onClose, meeting, onEdit }) => {
                             <Box>
                                 <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 1 }}>Participants</Typography>
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                                    {meeting.participants.split(',').map((p, i) => (
+                                    {Array.isArray(meeting.participants) ? meeting.participants.map((p, i) => (
+                                        <Chip 
+                                            key={i} 
+                                            label={typeof p === 'object' ? `${p.name} (${p.status})` : p.trim()} 
+                                            size="small" 
+                                            sx={{ 
+                                                bgcolor: 'rgba(99, 102, 241, 0.1)', 
+                                                color: '#8B5CF6',
+                                                border: '1px solid rgba(139, 92, 246, 0.2)',
+                                                fontWeight: 500,
+                                                fontSize: '0.75rem'
+                                            }} 
+                                        />
+                                    )) : meeting.participants.split(',').map((p, i) => (
                                         <Chip 
                                             key={i} 
                                             label={p.trim()} 
@@ -123,30 +157,88 @@ const MeetingDetailsModal = ({ open, onClose, meeting, onEdit }) => {
                 </Box>
             </DialogContent>
 
-            <DialogActions sx={{ px: 3, pb: 3, display: 'flex', justifyContent: 'center' }}>
-                <Button
-                    fullWidth
-                    onClick={() => {
-                        if (onEdit) onEdit(meeting);
-                        onClose();
-                    }}
-                    variant="contained"
-                    sx={{
-                        background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)',
-                        borderRadius: '12px',
-                        textTransform: 'none',
-                        fontWeight: 600,
-                        py: 1.2,
-                        boxShadow: '0 4px 14px 0 rgba(99, 102, 241, 0.3)',
-                        '&:hover': {
-                            background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)',
-                            boxShadow: '0 6px 20px rgba(99, 102, 241, 0.5)',
-                        }
-                    }}
-                >
-                    Edit Meeting
-                </Button>
+            <DialogActions sx={{ px: 3, pb: 3, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                {meeting.isHost ? (
+                    <Button
+                        fullWidth
+                        onClick={() => {
+                            if (onEdit) onEdit(meeting);
+                            onClose();
+                        }}
+                        variant="contained"
+                        sx={{
+                            background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)',
+                            borderRadius: '12px',
+                            textTransform: 'none',
+                            fontWeight: 600,
+                            py: 1.2,
+                            boxShadow: '0 4px 14px 0 rgba(99, 102, 241, 0.3)',
+                            '&:hover': {
+                                background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)',
+                                boxShadow: '0 6px 20px rgba(99, 102, 241, 0.5)',
+                            }
+                        }}
+                    >
+                        Edit Meeting
+                    </Button>
+                ) : (
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, width: '100%' }}>
+                        {isPending && (
+                            <Button
+                                fullWidth
+                                onClick={() => {
+                                    if (onAccept) onAccept(meeting.meetingCode);
+                                    onClose();
+                                }}
+                                variant="contained"
+                                sx={{
+                                    background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+                                    borderRadius: '12px',
+                                    textTransform: 'none',
+                                    fontWeight: 600,
+                                    py: 1.2,
+                                    boxShadow: '0 4px 14px 0 rgba(16, 185, 129, 0.3)',
+                                    '&:hover': {
+                                        background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
+                                        boxShadow: '0 6px 20px rgba(16, 185, 129, 0.5)',
+                                    }
+                                }}
+                            >
+                                Accept Meeting
+                            </Button>
+                        )}
+                        <Button
+                            fullWidth
+                            onClick={handleRejectClick}
+                            variant="outlined"
+                            sx={{
+                                borderColor: '#EF4444',
+                                color: '#EF4444',
+                                borderRadius: '12px',
+                                textTransform: 'none',
+                                fontWeight: 600,
+                                py: 1.2,
+                                '&:hover': {
+                                    borderColor: '#DC2626',
+                                    bgcolor: 'rgba(239, 68, 68, 0.05)'
+                                }
+                            }}
+                        >
+                            Reject Meeting
+                        </Button>
+                    </Box>
+                )}
             </DialogActions>
+
+            <ActionConfirmModal
+                open={isConfirmOpen}
+                onClose={() => setIsConfirmOpen(false)}
+                onConfirm={handleConfirmReject}
+                title="Reject Meeting Invitation"
+                message={`Are you sure you want to reject the invitation for "${meeting.title}"? This meeting will be removed from your calendar.`}
+                confirmText="Reject Meeting"
+                severity="error"
+            />
         </Dialog>
     );
 };
