@@ -6,6 +6,7 @@ messages = {}
 socket_to_user = {}
 socket_to_client = {}
 socket_video_state = {}
+socket_to_profile_pic = {}
 
 def register_socket_events(sio):
     @sio.event
@@ -35,6 +36,8 @@ def register_socket_events(sio):
                     del socket_to_client[sid]
                 if sid in socket_video_state:
                     del socket_video_state[sid]
+                if sid in socket_to_profile_pic:
+                    del socket_to_profile_pic[sid]
                     
                 break
 
@@ -44,7 +47,7 @@ def register_socket_events(sio):
         await sio.enter_room(sid, username)
 
     @sio.on('join-call')
-    async def handle_join_call(sid, path, username="Guest", client_id=None):
+    async def handle_join_call(sid, path, username="Guest", client_id=None, profile_picture=None):
         if path not in connections:
             connections[path] = set() # Use set to avoid duplicates
             
@@ -59,16 +62,19 @@ def register_socket_events(sio):
                 socket_to_user.pop(old_sid, None)
                 socket_to_client.pop(old_sid, None)
                 socket_video_state.pop(old_sid, None)
+                socket_to_profile_pic.pop(old_sid, None)
         
         connections[path].add(sid)
         socket_to_user[sid] = username
         if client_id:
             socket_to_client[sid] = client_id
         socket_video_state[sid] = True # Default true
+        socket_to_profile_pic[sid] = profile_picture
         
         room_users = {client: {
             "name": socket_to_user.get(client, "Guest"),
-            "video": socket_video_state.get(client, True)
+            "video": socket_video_state.get(client, True),
+            "profile_picture": socket_to_profile_pic.get(client)
         } for client in connections[path]}
         
         # Notify others in the room

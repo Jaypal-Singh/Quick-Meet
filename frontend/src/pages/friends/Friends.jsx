@@ -28,6 +28,8 @@ export default function Friends() {
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState([]);
     const [friends, setFriends] = useState([]);
+    const [pendingRequests, setPendingRequests] = useState([]);
+    const [sentRequests, setSentRequests] = useState([]);
     const [loading, setLoading] = useState(false);
     const [searching, setSearching] = useState(false);
     const [notification, setNotification] = useState({ open: false, message: "", severity: "success" });
@@ -37,6 +39,12 @@ export default function Friends() {
 
     useEffect(() => {
         fetchFriends();
+        
+        const handleRefresh = () => {
+            fetchFriends();
+        };
+        window.addEventListener('refreshFriends', handleRefresh);
+        return () => window.removeEventListener('refreshFriends', handleRefresh);
     }, []);
 
     const handleMeet = async (friendUsername) => {
@@ -63,7 +71,9 @@ export default function Friends() {
             const response = await axios.get(`${server}/api/v1/friends/list`, {
                 params: { token }
             });
-            setFriends(response.data);
+            setFriends(response.data.friends || []);
+            setPendingRequests(response.data.pending || []);
+            setSentRequests(response.data.sent || []);
         } catch (error) {
             console.error("Error fetching friends:", error);
         } finally {
@@ -97,14 +107,48 @@ export default function Friends() {
                 token,
                 friend_username: friendUsername
             });
-            setNotification({ open: true, message: response.data.message, severity: "success" });
+            setNotification({ open: true, message: "Friend request sent!", severity: "success" });
             fetchFriends();
             setSearchResults([]);
             setSearchQuery("");
         } catch (error) {
             setNotification({ 
                 open: true, 
-                message: error.response?.data?.detail || "Failed to add friend", 
+                message: error.response?.data?.detail || "Failed to send request", 
+                severity: "error" 
+            });
+        }
+    };
+
+    const acceptFriend = async (friendUsername) => {
+        try {
+            const response = await axios.post(`${server}/api/v1/friends/accept`, {
+                token,
+                friend_username: friendUsername
+            });
+            setNotification({ open: true, message: "Request accepted!", severity: "success" });
+            fetchFriends();
+        } catch (error) {
+            setNotification({ 
+                open: true, 
+                message: "Failed to accept request", 
+                severity: "error" 
+            });
+        }
+    };
+
+    const rejectFriend = async (friendUsername) => {
+        try {
+            await axios.post(`${server}/api/v1/friends/reject`, {
+                token,
+                friend_username: friendUsername
+            });
+            setNotification({ open: true, message: "Request rejected", severity: "info" });
+            fetchFriends();
+        } catch (error) {
+            setNotification({ 
+                open: true, 
+                message: "Failed to reject request", 
                 severity: "error" 
             });
         }
@@ -197,8 +241,9 @@ export default function Friends() {
                                     <Button 
                                         variant="contained" 
                                         size="small"
-                                        startIcon={<PersonAddIcon />}
+                                        startIcon={sentRequests.some(r => r.username === user.username) ? null : <PersonAddIcon />}
                                         onClick={() => addFriend(user.username)}
+                                        disabled={friends.some(f => f.username === user.username) || sentRequests.some(r => r.username === user.username) || pendingRequests.some(r => r.username === user.username)}
                                         sx={{ 
                                             borderRadius: '8px', 
                                             textTransform: 'none',
@@ -206,7 +251,9 @@ export default function Friends() {
                                             '&:hover': { bgcolor: '#4F46E5' }
                                         }}
                                     >
-                                        Add
+                                        {friends.some(f => f.username === user.username) ? 'Friend' : 
+                                         sentRequests.some(r => r.username === user.username) ? 'Pending' :
+                                         pendingRequests.some(r => r.username === user.username) ? 'Requested You' : 'Add'}
                                     </Button>
                                 </Box>
                             ))
@@ -218,6 +265,59 @@ export default function Friends() {
                     </Paper>
                 )}
             </Box>
+
+            {/* Pending Requests Section */}
+            {pendingRequests.length > 0 && (
+                <Box sx={{ mb: 4 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 3, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                        Pending Requests <Box sx={{ fontSize: '0.75rem', bgcolor: 'rgba(234, 179, 8, 0.2)', color: '#EAB308', px: 1.5, py: 0.5, borderRadius: '12px' }}>{pendingRequests.length}</Box>
+                    </Typography>
+                    
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                        {pendingRequests.map((req, index) => (
+                            <Fade in={true} key={req.username}>
+                                <Paper sx={{ 
+                                    bgcolor: 'rgba(30, 41, 59, 0.4)', 
+                                    border: '1px solid rgba(234, 179, 8, 0.2)',
+                                    borderRadius: '16px',
+                                    p: 2,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    backdropFilter: 'blur(10px)',
+                                }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2.5 }}>
+                                        <Avatar sx={{ width: 48, height: 48, bgcolor: 'rgba(234, 179, 8, 0.1)', color: '#EAB308', fontWeight: 700 }}>{req.name[0]}</Avatar>
+                                        <Box>
+                                            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>{req.name}</Typography>
+                                            <Typography variant="body2" sx={{ color: '#94A3B8' }}>@{req.username}</Typography>
+                                        </Box>
+                                    </Box>
+                                    
+                                    <Box sx={{ display: 'flex', gap: 1.5 }}>
+                                        <Button 
+                                            variant="contained" 
+                                            size="small"
+                                            onClick={() => acceptFriend(req.username)}
+                                            sx={{ borderRadius: '10px', bgcolor: '#10B981', '&:hover': { bgcolor: '#059669' }, textTransform: 'none', px: 3 }}
+                                        >
+                                            Accept
+                                        </Button>
+                                        <Button 
+                                            variant="outlined" 
+                                            size="small"
+                                            onClick={() => rejectFriend(req.username)}
+                                            sx={{ borderRadius: '10px', color: '#EF4444', borderColor: 'rgba(239, 68, 68, 0.3)', '&:hover': { borderColor: '#EF4444', bgcolor: 'rgba(239, 68, 68, 0.05)' }, textTransform: 'none' }}
+                                        >
+                                            Ignore
+                                        </Button>
+                                    </Box>
+                                </Paper>
+                            </Fade>
+                        ))}
+                    </Box>
+                </Box>
+            )}
 
             {/* Friends List Section */}
             <Box>
