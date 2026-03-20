@@ -4,8 +4,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CloseIcon from '@mui/icons-material/Close';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import VideocamIcon from '@mui/icons-material/Videocam';
-import axios from 'axios';
-const server = import.meta.env.VITE_API_URL;
+import axiosInstance from '../../utils/axiosInstance';
 
 const MeetingReadyPopup = ({ meetingUrl, username, onClose }) => {
     const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -22,10 +21,7 @@ const MeetingReadyPopup = ({ meetingUrl, username, onClose }) => {
     const fetchFriends = async () => {
         setLoadingFriends(true);
         try {
-            const token = localStorage.getItem("token");
-            const response = await axios.get(`${server}/api/v1/friends/list`, {
-                params: { token }
-            });
+            const response = await axiosInstance.get(`/api/v1/friends/list`);
             setFriends(response.data.friends || []);
         } catch (error) {
             console.error("Error fetching friends:", error);
@@ -52,8 +48,7 @@ const MeetingReadyPopup = ({ meetingUrl, username, onClose }) => {
         }
         
         try {
-            const response = await axios.post(`${server}/api/v1/friends/invite`, {
-                token,
+            const response = await axiosInstance.post(`/api/v1/friends/invite`, {
                 friend_username: friendUsername,
                 meeting_code: meetingCode
             });
@@ -72,7 +67,7 @@ const MeetingReadyPopup = ({ meetingUrl, username, onClose }) => {
     };
 
     return (
-        <div className="absolute bottom-[100px] left-6 w-[360px] max-h-[500px] flex flex-col rounded-xl z-[100] bg-[#1C2230] border border-white/10 shadow-2xl overflow-hidden">
+        <div className="absolute bottom-[100px] left-6 w-[360px] max-h-[500px] flex flex-col rounded-xl z-[100] bg-[#1C2230] border border-white/10 shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300 ease-out">
             
             <div className="p-6 border-b border-white/5">
                 <div className="flex justify-between items-center mb-4">

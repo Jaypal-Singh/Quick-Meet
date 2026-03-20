@@ -17,7 +17,7 @@ import {
     useTheme,
     useMediaQuery
 } from '@mui/material';
-import axios from 'axios';
+import axiosInstance from '../../../../utils/axiosInstance';
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import TitleIcon from '@mui/icons-material/Title';
@@ -48,7 +48,7 @@ const ScheduleMeetingModal = ({ open, onClose, onSchedule, onDelete, initialData
             const token = localStorage.getItem('token');
             if (open && token) {
                 try {
-                    const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/friends/list?token=${token}`);
+                    const response = await axiosInstance.get(`/api/v1/friends/list`);
                     const data = response.data.friends || [];
                     setFriends(data.map(f => ({ name: f.name, email: f.username })));
                 } catch (error) {

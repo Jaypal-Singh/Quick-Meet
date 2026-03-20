@@ -11,12 +11,12 @@ import ChatIcon from '@mui/icons-material/Chat';
 import ClosedCaptionIcon from '@mui/icons-material/ClosedCaption';
 import ClosedCaptionDisabledIcon from '@mui/icons-material/ClosedCaptionDisabled';
 
-import RefreshIcon from '@mui/icons-material/Refresh';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 const VideoControls = ({
     video, audio, screen, screenAvailable, newMessages, showModal, captions,
     handleVideo, handleAudio, handleScreen, handleEndCall, setModal, handleCaptions,
-    handleReconnect
+    toggleMeetingInfo
 }) => {
     return (
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center flex-wrap gap-1 md:gap-3 bg-[#1C2230] px-4 md:px-6 py-2 md:py-3 rounded-full md:rounded-full z-50 shadow-2xl max-w-[95vw] md:max-w-none">
@@ -31,7 +31,7 @@ const VideoControls = ({
 
             {screenAvailable && (
                 <IconButton onClick={handleScreen} sx={{ color: screen ? '#818CF8' : '#ffffff', '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' } }}>
-                    {screen ? <ScreenShareIcon /> : <StopScreenShareIcon />}
+                    {screen ? <StopScreenShareIcon /> : <ScreenShareIcon />}
                 </IconButton>
             )}
 
@@ -39,8 +39,8 @@ const VideoControls = ({
                 {captions ? <ClosedCaptionIcon /> : <ClosedCaptionDisabledIcon />}
             </IconButton>
 
-            <IconButton onClick={handleReconnect} title="Re-sync connection" sx={{ color: '#ffffff', '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)', color: '#818CF8' } }}>
-                <RefreshIcon />
+            <IconButton onClick={toggleMeetingInfo} title="Meeting Info" sx={{ color: '#ffffff', '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)', color: '#818CF8' } }}>
+                <PersonAddIcon />
             </IconButton>
 
             <IconButton

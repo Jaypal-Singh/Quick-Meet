@@ -6,13 +6,13 @@ from src.controllers import meeting_controller
 router = APIRouter()
 
 @router.post("/schedule", status_code=status.HTTP_201_CREATED)
-async def schedule_meeting(meeting_data: MeetingCreate, token: Optional[str] = Cookie(None)):
+async def schedule_meeting(meeting_data: MeetingCreate, token: Optional[str] = Cookie(None, alias="token")):
     if not meeting_data.token:
         meeting_data.token = token
     return await meeting_controller.schedule_meeting(meeting_data)
 
 @router.put("/{meeting_code}")
-async def update_meeting(meeting_code: str, meeting_data: MeetingCreate, token: Optional[str] = Cookie(None)):
+async def update_meeting(meeting_code: str, meeting_data: MeetingCreate, token: Optional[str] = Cookie(None, alias="token")):
     if not meeting_data.token:
         meeting_data.token = token
     return await meeting_controller.update_meeting(meeting_code, meeting_data)

@@ -3,7 +3,7 @@ import { Box, Typography, Button } from '@mui/material';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 
 const UpcomingMeetings = () => {
     const navigate = useNavigate();
@@ -14,7 +14,7 @@ const UpcomingMeetings = () => {
     const fetchMeetings = async () => {
         if (!token) return;
         try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/meetings/?token=${token}`);
+            const response = await axiosInstance.get(`/api/v1/meetings/`);
             const now = new Date();
             const email = localStorage.getItem('email');
             const data = Array.isArray(response.data) ? response.data : [];

@@ -19,12 +19,12 @@ async def google_login(user_data: GoogleLoginRequest):
     return await auth_controller.google_login(user_data)
 
 @router.post("/update_fcm_token")
-async def update_fcm_token(data: UpdateFCMTokenRequest, token: Optional[str] = Cookie(None)):
+async def update_fcm_token(data: UpdateFCMTokenRequest, token: Optional[str] = Cookie(None, alias="token")):
     effective_token = data.token or token
     return await auth_controller.update_fcm_token(effective_token, data.fcm_token)
 
 @router.post("/add_to_activity")
-async def add_to_activity(user_data: AddToActivityRequest, token: Optional[str] = Cookie(None)):
+async def add_to_activity(user_data: AddToActivityRequest, token: Optional[str] = Cookie(None, alias="token")):
     if not user_data.token:
         user_data.token = token # Inject token from cookie if missing from body
     return await auth_controller.add_to_activity(user_data)
@@ -35,7 +35,7 @@ async def get_all_activity(token: Optional[str] = Query(None), cookie_token: Opt
     return await auth_controller.get_all_activity(effective_token)
 
 @router.put("/update_profile_picture")
-async def update_profile_picture(data: UpdateProfilePictureRequest, token: Optional[str] = Cookie(None)):
+async def update_profile_picture(data: UpdateProfilePictureRequest, token: Optional[str] = Cookie(None, alias="token")):
     if not data.token:
         data.token = token # Inject token from cookie if missing from body
     return await auth_controller.update_profile_picture(data)
