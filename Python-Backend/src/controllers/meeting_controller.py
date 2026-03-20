@@ -1,10 +1,10 @@
+import os
 from datetime import datetime
 from src.Model.meeting_model import Meeting, MeetingCreate
 from src.Model.user_model import User
 from fastapi import HTTPException, status
 import uuid
 from src.utils.notification_util import notify_meeting_invite
-from src.core.config import settings
 
 
 async def schedule_meeting(meeting_data: MeetingCreate):
@@ -62,7 +62,7 @@ async def schedule_meeting(meeting_data: MeetingCreate):
                     inviter_username=user.username,
                     recipient_username=p_username,
                     meeting_code=meeting.meetingCode,
-                    meeting_link=f"{settings.FRONTEND_URL}/video-meet?roomID={meeting.meetingCode}"
+                    meeting_link=f"{os.getenv('FRONTEND_URL')}/video-meet?roomID={meeting.meetingCode}"
                 )
             except Exception as e:
                 print(f"Failed to send schedule notification to {p_username}: {e}")
@@ -141,7 +141,7 @@ async def update_meeting(meeting_code: str, meeting_data: MeetingCreate):
                         inviter_username=user.username,
                         recipient_username=p_username,
                         meeting_code=meeting.meetingCode,
-                        meeting_link=f"{settings.FRONTEND_URL}/video-meet?roomID={meeting.meetingCode}"
+                        meeting_link=f"{os.getenv('FRONTEND_URL')}/video-meet?roomID={meeting.meetingCode}"
                     )
                 except Exception as e:
                     print(f"Failed to send update notification to {p_username}: {e}")

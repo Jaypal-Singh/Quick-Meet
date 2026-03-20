@@ -5,12 +5,12 @@ import json
 import base64
 from typing import Dict, Any, Optional
 from src.Model.notification_model import Notification
-from src.core.config import settings
 
 # Initialize Firebase Admin SDK
 try:
-    if settings.FIREBASE_CREDENTIALS_BASE64:
-        cred_dict = json.loads(base64.b64decode(settings.FIREBASE_CREDENTIALS_BASE64).decode('utf-8'))
+    firebase_creds = os.getenv("FIREBASE_CREDENTIALS_BASE64")
+    if firebase_creds:
+        cred_dict = json.loads(base64.b64decode(firebase_creds).decode('utf-8'))
         cred = credentials.Certificate(cred_dict)
         firebase_admin.initialize_app(cred)
         print("Firebase Admin initialized successfully from environment variable.")

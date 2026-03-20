@@ -1,15 +1,25 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import socketio # This import is still needed for socketio.ASGIApp
+import os
+from dotenv import load_dotenv
 
-from src.core.config import settings
+# Load environment variables from .env file
+load_dotenv()
+
 from src.core.socket_instance import sio # Added this import
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:5173", "http://127.0.0.1:5173", "https://quick-meet-coral.vercel.app"],
+    allow_origins=[
+        "http://localhost:3000", 
+        "http://localhost:5173", 
+        "http://127.0.0.1:5173", 
+        "https://quick-meet-coral.vercel.app",
+        os.getenv("FRONTEND_URL")
+    ],
     allow_headers=["*"],
     allow_credentials=True,        
     allow_methods=["*"],
