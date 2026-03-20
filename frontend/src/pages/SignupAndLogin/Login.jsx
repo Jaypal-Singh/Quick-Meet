@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
 import { useGoogleLogin } from '@react-oauth/google';
+import axiosInstance from '../../utils/axiosInstance';
 const server = import.meta.env.VITE_API_URL;
 
 export default function Login() {
@@ -12,6 +12,20 @@ export default function Login() {
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const checkExistingAuth = async () => {
+            try {
+                const res = await axiosInstance.get('/api/v1/users/check_auth');
+                if (res.data.authenticated) {
+                    navigate('/dashboard');
+                }
+            } catch (err) {
+                // Not authenticated, stay on login
+            }
+        };
+        checkExistingAuth();
+    }, [navigate]);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -24,11 +38,7 @@ export default function Login() {
 
         setLoading(true);
         try {
-            const client = axios.create({ 
-                baseURL: `${server}/api/v1/users`,
-                withCredentials: true 
-            });
-            const request = await client.post('/login', { username: email, password });
+            const request = await axiosInstance.post('/api/v1/users/login', { username: email, password });
 
             if (request.status === 200) {
                 // Token is now set in HttpOnly cookie by server
@@ -58,9 +68,9 @@ export default function Login() {
         onSuccess: async (tokenResponse) => {
             setLoading(true);
             try {
-                const response = await axios.post(`${server}/api/v1/users/google-login`, {
+                const response = await axiosInstance.post(`/api/v1/users/google-login`, {
                     access_token: tokenResponse.access_token
-                }, { withCredentials: true });
+                });
 
                 if (response.status === 200) {
                     // Token is now set in HttpOnly cookie by server

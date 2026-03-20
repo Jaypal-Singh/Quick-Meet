@@ -16,7 +16,7 @@ import {
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import EventIcon from '@mui/icons-material/Event';
 import CloseIcon from '@mui/icons-material/Close';
-import axios from 'axios';
+import axiosInstance from '../../../../utils/axiosInstance';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -31,9 +31,8 @@ export default function NotificationPopover({
 }) {
     const handleRespond = async (notificationId, action) => {
         try {
-            const token = localStorage.getItem('token');
-            await axios.post(`${API_URL}/api/v1/notifications/${notificationId}/respond`, null, {
-                params: { action, token }
+            await axiosInstance.post(`/api/v1/notifications/${notificationId}/respond`, null, {
+                params: { action }
             });
             
             // Remove the notification from the list
@@ -49,8 +48,7 @@ export default function NotificationPopover({
 
     const handleClearAll = async () => {
         try {
-            const token = localStorage.getItem('token');
-            await axios.put(`${API_URL}/api/v1/notifications/read-all?token=${token}`);
+            await axiosInstance.put(`/api/v1/notifications/read-all`);
             setNotifications([]);
             onClose();
         } catch (error) {
@@ -60,8 +58,7 @@ export default function NotificationPopover({
 
     const markAsRead = async (notificationId) => {
         try {
-            const token = localStorage.getItem('token');
-            await axios.put(`${API_URL}/api/v1/notifications/${notificationId}/read?token=${token}`);
+            await axiosInstance.put(`/api/v1/notifications/${notificationId}/read`);
             setNotifications(prev => prev.filter(n => (n._id || n.id) !== notificationId));
         } catch (error) {
             console.error('Error deleting notification:', error);
@@ -83,8 +80,8 @@ export default function NotificationPopover({
             }}
             PaperProps={{
                 sx: {
-                    width: 360,
-                    maxHeight: 480,
+                    width: { xs: 'calc(100vw - 32px)', sm: 360 },
+                    maxWidth: 360,
                     bgcolor: '#1E293B',
                     border: '1px solid rgba(255, 255, 255, 0.1)',
                     borderRadius: '16px',

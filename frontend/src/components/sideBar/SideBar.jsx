@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import { Box, Typography, Button, IconButton, useMediaQuery, useTheme } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import VideocamIcon from '@mui/icons-material/Videocam';
@@ -37,8 +37,7 @@ export default function SideBar() {
 
     const handleLogout = async () => {
         try {
-            const server = import.meta.env.VITE_API_URL;
-            await axios.post(`${server}/api/v1/users/logout`);
+            await axiosInstance.post(`/api/v1/users/logout`);
         } catch (err) {
             console.error("Logout failed:", err);
         } finally {

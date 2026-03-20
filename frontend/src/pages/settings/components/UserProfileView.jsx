@@ -5,7 +5,7 @@ import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import CloseIcon from '@mui/icons-material/Close';
 import PersonIcon from '@mui/icons-material/Person';
 import EmailIcon from '@mui/icons-material/Email';
-import axios from 'axios';
+import axiosInstance from '../../../utils/axiosInstance';
 
 const server = import.meta.env.VITE_API_URL;
 
@@ -31,8 +31,7 @@ export default function UserProfileView({ onBack }) {
             const base64 = reader.result;
             setUploading(true);
             try {
-                await axios.put(`${server}/api/v1/users/update_profile_picture`, {
-                    token,
+                await axiosInstance.put(`/api/v1/users/update_profile_picture`, {
                     profile_picture: base64
                 });
                 setProfilePic(base64);
@@ -51,9 +50,7 @@ export default function UserProfileView({ onBack }) {
         e.stopPropagation();
         setUploading(true);
         try {
-            await axios.delete(`${server}/api/v1/users/remove_profile_picture`, {
-                params: { token }
-            });
+            await axiosInstance.delete(`/api/v1/users/remove_profile_picture`);
             setProfilePic(null);
             localStorage.removeItem('profile_picture');
             window.dispatchEvent(new Event('profileUpdate'));

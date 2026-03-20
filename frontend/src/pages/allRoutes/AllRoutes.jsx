@@ -13,6 +13,9 @@ import Settings from '../settings/settings';
 import MeetingHistory from '../meeting/history/MeetingHistory';
 import UpcomingSchedule from '../dashboard/UpcomingSchedule';
 import Friends from '../friends/Friends';
+import withAuth from '../../utils/withAuth';
+
+const ProtectedRoot = withAuth(Root);
 
 export default function AllRoutes() {
     return (
@@ -21,8 +24,8 @@ export default function AllRoutes() {
             <Route path='/' element={<Signup />} />
             <Route path='/login' element={<Login />} />
 
-            {/* Pages with Sidebar Layout */}
-            <Route element={<Root />}>
+            {/* Pages with Sidebar Layout - Protected */}
+            <Route element={<ProtectedRoot />}>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/meetings" element={<Meetings />} />
                 <Route path="/friends" element={<Friends />} />
