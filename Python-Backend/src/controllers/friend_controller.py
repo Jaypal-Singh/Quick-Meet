@@ -1,10 +1,10 @@
+import os
 from src.utils.notification_util import notify_meeting_invite, notify_friend_request, notify_friend_accept
 from pydantic import BaseModel
 from typing import List, Optional
 from fastapi import HTTPException, status
 from src.Model.user_model import User
 from src.Model.friend_model import Friend
-from src.core.config import settings
 
 class InviteRequest(BaseModel):
     token: Optional[str] = None
@@ -173,7 +173,7 @@ async def invite_to_meeting(data: InviteRequest):
             inviter_username=sender.username,
             recipient_username=friend.username,
             meeting_code=data.meeting_code,
-            meeting_link=f"{settings.FRONTEND_URL}/video-meet?roomID={data.meeting_code}"
+            meeting_link=f"{os.getenv('FRONTEND_URL')}/video-meet?roomID={data.meeting_code}"
         )
         
         if success:
