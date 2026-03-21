@@ -3,17 +3,76 @@ from firebase_admin import credentials, messaging
 import os
 import json
 import base64
+import re
 from typing import Dict, Any, Optional
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.backends import default_backend
 from src.Model.notification_model import Notification
+
+def clean_private_key(pk: str) -> str:
+    """Robustly cleans and formats a PEM private key."""
+    if not pk:
+        return ""
+    
+    # 1. Handle potential literal escapes (though json.loads usually handles this)
+    content = pk.replace("\\n", "\n").replace("\\r", "")
+    
+    # 2. Extract the base64 body by removing headers, footers, and all whitespace
+    body = content
+    for marker in [
+        "-----BEGIN PRIVATE KEY-----", 
+        "-----END PRIVATE KEY-----",
+        "-----BEGIN RSA PRIVATE KEY-----",
+        "-----END RSA PRIVATE KEY-----"
+    ]:
+        body = body.replace(marker, "")
+    
+    clean_body = "".join(body.split())
+    
+    # 3. Reconstruct as standard PKCS#8 with 64-character folding
+    header = "-----BEGIN PRIVATE KEY-----"
+    footer = "-----END PRIVATE KEY-----"
+    NL = "\n"
+    
+    folded_lines = [clean_body[i:i+64] for i in range(0, len(clean_body), 64)]
+    return f"{header}{NL}{NL.join(folded_lines)}{NL}{footer}{NL}"
 
 # Initialize Firebase Admin SDK
 try:
-    firebase_creds = os.getenv("FIREBASE_CREDENTIALS_BASE64")
-    if firebase_creds:
-        cred_dict = json.loads(base64.b64decode(firebase_creds).decode('utf-8'))
-        cred = credentials.Certificate(cred_dict)
-        firebase_admin.initialize_app(cred)
-        print("Firebase Admin initialized successfully from environment variable.")
+    firebase_creds_b64 = os.getenv("FIREBASE_CREDENTIALS_BASE64")
+    if firebase_creds_b64:
+        try:
+            decoded = base64.b64decode(firebase_creds_b64).decode('utf-8')
+            cred_dict = json.loads(decoded)
+            
+            if "private_key" in cred_dict:
+                original_pk = cred_dict["private_key"]
+                print(f"DEBUG: Original PK len: {len(original_pk)}")
+                print(f"DEBUG: Original PK starts with: {repr(original_pk[:40])}")
+                print(f"DEBUG: Original PK ends with: {repr(original_pk[-40:])}")
+                cleaned_pk = clean_private_key(original_pk)
+                cred_dict["private_key"] = cleaned_pk
+                print(f"DEBUG: Cleaned private key starts with: {repr(cleaned_pk[:60])}")
+                print(f"DEBUG: Cleaned private key ends with: {repr(cleaned_pk[-60:])}")
+            
+            cred = credentials.Certificate(cred_dict)
+            firebase_admin.initialize_app(cred)
+            print("Firebase Admin initialized successfully from environment variable.")
+        except Exception as inner_e:
+            print(f"Error parsing FIREBASE_CREDENTIALS_BASE64: {inner_e}")
+            # Context diagnostic
+            try:
+                from cryptography.hazmat.primitives import serialization
+                from cryptography.hazmat.backends import default_backend
+                serialization.load_pem_private_key(
+                    cleaned_pk.encode('utf-8'),
+                    password=None,
+                    backend=default_backend()
+                )
+                print("DIAGNOSTIC: Cryptography loaded the key successfully in this context!")
+            except Exception as crypto_e:
+                print(f"DIAGNOSTIC: Cryptography ALSO failed in this context: {crypto_e}")
+            raise inner_e
     else:
         cred_path = os.path.join(os.path.dirname(__file__), "..", "services", "firebase-service-account.json")
         if os.path.exists(cred_path):
