@@ -197,7 +197,9 @@ export default function VideoMeetComponent() {
         setIsConnecting(true);
         console.log('[Init] getPermissions started');
 
-        setScreenAvailable(!!(navigator.mediaDevices && (navigator.mediaDevices.getDisplayMedia || navigator.getDisplayMedia)));
+        const isScreenSharingSupported = !!(navigator.mediaDevices && (navigator.mediaDevices.getDisplayMedia || navigator.getDisplayMedia));
+        console.log('[Init] Screen Sharing Supported:', isScreenSharingSupported);
+        setScreenAvailable(isScreenSharingSupported);
 
         try {
             // 1. Identify what hardware is actually present
