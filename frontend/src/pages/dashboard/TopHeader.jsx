@@ -105,8 +105,8 @@ const TopHeader = () => {
 
     const handleRespondMeeting = async (notificationId, action) => {
         try {
-            await axios.post(`${server}/api/v1/notifications/${notificationId}/respond`, null, {
-                params: { action, token }
+            await axiosInstance.post(`/api/v1/notifications/${notificationId}/respond`, null, {
+                params: { action }
             });
             setNotifications(prev => prev.filter(n => (n._id || n.id) !== notificationId));
             window.dispatchEvent(new CustomEvent('refreshMeetings'));

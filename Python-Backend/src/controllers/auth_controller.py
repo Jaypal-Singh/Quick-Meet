@@ -53,8 +53,8 @@ async def login(user_data: UserLogin, response: Response):
         value=token,
         httponly=True,
         max_age=60 * 60 * 24 * 7, # 7 days
-        samesite="lax", # or "none" with secure=True for cross-site
-        secure=False # Set to True in production with HTTPS
+        samesite="none", # Required for cross-site (Vercel to Render)
+        secure=True # Must be True for samesite="none"
     )
     
     return {"message": "Login successful", "token": token, "name": user.name, "profile_picture": user.profile_picture}

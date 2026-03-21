@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
-import axios from 'axios';
+import axiosInstance from './utils/axiosInstance';
 const server = import.meta.env.VITE_API_URL;
 
 // Your web app's Firebase configuration
@@ -94,8 +94,7 @@ export const requestForToken = async () => {
         if (userToken) {
           try {
             console.log('FCM: Updating backend with token...');
-            const response = await axios.post(`${server}/api/v1/users/update_fcm_token`, {
-              token: userToken,
+            const response = await axiosInstance.post(`/api/v1/users/update_fcm_token`, {
               fcm_token: currentToken
             });
             console.log('FCM: Backend updated successfully:', response.data);

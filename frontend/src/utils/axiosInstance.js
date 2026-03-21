@@ -11,12 +11,26 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
     if (token) {
-        // You can also add it to headers if needed, e.g., config.headers.Authorization = `Bearer ${token}`;
-        // But for this project, we primarily use query params or cookies.
-        // We'll let the routers handle merging token from query/cookie.
-        
-        // If the request is a GET, we can automatically add token to params if missing
+        // Attach token to GET request params
         if (config.method === 'get') {
+            config.params = {
+                token: token,
+                ...config.params
+            };
+        } else {
+            // Attach token to POST, PUT, DELETE request body
+            // Only if it's a plain object (not FormData)
+            if (config.data && typeof config.data === 'object' && !(config.data instanceof FormData)) {
+                config.data = {
+                    token: token,
+                    ...config.data
+                };
+            } else if (!config.data) {
+                // If no data, initialize it with token
+                config.data = { token };
+            }
+            
+            // Also add to params just in case the backend expects it there for non-GET
             config.params = {
                 token: token,
                 ...config.params
