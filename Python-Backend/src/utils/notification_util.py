@@ -14,22 +14,30 @@ def clean_private_key(pk: str) -> str:
     if not pk:
         return ""
     
-    # 1. Handle potential literal escapes (though json.loads usually handles this)
+    # 1. Handle potential literal escapes and common mess-ups
     content = pk.replace("\\n", "\n").replace("\\r", "")
     
-    # 2. Extract the base64 body by removing headers, footers, and all whitespace
-    body = content
-    for marker in [
+    # 2. Extract the base64 body by removing headers, footers, and ALL non-base64 chars
+    markers = [
         "-----BEGIN PRIVATE KEY-----", 
         "-----END PRIVATE KEY-----",
         "-----BEGIN RSA PRIVATE KEY-----",
-        "-----END RSA PRIVATE KEY-----"
-    ]:
-        body = body.replace(marker, "")
+        "-----END RSA PRIVATE KEY-----",
+        "-----BEGIN PRIVATE KEY-----",
+        "-----END PRIVATE KEY-----"
+    ]
+    for marker in markers:
+        content = content.replace(marker, "")
     
-    clean_body = "".join(body.split())
+    # Filter for valid base64 characters only
+    clean_body = "".join(re.findall(r"[A-Za-z0-9+/=]", content))
     
-    # 3. Reconstruct as standard PKCS#8 with 64-character folding
+    # 3. Ensure length is multiple of 4 (padding)
+    missing_padding = len(clean_body) % 4
+    if missing_padding:
+        clean_body += "=" * (4 - missing_padding)
+    
+    # 4. Reconstruct as standard PKCS#8 with 64-character folding
     header = "-----BEGIN PRIVATE KEY-----"
     footer = "-----END PRIVATE KEY-----"
     NL = "\n"
@@ -39,50 +47,41 @@ def clean_private_key(pk: str) -> str:
 
 # Initialize Firebase Admin SDK
 try:
+    firebase_initialized = False
     firebase_creds_b64 = os.getenv("FIREBASE_CREDENTIALS_BASE64")
+    
     if firebase_creds_b64:
         try:
+            print("Attempting to initialize Firebase from FIREBASE_CREDENTIALS_BASE64...")
             decoded = base64.b64decode(firebase_creds_b64).decode('utf-8')
             cred_dict = json.loads(decoded)
             
             if "private_key" in cred_dict:
-                original_pk = cred_dict["private_key"]
-                print(f"DEBUG: Original PK len: {len(original_pk)}")
-                print(f"DEBUG: Original PK starts with: {repr(original_pk[:40])}")
-                print(f"DEBUG: Original PK ends with: {repr(original_pk[-40:])}")
-                cleaned_pk = clean_private_key(original_pk)
+                cleaned_pk = clean_private_key(cred_dict["private_key"])
                 cred_dict["private_key"] = cleaned_pk
-                print(f"DEBUG: Cleaned private key starts with: {repr(cleaned_pk[:60])}")
-                print(f"DEBUG: Cleaned private key ends with: {repr(cleaned_pk[-60:])}")
             
             cred = credentials.Certificate(cred_dict)
             firebase_admin.initialize_app(cred)
+            firebase_initialized = True
             print("Firebase Admin initialized successfully from environment variable.")
         except Exception as inner_e:
-            print(f"Error parsing FIREBASE_CREDENTIALS_BASE64: {inner_e}")
-            # Context diagnostic
-            try:
-                from cryptography.hazmat.primitives import serialization
-                from cryptography.hazmat.backends import default_backend
-                serialization.load_pem_private_key(
-                    cleaned_pk.encode('utf-8'),
-                    password=None,
-                    backend=default_backend()
-                )
-                print("DIAGNOSTIC: Cryptography loaded the key successfully in this context!")
-            except Exception as crypto_e:
-                print(f"DIAGNOSTIC: Cryptography ALSO failed in this context: {crypto_e}")
-            raise inner_e
-    else:
+            print(f"WARNING: Failed to initialize Firebase from environment variable: {inner_e}")
+            # Diagnostic attempt is already done in logs usually
+    
+    if not firebase_initialized:
+        # Fallback to local file
         cred_path = os.path.join(os.path.dirname(__file__), "..", "services", "firebase-service-account.json")
         if os.path.exists(cred_path):
+            print(f"Attempting to initialize Firebase from {cred_path}...")
             cred = credentials.Certificate(cred_path)
             firebase_admin.initialize_app(cred)
+            firebase_initialized = True
             print(f"Firebase Admin initialized successfully from {cred_path}")
         else:
-            print(f"CRITICAL: Firebase service account file NOT found at {cred_path} and ENV var missing. Push notifications will not be sent.")
+            print(f"CRITICAL: Firebase service account file NOT found at {cred_path} and ENV var failed or missing.")
+            
 except Exception as e:
-    print(f"CRITICAL Error initializing Firebase Admin: {e}")
+    print(f"CRITICAL Error during Firebase Admin setup: {e}")
 
 async def send_push_notification(
     token: str, 
