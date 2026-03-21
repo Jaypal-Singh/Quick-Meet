@@ -199,7 +199,8 @@ export default function VideoMeetComponent() {
 
         const isScreenSharingSupported = !!(navigator.mediaDevices && (navigator.mediaDevices.getDisplayMedia || navigator.getDisplayMedia));
         console.log('[Init] Screen Sharing Supported:', isScreenSharingSupported);
-        setScreenAvailable(isScreenSharingSupported);
+        // Force available on mobile for visibility, handler will check support
+        setScreenAvailable(isScreenSharingSupported || window.innerWidth < 1024); 
 
         try {
             // 1. Identify what hardware is actually present
@@ -733,6 +734,18 @@ export default function VideoMeetComponent() {
         }
     }, [screen])
     let handleScreen = () => {
+        if (screen === undefined || screen === false) {
+             // Check for actual support before trying to start
+             const supported = !!(navigator.mediaDevices && (navigator.mediaDevices.getDisplayMedia || navigator.getDisplayMedia));
+             if (!supported) {
+                 setNotification({ 
+                     open: true, 
+                     message: "Screen sharing is not supported on this browser/device.", 
+                     severity: "error" 
+                 });
+                 return;
+             }
+        }
         setScreen(!screen);
     }
 
