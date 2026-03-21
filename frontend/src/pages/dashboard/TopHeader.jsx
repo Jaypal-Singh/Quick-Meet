@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Box, Typography, IconButton } from '@mui/material';
+import { Box, Typography, IconButton, Button } from '@mui/material';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import VideocamOutlinedIcon from '@mui/icons-material/VideocamOutlined';
 import CloseIcon from '@mui/icons-material/Close';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import EventIcon from '@mui/icons-material/Event';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../utils/axiosInstance';
 const server = import.meta.env.VITE_API_URL;
@@ -41,7 +43,7 @@ const TopHeader = () => {
             setProfilePic(localStorage.getItem('profile_picture') || null);
         };
         window.addEventListener('profileUpdate', handleProfileUpdate);
-        
+
         // Listen for real-time refresh event
         const handleRefresh = () => {
             console.log('TopHeader: Refreshing notifications due to real-time update');
@@ -50,8 +52,8 @@ const TopHeader = () => {
 
         window.addEventListener('refreshMeetings', handleRefresh);
 
-        
-        const interval = setInterval(fetchNotifications, 10000); // poll every 10s
+
+        const interval = setInterval(fetchNotifications, 30000); // poll every 30s
         return () => {
             clearInterval(interval);
             window.removeEventListener('refreshMeetings', handleRefresh);
@@ -98,6 +100,18 @@ const TopHeader = () => {
             }
         } catch (e) {
             console.error(`Error ${action}ing friend request:`, e);
+        }
+    };
+
+    const handleRespondMeeting = async (notificationId, action) => {
+        try {
+            await axios.post(`${server}/api/v1/notifications/${notificationId}/respond`, null, {
+                params: { action, token }
+            });
+            setNotifications(prev => prev.filter(n => (n._id || n.id) !== notificationId));
+            window.dispatchEvent(new CustomEvent('refreshMeetings'));
+        } catch (e) {
+            console.error(`Error ${action}ing invite:`, e);
         }
     };
 
@@ -189,89 +203,150 @@ const TopHeader = () => {
                                 ) : (
                                     notifications.map((n) => {
                                         const id = n.id || n._id;
-                                        return (
-                                            <Box
-                                                key={id}
-                                                sx={{
-                                                    display: 'flex', alignItems: 'flex-start', gap: 1.5,
-                                                    px: 2.5, py: 1.5,
-                                                    borderBottom: '1px solid rgba(255,255,255,0.04)',
-                                                    bgcolor: n.read ? 'transparent' : 'rgba(139,92,246,0.05)',
-                                                    transition: 'background 0.2s',
-                                                    '&:hover': { bgcolor: 'rgba(255,255,255,0.03)' }
-                                                }}
-                                            >
-                                                {/* Icon dot */}
-                                                <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: n.read ? '#374151' : '#8B5CF6', flexShrink: 0, mt: '6px' }} />
-                                                {/* Content */}
-                                                <Box sx={{ flex: 1, minWidth: 0 }}>
-                                                    <Typography sx={{ color: 'white', fontSize: '13px', fontWeight: n.read ? 400 : 600, lineHeight: 1.4 }}>
-                                                        {n.title}
-                                                    </Typography>
-                                                    <Typography sx={{ color: '#9CA3AF', fontSize: '12px', mt: '2px', lineHeight: 1.4, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
-                                                        {n.body}
-                                                    </Typography>
-                                                    <Typography sx={{ color: '#4B5563', fontSize: '11px', mt: '4px' }}>
-                                                        {timeAgo(n.timestamp, tick)}
-                                                    </Typography>
-                                                </Box>
-                                                {/* Action Buttons */}
-                                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, flexShrink: 0 }}>
-                                                    {n.type === 'meeting_invite' && n.data?.meeting_code && (
-                                                        <IconButton
-                                                            onClick={() => {
-                                                                markRead(id);
-                                                                navigate(`/video-meet?roomID=${n.data.meeting_code}`);
+                                        const isMeetingInvite = n.type === 'meeting_invite';
 
-                                                            }}
-                                                        
+                                        if (isMeetingInvite) {
+                                            // IMAGE 1 STYLE
+                                            return (
+                                                <Box
+                                                    key={id}
+                                                    sx={{
+                                                        display: 'flex', flexDirection: 'column',
+                                                        px: 2.5, py: 2,
+                                                        borderBottom: '1px solid rgba(255,255,255,0.06)',
+                                                        bgcolor: n.read ? 'transparent' : 'rgba(99,102,241,0.03)',
+                                                        position: 'relative',
+                                                        '&:hover': { bgcolor: 'rgba(255,255,255,0.03)' }
+                                                    }}
+                                                >
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={() => markRead(id)}
+                                                        sx={{ position: 'absolute', top: 12, right: 12, color: '#4B5563', p: 0.5 }}
+                                                    >
+                                                        <CloseIcon sx={{ fontSize: 16 }} />
+                                                    </IconButton>
+
+                                                    <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+                                                        <Box sx={{
+                                                            width: 48, height: 48, borderRadius: '12px',
+                                                            bgcolor: 'rgba(99,102,241,0.1)', color: '#6366F1',
+                                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                            flexShrink: 0
+                                                        }}>
+                                                            <EventIcon sx={{ fontSize: 24 }} />
+                                                        </Box>
+                                                        <Box sx={{ flexGrow: 1, pr: 2 }}>
+                                                            <Typography sx={{ color: 'white', fontWeight: 700, fontSize: '14px', mb: 0.5 }}>
+                                                                {n.title}
+                                                            </Typography>
+                                                            <Typography sx={{ color: '#9CA3AF', fontSize: '13px', lineHeight: 1.4 }}>
+                                                                {n.body}
+                                                            </Typography>
+                                                        </Box>
+                                                    </Box>
+
+                                                    <Box sx={{ display: 'flex', gap: 1.5 }}>
+                                                        <Button
+                                                            variant="contained"
                                                             size="small"
-                                                            title="Join Meeting"
+                                                            fullWidth
+                                                            onClick={() => handleRespondMeeting(id, 'accept')}
                                                             sx={{
-                                                                color: '#8B5CF6',
-                                                                bgcolor: 'rgba(139,92,246,0.1)',
-                                                                '&:hover': { bgcolor: 'rgba(139,92,246,0.2)' }
+                                                                bgcolor: '#6366F1',
+                                                                color: 'white',
+                                                                textTransform: 'none',
+                                                                fontWeight: 700,
+                                                                borderRadius: '8px',
+                                                                boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)',
+                                                                '&:hover': { bgcolor: '#4F46E5' }
                                                             }}
                                                         >
-                                                            <VideocamOutlinedIcon fontSize="small" />
-                                                        </IconButton>
-                                                    )}
-                                                    {n.type === 'friend_request' && n.data?.sender_username && (
-                                                        <Box sx={{ display: 'flex', gap: 0.5 }}>
-                                                            <IconButton
-                                                                onClick={() => respondToFriendRequest(id, n.data.sender_username, 'accept')}
-                                                                size="small"
-                                                                title="Accept Request"
-                                                                sx={{
-                                                                    color: '#10B981',
-                                                                    bgcolor: 'rgba(16,185,129,0.1)',
-                                                                    '&:hover': { bgcolor: 'rgba(16,185,129,0.2)' }
-                                                                }}
-                                                            >
-                                                                <CheckCircleOutlineIcon fontSize="small" />
-                                                            </IconButton>
-                                                            <IconButton
-                                                                onClick={() => respondToFriendRequest(id, n.data.sender_username, 'reject')}
-                                                                size="small"
-                                                                title="Reject Request"
-                                                                sx={{
-                                                                    color: '#EF4444',
-                                                                    bgcolor: 'rgba(239,68,68,0.1)',
-                                                                    '&:hover': { bgcolor: 'rgba(239,68,68,0.2)' }
-                                                                }}
-                                                            >
-                                                                <CloseIcon fontSize="small" />
-                                                            </IconButton>
-                                                        </Box>
-                                                    )}
-                                                    {!n.read && n.type !== 'friend_request' && (
-                                                        <IconButton onClick={() => markRead(id)} size="small" title="Delete" sx={{ color: '#4B5563', '&:hover': { color: '#ef4444' } }}>
-                                                            <CheckCircleOutlineIcon fontSize="small" />
-                                                        </IconButton>
-                                                    )}
+                                                            Accept
+                                                        </Button>
+                                                        <Button
+                                                            variant="outlined"
+                                                            size="small"
+                                                            fullWidth
+                                                            onClick={() => handleRespondMeeting(id, 'reject')}
+                                                            sx={{
+                                                                borderColor: 'rgba(255,255,255,0.1)',
+                                                                color: '#9CA3AF',
+                                                                textTransform: 'none',
+                                                                fontWeight: 600,
+                                                                borderRadius: '8px',
+                                                                '&:hover': { borderColor: 'rgba(255,255,255,0.3)', bgcolor: 'rgba(255,255,255,0.02)' }
+                                                            }}
+                                                        >
+                                                            Reject
+                                                        </Button>
+                                                    </Box>
                                                 </Box>
-                                            </Box>
-                                        );
+                                            );
+                                        } else {
+                                            // IMAGE 2 STYLE
+                                            return (
+                                                <Box
+                                                    key={id}
+                                                    sx={{
+                                                        display: 'flex', alignItems: 'center', gap: 1.5,
+                                                        px: 2.5, py: 1.5,
+                                                        borderBottom: '1px solid rgba(255,255,255,0.04)',
+                                                        bgcolor: n.read ? 'transparent' : 'rgba(139,92,246,0.05)',
+                                                        transition: 'background 0.2s',
+                                                        '&:hover': { bgcolor: 'rgba(255,255,255,0.03)' },
+                                                        cursor: n.type === 'direct_meet' ? 'pointer' : 'default'
+                                                    }}
+                                                    onClick={() => {
+                                                        if (n.type === 'direct_meet' && n.data?.meeting_code) {
+                                                            navigate(`/video-meet?roomID=${n.data.meeting_code}`);
+                                                            markRead(id);
+                                                        }
+                                                    }}
+                                                >
+                                                    {/* Purple dot */}
+                                                    <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: n.read ? '#374151' : '#8B5CF6', flexShrink: 0 }} />
+
+                                                    {/* Content */}
+                                                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                                                        <Typography sx={{ color: 'white', fontSize: '13px', fontWeight: n.read ? 400 : 700, lineHeight: 1.4 }}>
+                                                            {n.title}
+                                                        </Typography>
+                                                        <Typography noWrap sx={{ color: '#9CA3AF', fontSize: '12px', mt: '2px', lineHeight: 1.4 }}>
+                                                            {n.body}
+                                                        </Typography>
+                                                        <Typography sx={{ color: '#4B5563', fontSize: '11px', mt: '4px' }}>
+                                                            {timeAgo(n.timestamp, tick)}
+                                                        </Typography>
+                                                    </Box>
+
+                                                    {/* Right Side Icons */}
+                                                    <Box sx={{ position: 'relative', flexShrink: 0 }}>
+                                                        <Box sx={{
+                                                            width: 40, height: 40, borderRadius: '50%',
+                                                            bgcolor: 'rgba(139,92,246,0.1)', color: '#8B5CF6',
+                                                            display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                                        }}>
+                                                            {n.type === 'friend_request' ? <CheckCircleOutlineIcon fontSize="small" /> : <VideocamOutlinedIcon fontSize="small" />}
+                                                        </Box>
+                                                        <IconButton
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                markRead(id);
+                                                            }}
+                                                            size="small"
+                                                            sx={{
+                                                                position: 'absolute', bottom: -5, right: -5,
+                                                                bgcolor: '#131722', border: '1px solid rgba(255,255,255,0.1)',
+                                                                p: 0.2, color: '#4B5563', '&:hover': { color: '#8B5CF6', bgcolor: '#1C2230' }
+                                                            }}
+                                                        >
+                                                            <CheckCircleOutlineIcon sx={{ fontSize: 12 }} />
+                                                        </IconButton>
+                                                    </Box>
+                                                </Box>
+                                            );
+                                        }
                                     })
                                 )}
                             </Box>
@@ -291,7 +366,7 @@ const TopHeader = () => {
 
                         // src={profilePic || https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=8B5CF6&color=FFFFFF&bold=true&size=36}
                         src={profilePic || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=8B5CF6&color=FFFFFF&bold=true&size=36`}
-                        
+
                         alt={name}
                         sx={{ width: { xs: '32px', sm: '36px' }, height: { xs: '32px', sm: '36px' }, borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(139, 92, 246, 0.3)' }}
                     />

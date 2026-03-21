@@ -54,7 +54,7 @@ async def send_push_notification(
         print(f"Error sending push notification: {e}")
         return False
 
-async def notify_meeting_invite(token: Optional[str], inviter_name: str, inviter_username: str, recipient_username: str, meeting_code: str, meeting_link: str = ""):
+async def notify_meeting_invite(token: Optional[str], inviter_name: str, inviter_username: str, recipient_username: str, meeting_code: str, meeting_link: str = "", notif_type: str = "meeting_invite"):
     """
     Utility for meeting invitation notifications.
     """
@@ -69,7 +69,7 @@ async def notify_meeting_invite(token: Optional[str], inviter_name: str, inviter
             title="New Meeting Invite",
             body=body,
             data={
-                "type": "meeting_invite",
+                "type": notif_type,
                 "meeting_code": meeting_code,
                 "meeting_link": meeting_link,
                 "click_action": "FLUTTER_NOTIFICATION_CLICK"
@@ -83,7 +83,7 @@ async def notify_meeting_invite(token: Optional[str], inviter_name: str, inviter
             sender_username=inviter_username,
             title="New Meeting Invite",
             body=body,
-            type="meeting_invite",
+            type=notif_type,
             data={
                 "meeting_code": meeting_code, 
                 "meeting_link": meeting_link,

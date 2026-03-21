@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import AllRoutes from './pages/allRoutes/AllRoutes';
 import { onMessageListener } from './firebase';
-import { Snackbar, Alert, Button, Typography, Box } from '@mui/material';
+import { Snackbar, Alert, Button, Typography, Box, IconButton } from '@mui/material';
 import VideocamIcon from '@mui/icons-material/Videocam';
+import EventIcon from '@mui/icons-material/Event';
+import CloseIcon from '@mui/icons-material/Close';
 
 function App() {
   const [showNotification, setShowNotification] = useState(false);
@@ -29,7 +31,7 @@ function App() {
     if (notification.data?.meeting_code) {
       window.location.href = `/video-meet?roomID=${notification.data.meeting_code}`;
     } else if (notification.data?.meeting_link) {
-        window.location.href = notification.data.meeting_link;
+      window.location.href = notification.data.meeting_link;
     }
     setShowNotification(false);
   };
@@ -48,38 +50,50 @@ function App() {
         sx={{ mt: 2 }}
       >
         <Box sx={{
-            background: 'linear-gradient(135deg, #1C2230 0%, #131722 100%)',
+            background: '#1E293B',
             border: '1px solid rgba(255, 255, 255, 0.1)',
             borderRadius: '16px',
-            p: 2,
-            boxShadow: '0 12px 40px rgba(0,0,0,0.5)',
-            minWidth: '320px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 1.5
+            p: 2.5,
+            boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+            minWidth: '340px',
+            position: 'relative'
         }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <Box>
-                    <Typography sx={{ color: 'white', fontWeight: 700, fontSize: '15px', mb: 0.5 }}>
+            <IconButton 
+                size="small" 
+                onClick={() => setShowNotification(false)}
+                sx={{ position: 'absolute', top: 12, right: 12, color: '#64748B' }}
+            >
+                <CloseIcon sx={{ fontSize: 18 }} />
+            </IconButton>
+
+            <Box sx={{ display: 'flex', gap: 2, mb: 2.5 }}>
+                <Box sx={{ 
+                    bgcolor: 'rgba(99, 102, 241, 0.1)', 
+                    borderRadius: '12px', 
+                    width: 48, 
+                    height: 48, 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                    flexShrink: 0
+                }}>
+                    {notification.data?.type === 'direct_meet' ? (
+                        <VideocamIcon sx={{ color: '#6366F1', fontSize: '24px' }} />
+                    ) : (
+                        <EventIcon sx={{ color: '#6366F1', fontSize: '24px' }} />
+                    )}
+                </Box>
+                <Box sx={{ pr: 2 }}>
+                    <Typography sx={{ color: 'white', fontWeight: 700, fontSize: '16px', mb: 0.5 }}>
                         {notification.title}
                     </Typography>
-                    <Typography sx={{ color: '#9CA3AF', fontSize: '13px', lineHeight: 1.4 }}>
+                    <Typography sx={{ color: '#94A3B8', fontSize: '13.5px', lineHeight: 1.5 }}>
                         {notification.body}
                     </Typography>
                 </Box>
-                <Box sx={{ 
-                    bgcolor: 'rgba(99, 102, 241, 0.15)', 
-                    borderRadius: '50%', 
-                    p: 1, 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center' 
-                }}>
-                    <VideocamIcon sx={{ color: '#6366F1', fontSize: '20px' }} />
-                </Box>
             </Box>
 
-            {(notification.data?.meeting_code || notification.data?.meeting_link) && (
+            <Box sx={{ display: 'flex', gap: 1.5 }}>
                 <Button
                     fullWidth
                     variant="contained"
@@ -89,32 +103,36 @@ function App() {
                         color: 'white',
                         fontWeight: 700,
                         textTransform: 'none',
-                        borderRadius: '12px',
+                        borderRadius: '10px',
                         py: 1,
-                        mt: 0.5,
+                        boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)',
                         '&:hover': {
                             background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)',
-                            boxShadow: '0 4px 12px rgba(99, 102, 241, 0.4)'
+                            boxShadow: '0 6px 16px rgba(99, 102, 241, 0.5)'
                         }
                     }}
                 >
-                    Join Meeting
+                    {notification.data?.type === 'direct_meet' ? 'Join Now' : 'Accept'}
                 </Button>
-            )}
-            
-            <Button 
-                onClick={() => setShowNotification(false)}
-                sx={{ 
-                    color: '#6B7280', 
-                    fontSize: '11px', 
-                    textTransform: 'none', 
-                    alignSelf: 'center',
-                    minWidth: 'auto',
-                    '&:hover': { color: 'white' }
-                }}
-            >
-                Dismiss
-            </Button>
+                <Button 
+                    fullWidth
+                    variant="outlined"
+                    onClick={() => setShowNotification(false)}
+                    sx={{ 
+                        borderColor: 'rgba(255, 255, 255, 0.1)',
+                        color: '#94A3B8', 
+                        fontWeight: 600,
+                        textTransform: 'none', 
+                        borderRadius: '10px',
+                        '&:hover': { 
+                            borderColor: 'rgba(255, 255, 255, 0.3)',
+                            bgcolor: 'rgba(255, 255, 255, 0.05)'
+                        }
+                    }}
+                >
+                    Reject
+                </Button>
+            </Box>
         </Box>
       </Snackbar>
     </div>
