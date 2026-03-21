@@ -173,7 +173,8 @@ async def invite_to_meeting(data: InviteRequest):
             inviter_username=sender.username,
             recipient_username=friend.username,
             meeting_code=data.meeting_code,
-            meeting_link=f"{os.getenv('FRONTEND_URL')}/video-meet?roomID={data.meeting_code}"
+            meeting_link=f"{os.getenv('FRONTEND_URL')}/video-meet?roomID={data.meeting_code}",
+            notif_type="direct_meet"
         )
         
         if success:
