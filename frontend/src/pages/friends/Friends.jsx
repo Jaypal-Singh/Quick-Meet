@@ -22,7 +22,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import VideocamIcon from '@mui/icons-material/Videocam';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 const server = import.meta.env.VITE_API_URL;
 import TopHeader from '../dashboard/TopHeader';
 
@@ -55,8 +55,7 @@ export default function Friends() {
         const meetingCode = Math.random().toString(36).substring(2, 10);
         setNotification({ open: true, message: "Sending invite...", severity: "info" });
         try {
-            await axios.post(`${server}/api/v1/friends/invite`, {
-                token,
+            await axiosInstance.post(`/api/v1/friends/invite`, {
                 friend_username: friendUsername,
                 meeting_code: meetingCode
             });
@@ -72,9 +71,7 @@ export default function Friends() {
     const fetchFriends = async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${server}/api/v1/friends/list`, {
-                params: { token }
-            });
+            const response = await axiosInstance.get(`/api/v1/friends/list`);
             setFriends(response.data.friends || []);
             setPendingRequests(response.data.pending || []);
             setSentRequests(response.data.sent || []);
@@ -94,7 +91,7 @@ export default function Friends() {
 
         setSearching(true);
         try {
-            const response = await axios.get(`${server}/api/v1/friends/search`, {
+            const response = await axiosInstance.get(`/api/v1/friends/search`, {
                 params: { query }
             });
             setSearchResults(response.data);
@@ -107,8 +104,7 @@ export default function Friends() {
 
     const addFriend = async (friendUsername) => {
         try {
-            const response = await axios.post(`${server}/api/v1/friends/add`, {
-                token,
+            const response = await axiosInstance.post(`/api/v1/friends/add`, {
                 friend_username: friendUsername
             });
             setNotification({ open: true, message: "Friend request sent!", severity: "success" });
@@ -126,8 +122,7 @@ export default function Friends() {
 
     const acceptFriend = async (friendUsername) => {
         try {
-            const response = await axios.post(`${server}/api/v1/friends/accept`, {
-                token,
+            const response = await axiosInstance.post(`/api/v1/friends/accept`, {
                 friend_username: friendUsername
             });
             setNotification({ open: true, message: "Request accepted!", severity: "success" });
@@ -143,8 +138,7 @@ export default function Friends() {
 
     const rejectFriend = async (friendUsername) => {
         try {
-            await axios.post(`${server}/api/v1/friends/reject`, {
-                token,
+            await axiosInstance.post(`/api/v1/friends/reject`, {
                 friend_username: friendUsername
             });
             setNotification({ open: true, message: "Request rejected", severity: "info" });

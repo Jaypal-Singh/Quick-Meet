@@ -159,6 +159,10 @@ export default function VideoMeetComponent() {
             getUserMedia(); // Switch back to camera
         }
     }
+    
+    let resetLocalPin = () => {
+        setPinnedSocketId(prev => prev === 'local' ? null : prev);
+    }
 
     const [globalError, setGlobalError] = useState(null);
     const isInitializing = useRef(false);
@@ -193,7 +197,7 @@ export default function VideoMeetComponent() {
         setIsConnecting(true);
         console.log('[Init] getPermissions started');
 
-        setScreenAvailable(!!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia));
+        setScreenAvailable(!!(navigator.mediaDevices && (navigator.mediaDevices.getDisplayMedia || navigator.getDisplayMedia)));
 
         try {
             // 1. Identify what hardware is actually present
@@ -364,7 +368,7 @@ export default function VideoMeetComponent() {
         if ((video && videoAvailable) || (audio && audioAvailable)) {
             navigator.mediaDevices.getUserMedia({ video: video, audio: audio })
                 .then(getUserMediaSuccess)
-                .then((stream) => { })
+                .then(() => { resetLocalPin(); })
                 .catch((e) => console.log(e))
         } else {
             try {
@@ -388,6 +392,9 @@ export default function VideoMeetComponent() {
         setLocalStream(stream);
         localVideoref.current.srcObject = stream
         setPinnedSocketId('local'); // Auto-pin when screen sharing
+        if (socketRef.current) {
+            socketRef.current.emit('screen-toggle', true);
+        }
 
         for (let id in connections) {
             if (id === socketIdRef.current) continue
@@ -409,6 +416,9 @@ export default function VideoMeetComponent() {
         stream.getTracks().forEach(track => track.onended = () => {
             setScreen(false)
             setPinnedSocketId(null); // Unpin when screen sharing ends
+            if (socketRef.current) {
+                socketRef.current.emit('screen-toggle', false);
+            }
 
             try {
                 let tracks = localVideoref.current.srcObject.getTracks()
@@ -519,6 +529,19 @@ export default function VideoMeetComponent() {
             console.log('[Socket] video-toggle from', socketId, 'state:', state);
             setVideos(prevVideos => prevVideos.map(vid => 
                 vid.socketId === socketId ? { ...vid, videoEnabled: state } : vid
+            ));
+        })
+
+        socketRef.current.on('screen-toggle', (socketId, state) => {
+            console.log('[Socket] screen-toggle from', socketId, 'state:', state);
+            if (state) {
+                setPinnedSocketId(socketId);
+            } else {
+                setPinnedSocketId(prev => prev === socketId ? null : prev);
+            }
+            // Also update the video state if needed (though stream might already handle it)
+            setVideos(prevVideos => prevVideos.map(vid => 
+                vid.socketId === socketId ? { ...vid, isScreenShare: state } : vid
             ));
         })
 
@@ -731,6 +754,10 @@ export default function VideoMeetComponent() {
 
     let handleCaptions = () => {
         setCaptions(!captions);
+    }
+    
+    let toggleMeetingInfo = () => {
+        setShowMeetingReady(!showMeetingReady);
     }
 
     useEffect(() => {
@@ -957,7 +984,7 @@ export default function VideoMeetComponent() {
                     <video ref={localVideoref} autoPlay playsInline muted className="hidden" />
 
                     {/* Meeting Ready Popup */}
-                    {showMeetingReady && videos.length === 0 && (
+                    {showMeetingReady && (
                         <MeetingReadyPopup
                             meetingUrl={`${window.location.origin}/${roomID}`}
                             username={username}
@@ -980,7 +1007,7 @@ export default function VideoMeetComponent() {
                         handleEndCall={handleEndCall}
                         setModal={setModal}
                         handleCaptions={handleCaptions}
-                        handleReconnect={handleReconnect}
+                        toggleMeetingInfo={toggleMeetingInfo}
                     />
 
                     {/* Main Content Area: Video Grid + Chat Side by Side */}

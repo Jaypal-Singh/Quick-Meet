@@ -140,3 +140,16 @@ def register_socket_events(sio):
             for client_id in connections[matching_room]:
                 if client_id != sid: # Don't send back to the speaker
                     await sio.emit('caption-message', (data, sender, sid), room=client_id)
+
+    @sio.on('screen-toggle')
+    async def handle_screen_toggle(sid, state):
+        matching_room = None
+        for room, clients in connections.items():
+            if sid in clients:
+                matching_room = room
+                break
+        
+        if matching_room:
+            for client_id in connections[matching_room]:
+                if client_id != sid:
+                    await sio.emit('screen-toggle', (sid, state), room=client_id)

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import Header from './components/Header/Header';
 import Calendar from './components/Calendar/Calendar';
 import PastMeetings from './components/PastMeetings/PastMeetings';
@@ -19,7 +19,7 @@ export default function Meetings() {
     const fetchMeetings = async () => {
         if (!token) return;
         try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/meetings/?token=${token}`);
+            const response = await axiosInstance.get(`/api/v1/meetings/`);
             const data = Array.isArray(response.data) ? response.data : [];
             const formattedMeetings = data.map(m => {
                 const start = new Date(m.startTime);
@@ -96,7 +96,7 @@ export default function Meetings() {
                     ? meetingData.participants
                     : meetingData.participants.split(',').map(p => p.trim()).filter(p => p !== '')
             };
-            await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/meetings/schedule`, payload);
+            await axiosInstance.post(`/api/v1/meetings/schedule`, payload);
             fetchMeetings();
         } catch (error) {
             console.error('Error scheduling meeting:', error);
@@ -119,7 +119,7 @@ export default function Meetings() {
                     ? updatedMeeting.participants.split(',').map(p => p.trim()).filter(p => p !== '')
                     : updatedMeeting.participants
             };
-            await axios.put(`${import.meta.env.VITE_API_URL}/api/v1/meetings/${updatedMeeting.id}`, payload);
+            await axiosInstance.put(`/api/v1/meetings/${updatedMeeting.id}`, payload);
             setIsEditModalOpen(false);
             setEditingMeeting(null);
             fetchMeetings();
@@ -130,7 +130,7 @@ export default function Meetings() {
 
     const handleRejectMeeting = async (meetingCode) => {
         try {
-            await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/meetings/${meetingCode}/respond?action=reject&token=${token}`);
+            await axiosInstance.post(`/api/v1/meetings/${meetingCode}/respond?action=reject`);
             fetchMeetings();
         } catch (error) {
             console.error('Error rejecting meeting:', error);
@@ -139,7 +139,7 @@ export default function Meetings() {
 
     const handleAcceptMeeting = async (meetingCode) => {
         try {
-            await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/meetings/${meetingCode}/respond?action=accept&token=${token}`);
+            await axiosInstance.post(`/api/v1/meetings/${meetingCode}/respond?action=accept`);
             fetchMeetings();
         } catch (error) {
             console.error('Error accepting meeting:', error);
@@ -148,7 +148,7 @@ export default function Meetings() {
 
     const handleDeleteMeeting = async (id) => {
         try {
-            await axios.delete(`${import.meta.env.VITE_API_URL}/api/v1/meetings/${id}?token=${token}`);
+            await axiosInstance.delete(`/api/v1/meetings/${id}`);
             setIsEditModalOpen(false);
             setEditingMeeting(null);
             fetchMeetings();

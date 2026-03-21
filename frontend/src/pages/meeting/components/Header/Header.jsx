@@ -7,7 +7,7 @@ import AddIcon from '@mui/icons-material/Add';
 import Badge from '@mui/material/Badge';
 import ScheduleMeetingModal from './ScheduleMeetingModal';
 import NotificationPopover from './NotificationPopover';
-import axios from 'axios';
+import axiosInstance from '../../../../utils/axiosInstance';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -22,7 +22,7 @@ export default function Header({ onSchedule, onUpdate, onDelete, onRefresh, edit
             const token = localStorage.getItem('token');
             if (!token) return;
             setLoadingNotifications(true);
-            const response = await axios.get(`${API_URL}/api/v1/notifications?token=${token}`);
+            const response = await axiosInstance.get(`/api/v1/notifications`);
             setNotifications(response.data || []);
         } catch (error) {
             console.error('Error fetching notifications:', error);

@@ -8,7 +8,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import EventIcon from '@mui/icons-material/Event';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 const server = import.meta.env.VITE_API_URL;
 
 const TopHeader = () => {
@@ -27,7 +27,7 @@ const TopHeader = () => {
     const fetchNotifications = async () => {
         if (!token) return;
         try {
-            const res = await axios.get(`${server}/api/v1/notifications/`, { params: { token } });
+            const res = await axiosInstance.get(`/api/v1/notifications/`);
             const sorted = (res.data || []).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
             setNotifications(sorted);
         } catch (e) {
@@ -76,22 +76,21 @@ const TopHeader = () => {
 
     const markRead = async (id) => {
         try {
-            await axios.put(`${server}/api/v1/notifications/${id}/read`, null, { params: { token } });
+            await axiosInstance.put(`/api/v1/notifications/${id}/read`);
             setNotifications(prev => prev.filter(n => n.id !== id && n._id !== id));
         } catch (e) {/* ignore */ }
     };
 
     const markAllRead = async () => {
         try {
-            await axios.put(`${server}/api/v1/notifications/read-all`, null, { params: { token } });
+            await axiosInstance.put(`/api/v1/notifications/read-all`);
             setNotifications([]);
         } catch (e) {/* ignore */ }
     };
 
     const respondToFriendRequest = async (id, requesterUsername, action) => {
         try {
-            await axios.post(`${server}/api/v1/friends/${action}`, {
-                token,
+            await axiosInstance.post(`/api/v1/friends/${action}`, {
                 friend_username: requesterUsername
             });
             markRead(id);
@@ -171,8 +170,11 @@ const TopHeader = () => {
                     {/* Dropdown */}
                     {open && (
                         <Box sx={{
-                            position: 'absolute', top: '48px', right: 0, zIndex: 9999,
-                            width: { xs: '300px', sm: '360px' },
+                            position: 'absolute', top: '48px', 
+                            right: { xs: '-130px', sm: 0 }, // Offset on mobile to prevent left clipping
+                            zIndex: 9999,
+                            width: { xs: 'calc(100vw - 40px)', sm: '360px' },
+                            maxWidth: '360px',
                             background: 'linear-gradient(180deg, #1C2230 0%, #131722 100%)',
                             border: '1px solid rgba(255,255,255,0.08)',
                             borderRadius: '14px',
@@ -182,7 +184,7 @@ const TopHeader = () => {
                             {/* Header */}
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2.5, py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
                                 <Typography sx={{ color: 'white', fontWeight: 700, fontSize: '14px' }}>
-                                    Notifications ({tick}s) {unreadCount > 0 && <Box component="span" sx={{ ml: 1, px: '6px', py: '2px', bgcolor: '#8B5CF620', color: '#8B5CF6', borderRadius: '10px', fontSize: '11px' }}>{unreadCount}</Box>}
+                                    Notifications {unreadCount > 0 && <Box component="span" sx={{ ml: 1, px: '6px', py: '2px', bgcolor: '#8B5CF620', color: '#8B5CF6', borderRadius: '10px', fontSize: '11px' }}>{unreadCount}</Box>}
                                 </Typography>
                                 {notifications.length > 0 && (
                                     <IconButton onClick={markAllRead} size="small" title="Clear all" sx={{ color: '#6B7280', '&:hover': { color: '#8B5CF6' } }}>
