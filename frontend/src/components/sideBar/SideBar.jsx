@@ -18,6 +18,8 @@ import ListItemText from '@mui/material/ListItemText';
 import FlashOnIcon from '@mui/icons-material/FlashOn';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import Badge from '@mui/material/Badge';
+import { useSocket } from '../../context/SocketContext';
 
 const NAV_ITEMS = [
     { path: '/dashboard', label: 'Dashboard', icon: <DashboardIcon /> },
@@ -32,8 +34,44 @@ export default function SideBar() {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const navigate = useNavigate();
+    const socket = useSocket();
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const [totalUnread, setTotalUnread] = React.useState(0);
     const open = Boolean(anchorEl);
+
+    const fetchTotalUnread = React.useCallback(async () => {
+        try {
+            const res = await axiosInstance.get('/api/v1/chat/unread');
+            const total = Object.values(res.data).reduce((acc, curr) => acc + curr, 0);
+            setTotalUnread(total);
+        } catch (err) {
+            console.error(err);
+        }
+    }, []);
+
+    React.useEffect(() => {
+        fetchTotalUnread();
+        
+        const handleChatRead = () => {
+            fetchTotalUnread();
+        };
+        window.addEventListener('chat-read', handleChatRead);
+        
+        return () => window.removeEventListener('chat-read', handleChatRead);
+    }, [fetchTotalUnread]);
+
+    React.useEffect(() => {
+        if (!socket) return;
+        const currentUsername = localStorage.getItem('username');
+        const handleReceive = (data) => {
+            if (data.receiver_username === currentUsername) {
+                // Short delay to allow Friends page to mark as read if drawer is open
+                setTimeout(fetchTotalUnread, 500);
+            }
+        };
+        socket.on('receive-chat-message', handleReceive);
+        return () => socket.off('receive-chat-message', handleReceive);
+    }, [socket, fetchTotalUnread]);
 
     const handleLogout = async () => {
         try {
@@ -51,6 +89,7 @@ export default function SideBar() {
     };
 
     const username = localStorage.getItem('username') || 'User';
+    const fullName = localStorage.getItem('name') || username;
     const profilePic = localStorage.getItem('profile_picture') || null;
 
     const handleClick = (event) => {
@@ -178,7 +217,13 @@ export default function SideBar() {
                             }}
                         >
                             <Box className="nav-icon" sx={{ mr: { xs: 0, md: 2 }, mb: { xs: 0.8, md: 0 }, display: 'flex', alignItems: 'center', transition: 'all 0.3s ease', '& > svg': { fontSize: { xs: '1.4rem', md: '1.5rem' } } }}>
-                                {item.icon}
+                                {item.label === 'Friends' ? (
+                                    <Badge badgeContent={totalUnread} color="error" max={99} sx={{ '& .MuiBadge-badge': { right: 2, top: 4 } }}>
+                                        {item.icon}
+                                    </Badge>
+                                ) : (
+                                    item.icon
+                                )}
                             </Box>
                             <Typography variant="body2" sx={{ fontSize: { xs: '0.65rem', md: '0.95rem' }, fontFamily: 'inherit', letterSpacing: { xs: '-0.2px', md: '0px' }, mt: 0.5 }}>
                                 {item.label}
@@ -238,7 +283,7 @@ export default function SideBar() {
                             color: '#E2E8F0',
                             transition: 'all 0.3s ease'
                         }}>
-                            <Typography sx={{ fontSize: '9px', fontWeight: 'bold' }}>{username.split(' ').map(n => n[0]).join('').toUpperCase()}</Typography>
+                            <Typography sx={{ fontSize: '9px', fontWeight: 'bold' }}>{fullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}</Typography>
                         </Box>
                         <Typography variant="body2" sx={{ fontSize: '0.65rem', fontFamily: 'inherit', letterSpacing: '-0.2px', mt: 0.5 }}>
                             Profile
@@ -301,12 +346,14 @@ export default function SideBar() {
                                 <img src={profilePic} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px' }} />
                             ) : (
                                 <Typography sx={{ fontSize: '13px', fontWeight: 700, color: '#94A3B8' }}>
-                                    {username.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                    {fullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
                                 </Typography>
                             )}
                         </Box>
                         <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-                            <Typography variant="body2" sx={{ fontWeight: 600, color: 'white', lineHeight: 1.2 }}>{username}</Typography>
+                            <Typography variant="body2" sx={{ fontWeight: 600, color: 'white', lineHeight: 1.2 }}>
+                                {fullName.length > 20 ? fullName.substring(0, 20) + '...' : fullName}
+                            </Typography>
                             <Typography variant="caption" sx={{ color: '#8B5CF6', fontSize: '0.75rem', fontWeight: 500 }}>Pro Plan</Typography>
                         </Box>
                         <IconButton onClick={handleLogout} size="small" sx={{ color: '#94A3B8', transition: 'all 0.3s ease', '&:hover': { color: '#EF4444', bgcolor: 'rgba(239, 68, 68, 0.1)', transform: 'scale(1.1)' } }}>

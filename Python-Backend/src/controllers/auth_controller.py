@@ -57,7 +57,7 @@ async def login(user_data: UserLogin, response: Response):
         secure=True # Must be True for samesite="none"
     )
     
-    return {"message": "Login successful", "token": token, "name": user.name, "profile_picture": user.profile_picture}
+    return {"message": "Login successful", "token": token, "name": user.name, "username": user.username, "profile_picture": user.profile_picture}
 
 async def update_fcm_token(token: str, fcm_token: str):
     user = await User.find_one(User.token == token)
