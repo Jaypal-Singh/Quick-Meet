@@ -67,16 +67,18 @@ export default function Friends() {
         if (!socket) return;
 
         const handleReceiveMessage = (data) => {
-            // If the message is from someone not currently active in an OPEN drawer, increment their unread counter
-            // Wait, to safely check chatOpen and activeChatFriend in a socket listener, let's use functional state update
             if (data.receiver_username === currentUsername) {
-                setUnreadCounts(prev => {
-                    const isChatOpenForSender = activeChatFriend && activeChatFriend.username === data.sender_username && chatOpen;
-                    if (!isChatOpenForSender) {
-                        return { ...prev, [data.sender_username]: (prev[data.sender_username] || 0) + 1 };
-                    }
-                    return prev;
-                });
+                const isChatOpenForSender = activeChatFriend && activeChatFriend.username === data.sender_username && chatOpen;
+                
+                if (isChatOpenForSender) {
+                    // Chat is currently open, mark as read immediately behind the scenes
+                    axiosInstance.post(`/api/v1/chat/read/${data.sender_username}`)
+                        .then(() => window.dispatchEvent(new Event('chat-read')))
+                        .catch(err => console.error(err));
+                } else {
+                    // Chat is closed, increment the local badge
+                    setUnreadCounts(prev => ({ ...prev, [data.sender_username]: (prev[data.sender_username] || 0) + 1 }));
+                }
             }
         };
 

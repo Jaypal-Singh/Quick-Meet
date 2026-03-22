@@ -95,24 +95,8 @@ export default function ChatDrawer({ open, onClose, friend }) {
         if (!newMessage.trim() || !friend) return;
 
         try {
-            // Optimistic update optional, but backend responds with the saved message
-            // which will also be caught by socket if we want. But socket already emits
-            // back to the sender, so we just clear input and wait for socket,
-            // or push optimistic and deduplicate. Let's just rely on socket emitting back to sender!
-            // Wait, socket emitting back to sender might be delayed. 
-            // Better to push to state immediately and avoid dups.
             const messageText = newMessage.trim();
             setNewMessage(""); 
-            
-            const tempMessage = {
-                sender_username: currentUsername,
-                receiver_username: friend.username,
-                content: messageText,
-                timestamp: new Date().toISOString()
-            };
-            
-            // Add optimistic
-            setMessages(prev => [...prev, tempMessage]);
             
             await axiosInstance.post('/api/v1/chat/send', {
                 receiver_username: friend.username,
