@@ -739,10 +739,10 @@ export default function VideoMeetComponent() {
         if (screen === undefined || screen === false) {
              // Check for actual support before trying to start
              const supported = !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia);
-             if (!supported && !isMobile) {
+             if (!supported) {
                  setNotification({ 
                      open: true, 
-                     message: "Screen sharing is not supported on this browser/device. Try a desktop browser for full support.", 
+                     message: "Screen sharing is not supported by your mobile browser (Apple/Google restriction).", 
                      severity: "error" 
                  });
                  return;
