@@ -39,7 +39,11 @@ async def send_message(data: SendMessageRequest):
     await new_message.create()
 
     message_data = new_message.dict()
-    # converting datetime to isoformat
+    # converting ObjectId and datetime for JSON serialization
+    if 'id' in message_data and message_data['id'] is not None:
+        message_data['id'] = str(message_data['id'])
+    if '_id' in message_data and message_data['_id'] is not None:
+        message_data['_id'] = str(message_data['_id'])
     message_data['timestamp'] = getattr(new_message, 'timestamp').isoformat()
 
     # Emitting to the personal room of the receiver and the sender
