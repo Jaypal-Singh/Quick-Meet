@@ -45,8 +45,10 @@ export default function Login() {
                 // AND returned in JSON for explicit localStorage storage
                 localStorage.setItem('token', request.data.token);
                 localStorage.setItem('email', email);
+                if (request.data.username) {
+                    localStorage.setItem('username', request.data.username);
+                }
                 if (request.data.name) {
-                    localStorage.setItem('username', request.data.name);
                     localStorage.setItem('name', request.data.name);
                 }
                 if (request.data.profile_picture) {
@@ -77,7 +79,11 @@ export default function Login() {
                     // AND returned in JSON for explicit localStorage storage
                     localStorage.setItem('token', response.data.token);
                     localStorage.setItem('email', response.data.email);
-                    localStorage.setItem('username', response.data.name);
+                    if (response.data.username) {
+                        localStorage.setItem('username', response.data.username);
+                    } else {
+                        localStorage.setItem('username', response.data.name);
+                    }
                     localStorage.setItem('name', response.data.name);
                     if (response.data.profile_picture) {
                         localStorage.setItem('profile_picture', response.data.profile_picture);

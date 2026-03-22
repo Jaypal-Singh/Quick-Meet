@@ -39,12 +39,13 @@ async def startup_event():
     start_reminder_service()
 
 
-from src.routers import auth_router, meeting_router, friend_router, notification_router
+from src.routers import auth_router, meeting_router, friend_router, notification_router, chat_router
 
 app.include_router(auth_router.router, prefix="/api/v1/users")
 app.include_router(friend_router.router, prefix="/api/v1/friends")
 app.include_router(meeting_router.router, prefix="/api/v1/meetings")
 app.include_router(notification_router.router, prefix="/api/v1/notifications")
+app.include_router(chat_router.router, prefix="/api/v1/chat")
 
 
 @app.get("/")
