@@ -19,27 +19,28 @@ const VideoControls = ({
     toggleMeetingInfo
 }) => {
     return (
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center flex-wrap gap-1 md:gap-3 bg-[#1C2230] px-3 md:px-6 py-1.5 md:py-3 rounded-full md:rounded-full z-50 shadow-2xl max-w-[98vw] md:max-w-none">
-            <IconButton onClick={handleAudio} size="small" sx={{ p: { xs: 1, md: 1.5 }, color: audio ? '#ffffff' : '#ef4444', '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' } }}>
-                {audio ? <MicIcon fontSize="small" /> : <MicOffIcon fontSize="small" />}
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center flex-wrap gap-1 md:gap-3 bg-[var(--bg-card)] px-4 md:px-6 py-2 md:py-3 rounded-full md:rounded-full z-50 shadow-2xl max-w-[95vw] md:max-w-none">
+
+            <IconButton onClick={handleAudio} sx={{ color: audio ? 'var(--text-primary)' : '#ef4444', '&:hover': { backgroundColor: 'var(--border-main)' } }}>
+                {audio ? <MicIcon /> : <MicOffIcon />}
             </IconButton>
 
-            <IconButton onClick={handleVideo} size="small" sx={{ p: { xs: 1, md: 1.5 }, color: video ? '#ffffff' : '#ef4444', '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' } }}>
-                {video ? <VideocamIcon fontSize="small" /> : <VideocamOffIcon fontSize="small" />}
+            <IconButton onClick={handleVideo} sx={{ color: video ? 'var(--text-primary)' : '#ef4444', '&:hover': { backgroundColor: 'var(--border-main)' } }}>
+                {video ? <VideocamIcon /> : <VideocamOffIcon />}
             </IconButton>
 
             {screenAvailable && (
-                <IconButton onClick={handleScreen} size="small" sx={{ p: { xs: 1, md: 1.5 }, color: screen ? '#818CF8' : '#ffffff', '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' } }}>
-                    {screen ? <StopScreenShareIcon fontSize="small" /> : <ScreenShareIcon fontSize="small" />}
+                <IconButton onClick={handleScreen} sx={{ color: screen ? '#818CF8' : 'var(--text-primary)', '&:hover': { backgroundColor: 'var(--border-main)' } }}>
+                    {screen ? <StopScreenShareIcon /> : <ScreenShareIcon />}
                 </IconButton>
             )}
 
-            <IconButton onClick={handleCaptions} size="small" sx={{ p: { xs: 1, md: 1.5 }, color: captions ? '#10B981' : '#ffffff', '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' } }}>
-                {captions ? <ClosedCaptionIcon fontSize="small" /> : <ClosedCaptionDisabledIcon fontSize="small" />}
+            <IconButton onClick={handleCaptions} sx={{ color: captions ? '#10B981' : 'var(--text-primary)', '&:hover': { backgroundColor: 'var(--border-main)' } }}>
+                {captions ? <ClosedCaptionIcon /> : <ClosedCaptionDisabledIcon />}
             </IconButton>
 
-            <IconButton onClick={toggleMeetingInfo} size="small" title="Meeting Info" sx={{ p: { xs: 1, md: 1.5 }, color: '#ffffff', '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)', color: '#818CF8' } }}>
-                <PersonAddIcon fontSize="small" />
+            <IconButton onClick={toggleMeetingInfo} title="Meeting Info" sx={{ color: 'var(--text-primary)', '&:hover': { backgroundColor: 'var(--border-main)', color: '#818CF8' } }}>
+                <PersonAddIcon />
             </IconButton>
 
             <IconButton
@@ -47,8 +48,8 @@ const VideoControls = ({
                 size="small"
                 sx={{
                     backgroundColor: '#ef4444',
-                    color: '#ffffff',
-                    padding: { xs: '10px', md: '12px' },
+                    color: 'var(--text-primary)',
+                    padding: '12px',
                     '&:hover': { backgroundColor: '#dc2626' }
                 }}
             >
@@ -58,8 +59,7 @@ const VideoControls = ({
             <Badge badgeContent={newMessages} color="error" max={99}>
                 <IconButton
                     onClick={() => setModal(!showModal)}
-                    size="small"
-                    sx={{ p: { xs: 1, md: 1.5 }, color: showModal ? '#818CF8' : '#9CA3AF', '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' } }}
+                    sx={{ color: showModal ? '#818CF8' : 'var(--text-secondary)', '&:hover': { backgroundColor: 'var(--border-main)' } }}
                 >
                     <ChatIcon fontSize="small" />
                 </IconButton>

@@ -18,43 +18,42 @@ export const SettingsProvider = ({ children }) => {
     }, [fontSize, appearance]);
 
     const applyFontSize = (size) => {
-        const root = document.documentElement;
         switch(size) {
             case 'Small':
-                root.style.fontSize = '14px';
+                document.body.style.zoom = '0.9';
+                document.documentElement.style.setProperty('--app-zoom', '0.9');
                 break;
             case 'Medium':
-                root.style.fontSize = '16px';
+                document.body.style.zoom = '1.0';
+                document.documentElement.style.setProperty('--app-zoom', '1.0');
                 break;
             case 'Large':
-                root.style.fontSize = '18px';
+                document.body.style.zoom = '1.1';
+                document.documentElement.style.setProperty('--app-zoom', '1.1');
                 break;
             default:
-                root.style.fontSize = '16px';
+                document.body.style.zoom = '1.0';
+                document.documentElement.style.setProperty('--app-zoom', '1.0');
         }
     };
 
     const applyAppearance = (mode) => {
         const root = document.documentElement;
         if (mode === 'Dark') {
-            root.classList.add('dark');
             root.classList.remove('light');
-            document.body.style.backgroundColor = '#0B0F19';
+            document.body.style.backgroundColor = 'var(--bg-root)';
         } else if (mode === 'Light') {
             root.classList.add('light');
-            root.classList.remove('dark');
-            document.body.style.backgroundColor = '#F9FAFB';
+            document.body.style.backgroundColor = 'var(--bg-root)'; // Keep base dark, CSS filter will invert to var(--text-primary)!
         } else {
             // System preference
             const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             if (isDark) {
-                root.classList.add('dark');
                 root.classList.remove('light');
-                document.body.style.backgroundColor = '#0B0F19';
+                document.body.style.backgroundColor = 'var(--bg-root)';
             } else {
                 root.classList.add('light');
-                root.classList.remove('dark');
-                document.body.style.backgroundColor = '#F9FAFB';
+                document.body.style.backgroundColor = 'var(--bg-root)';
             }
         }
     };

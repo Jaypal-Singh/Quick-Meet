@@ -95,10 +95,10 @@ export default function NotificationPopover({
                 sx: {
                     width: { xs: 'calc(100vw - 32px)', sm: 360 },
                     maxWidth: 360,
-                    bgcolor: '#1E293B',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    bgcolor: 'var(--bg-card-alt)',
+                    border: '1px solid var(--border-main)',
                     borderRadius: '16px',
-                    boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+                    boxShadow: '0 10px 30px var(--shadow-strong)',
                     overflow: 'hidden',
                     display: 'flex',
                     flexDirection: 'column'
@@ -106,15 +106,15 @@ export default function NotificationPopover({
             }}
         >
             {/* Header */}
-            <Box sx={{ p: 2, borderBottom: '1px solid rgba(255, 255, 255, 0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography variant="h6" sx={{ color: '#F8FAFC', fontWeight: 700, fontSize: '1.1rem' }}>
+            <Box sx={{ p: 2, borderBottom: '1px solid var(--border-light)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="h6" sx={{ color: 'var(--text-primary)', fontWeight: 700, fontSize: '1.1rem' }}>
                     Notifications
                 </Typography>
                 {notifications.length > 0 && (
                     <Button
                         size="small"
                         onClick={handleClearAll}
-                        sx={{ color: '#6366F1', textTransform: 'none', fontWeight: 600 }}
+                        sx={{ color: 'var(--primary)', textTransform: 'none', fontWeight: 600 }}
                     >
                         Clear All
                     </Button>
@@ -125,13 +125,13 @@ export default function NotificationPopover({
             <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>
                 {loading ? (
                     <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-                        <CircularProgress size={24} sx={{ color: '#6366F1' }} />
+                        <CircularProgress size={24} sx={{ color: 'var(--primary)' }} />
                     </Box>
                 ) : notifications.length === 0 ? (
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', p: 6, textAlign: 'center' }}>
                         <NotificationsIcon sx={{ fontSize: 48, color: 'rgba(148, 163, 184, 0.2)', mb: 2 }} />
-                        <Typography sx={{ color: '#94A3B8', fontWeight: 600 }}>All caught up!</Typography>
-                        <Typography variant="caption" sx={{ color: '#64748B' }}>No new notifications to show</Typography>
+                        <Typography sx={{ color: 'var(--text-secondary)', fontWeight: 600 }}>All caught up!</Typography>
+                        <Typography variant="caption" sx={{ color: 'var(--text-secondary)' }}>No new notifications to show</Typography>
                     </Box>
                 ) : (
                     <List sx={{ p: 0 }}>
@@ -155,7 +155,7 @@ export default function NotificationPopover({
                                                     <IconButton 
                                                         size="small" 
                                                         onClick={() => markAsRead(id)} 
-                                                        sx={{ position: 'absolute', top: 8, right: 8, color: '#64748B', p: 0.5 }}
+                                                        sx={{ position: 'absolute', top: 8, right: 8, color: 'var(--text-secondary)', p: 0.5 }}
                                                     >
                                                         <CloseIcon sx={{ fontSize: 16 }} />
                                                     </IconButton>
@@ -165,16 +165,16 @@ export default function NotificationPopover({
                                                             width: 50, 
                                                             height: 50, 
                                                             bgcolor: 'rgba(99, 102, 241, 0.1)', 
-                                                            color: '#6366F1',
+                                                            color: 'var(--primary)',
                                                             borderRadius: '14px' 
                                                         }}>
                                                             <EventIcon sx={{ fontSize: 24 }} />
                                                         </Avatar>
                                                         <Box sx={{ flexGrow: 1, pr: 2 }}>
-                                                            <Typography variant="subtitle2" sx={{ color: '#F8FAFC', fontWeight: 700, mb: 0.5, fontSize: '1rem' }}>
+                                                            <Typography variant="subtitle2" sx={{ color: 'var(--text-primary)', fontWeight: 700, mb: 0.5, fontSize: '1rem' }}>
                                                                 {n.title}
                                                             </Typography>
-                                                            <Typography variant="body2" sx={{ color: '#94A3B8', fontSize: '0.85rem', lineHeight: 1.5 }}>
+                                                            <Typography variant="body2" sx={{ color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: 1.5 }}>
                                                                 {n.body}
                                                             </Typography>
                                                         </Box>
@@ -186,14 +186,14 @@ export default function NotificationPopover({
                                                             fullWidth
                                                             onClick={() => handleRespond(id, 'accept')}
                                                             sx={{ 
-                                                                bgcolor: '#6366F1', 
-                                                                color: 'white', 
+                                                                bgcolor: 'var(--primary)', 
+                                                                color: 'var(--text-primary)', 
                                                                 textTransform: 'none', 
                                                                 fontWeight: 700,
                                                                 borderRadius: '10px',
                                                                 py: 1,
                                                                 boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)',
-                                                                '&:hover': { bgcolor: '#4F46E5' }
+                                                                '&:hover': { bgcolor: 'var(--primary-hover)' }
                                                             }}
                                                         >
                                                             Accept
@@ -203,20 +203,20 @@ export default function NotificationPopover({
                                                             fullWidth
                                                             onClick={() => handleRespond(id, 'reject')}
                                                             sx={{ 
-                                                                borderColor: 'rgba(255, 255, 255, 0.1)', 
-                                                                color: '#94A3B8', 
+                                                                borderColor: 'var(--border-main)', 
+                                                                color: 'var(--text-secondary)', 
                                                                 textTransform: 'none', 
                                                                 fontWeight: 600,
                                                                 borderRadius: '10px',
                                                                 py: 1,
-                                                                '&:hover': { borderColor: 'rgba(255, 255, 255, 0.3)', bgcolor: 'rgba(255,255,255,0.02)' }
+                                                                '&:hover': { borderColor: 'var(--border-extra)', bgcolor: 'rgba(255,255,255,0.02)' }
                                                             }}
                                                         >
                                                             Reject
                                                         </Button>
                                                     </Box>
                                                 </ListItem>
-                                                {i < notifications.length - 1 && <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.05)' }} />}
+                                                {i < notifications.length - 1 && <Divider sx={{ borderColor: 'var(--border-light)' }} />}
                                             </React.Fragment>
                                         );
                                     } else {
@@ -241,14 +241,14 @@ export default function NotificationPopover({
                                                     }}
                                                 >
                                                     {/* Purple dot icon */}
-                                                    <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: n.read ? '#374151' : '#8B5CF6', flexShrink: 0 }} />
+                                                    <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: n.read ? '#374151' : 'var(--primary-light)', flexShrink: 0 }} />
                                                     
                                                     {/* Content */}
                                                     <Box sx={{ flex: 1, minWidth: 0 }}>
-                                                        <Typography sx={{ color: 'white', fontSize: '13px', fontWeight: n.read ? 400 : 700, lineHeight: 1.4 }}>
+                                                        <Typography sx={{ color: 'var(--text-primary)', fontSize: '13px', fontWeight: n.read ? 400 : 700, lineHeight: 1.4 }}>
                                                             {n.title}
                                                         </Typography>
-                                                        <Typography noWrap sx={{ color: '#9CA3AF', fontSize: '12px', mt: '2px', lineHeight: 1.4 }}>
+                                                        <Typography noWrap sx={{ color: 'var(--text-secondary)', fontSize: '12px', mt: '2px', lineHeight: 1.4 }}>
                                                             {n.body}
                                                         </Typography>
                                                         <Typography sx={{ color: '#4B5563', fontSize: '11px', mt: '4px' }}>
@@ -260,7 +260,7 @@ export default function NotificationPopover({
                                                     <Box sx={{ position: 'relative', flexShrink: 0 }}>
                                                         <Box sx={{ 
                                                             width: 40, height: 40, borderRadius: '50%', 
-                                                            bgcolor: 'rgba(139,92,246,0.1)', color: '#8B5CF6',
+                                                            bgcolor: 'rgba(139,92,246,0.1)', color: 'var(--primary-light)',
                                                             display: 'flex', alignItems: 'center', justifyContent: 'center' 
                                                         }}>
                                                             {n.type === 'friend_request' ? <Box sx={{ fontSize: 18 }}>✓</Box> : <Box sx={{ fontSize: 18 }}>🎥</Box>}
@@ -273,15 +273,15 @@ export default function NotificationPopover({
                                                             size="small" 
                                                             sx={{ 
                                                                 position: 'absolute', bottom: -5, right: -5,
-                                                                bgcolor: '#131722', border: '1px solid rgba(255,255,255,0.1)',
-                                                                p: 0.2, color: '#4B5563', '&:hover': { color: '#8B5CF6', bgcolor: '#1C2230' } 
+                                                                bgcolor: 'var(--bg-darker)', border: '1px solid var(--border-main)',
+                                                                p: 0.2, color: '#4B5563', '&:hover': { color: 'var(--primary-light)', bgcolor: 'var(--bg-card)' } 
                                                             }}
                                                         >
                                                             <Box sx={{ fontSize: 10 }}>✓</Box>
                                                         </IconButton>
                                                     </Box>
                                                 </Box>
-                                                {i < notifications.length - 1 && <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.05)' }} />}
+                                                {i < notifications.length - 1 && <Divider sx={{ borderColor: 'var(--border-light)' }} />}
                                             </React.Fragment>
                                         );
                                     }

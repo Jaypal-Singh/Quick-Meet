@@ -72,13 +72,13 @@ const UpcomingMeetings = () => {
         <Box>
             {/* Header */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                <Typography component="h2" sx={{ fontSize: { xs: '16px', md: '18px' }, fontWeight: 700, color: 'white', display: 'flex', alignItems: 'center', gap: 1, m: 0 }}>
-                    <CalendarMonthIcon sx={{ color: '#6366F1', fontSize: '20px' }} />
+                <Typography component="h2" sx={{ fontSize: { xs: '16px', md: '18px' }, fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: 1, m: 0 }}>
+                    <CalendarMonthIcon sx={{ color: 'var(--primary)', fontSize: '20px' }} />
                     Upcoming Meetings
                 </Typography>
                 <Button
                     onClick={() => navigate('/upcoming')}
-                    sx={{ color: '#8B5CF6', fontSize: { xs: '12px', md: '14px' }, fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', textTransform: 'none', p: 0, minWidth: 'auto', '&:hover': { background: 'none', textDecoration: 'underline' } }}
+                    sx={{ color: 'var(--primary-light)', fontSize: { xs: '12px', md: '14px' }, fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', textTransform: 'none', p: 0, minWidth: 'auto', '&:hover': { background: 'none', textDecoration: 'underline' } }}
                 >
                     View Schedule
                 </Button>
@@ -89,26 +89,26 @@ const UpcomingMeetings = () => {
                 {displayMeetings.length > 0 ? (
                     displayMeetings.map((meeting, idx) => (
                         <Box key={idx} sx={{
-                            display: 'flex', alignItems: 'center', backgroundColor: '#1C2230', flexDirection: { xs: 'column', sm: 'row' },
-                            border: '1px solid rgba(255, 255, 255, 0.05)', borderRadius: '14px', p: { xs: 2, md: 2 }
+                            display: 'flex', alignItems: 'center', backgroundColor: 'var(--bg-card)', flexDirection: { xs: 'column', sm: 'row' },
+                            border: '1px solid var(--border-light)', borderRadius: '14px', p: { xs: 2, md: 2 }
                         }}>
                             {/* Top/Left Section: Date + Info */}
                             <Box sx={{ display: 'flex', width: { xs: '100%', sm: 'auto' }, flexGrow: 1, alignItems: 'center', mb: { xs: 2, sm: 0 } }}>
                                 {/* Date Badge */}
                                 <Box sx={{
                                     width: { xs: '48px', md: '56px' }, height: { xs: '48px', md: '56px' }, borderRadius: '12px',
-                                    backgroundColor: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.05)',
+                                    backgroundColor: 'rgba(255, 255, 255, 0.04)', border: '1px solid var(--border-light)',
                                     display: 'flex', flexDirection: 'column', alignItems: 'center',
                                     justifyContent: 'center', mr: 2, flexShrink: 0
                                 }}>
-                                    <Typography sx={{ fontSize: '9px', color: '#9CA3AF', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px' }}>{meeting.month}</Typography>
-                                    <Typography sx={{ fontSize: { xs: '18px', md: '22px' }, color: 'white', fontWeight: 700, lineHeight: 1 }}>{meeting.day}</Typography>
+                                    <Typography sx={{ fontSize: '9px', color: 'var(--text-secondary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px' }}>{meeting.month}</Typography>
+                                    <Typography sx={{ fontSize: { xs: '18px', md: '22px' }, color: 'var(--text-primary)', fontWeight: 700, lineHeight: 1 }}>{meeting.day}</Typography>
                                 </Box>
 
                                 {/* Info */}
                                 <Box sx={{ flex: 1, minWidth: 0 }}>
-                                    <Typography sx={{ color: 'white', fontSize: { xs: '13px', md: '14px' }, fontWeight: 600, m: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{meeting.title}</Typography>
-                                    <Typography sx={{ color: '#9CA3AF', fontSize: '12px', display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}>
+                                    <Typography sx={{ color: 'var(--text-primary)', fontSize: { xs: '13px', md: '14px' }, fontWeight: 600, m: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{meeting.title}</Typography>
+                                    <Typography sx={{ color: 'var(--text-secondary)', fontSize: '12px', display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}>
                                         <AccessTimeIcon sx={{ fontSize: '14px' }} />
                                         {meeting.time}
                                     </Typography>
@@ -125,14 +125,14 @@ const UpcomingMeetings = () => {
                                         alt=""
                                         sx={{
                                             width: '28px', height: '28px', borderRadius: '50%',
-                                            border: '2px solid #1C2230', ml: i > 0 ? '-8px' : '0'
+                                            border: '2px solid var(--bg-card)', ml: i > 0 ? '-8px' : '0'
                                         }}
                                     />
                                 ))}
                                 {(meeting.participantCount || 0) > 3 && (
                                     <Box component="span" sx={{
                                         width: '28px', height: '28px', borderRadius: '50%',
-                                        backgroundColor: 'rgba(255, 255, 255, 0.1)', border: '2px solid #1C2230',
+                                        backgroundColor: 'var(--border-main)', border: '2px solid var(--bg-card)',
                                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                                         fontSize: '10px', color: '#D1D5DB', fontWeight: 600, ml: '-8px'
                                     }}>
@@ -146,11 +146,11 @@ const UpcomingMeetings = () => {
                     <Box sx={{
                         p: 4,
                         textAlign: 'center',
-                        bgcolor: '#1C2230',
+                        bgcolor: 'var(--bg-card)',
                         borderRadius: '14px',
-                        border: '1px solid rgba(255, 255, 255, 0.05)'
+                        border: '1px solid var(--border-light)'
                     }}>
-                        <Typography sx={{ color: '#9CA3AF', fontSize: '14px' }}>
+                        <Typography sx={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
                             No upcoming meetings scheduled.
                         </Typography>
                     </Box>

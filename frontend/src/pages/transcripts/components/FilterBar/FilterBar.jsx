@@ -15,23 +15,23 @@ export default function FilterBar() {
                 sx={{
                     display: 'flex',
                     alignItems: 'center',
-                    bgcolor: 'rgba(34, 43, 61, 0.4)',
+                    bgcolor: 'var(--overlay-light)',
                     borderRadius: '16px',
                     px: { xs: 2, md: 3 },
                     py: { xs: 1.2, md: 1.5 },
-                    border: '1px solid rgba(255, 255, 255, 0.05)',
+                    border: '1px solid var(--border-light)',
                     transition: 'all 0.3s ease',
                     '&:focus-within': {
-                        bgcolor: 'rgba(34, 43, 61, 0.8)',
+                        bgcolor: 'var(--overlay-strong)',
                         borderColor: 'rgba(99, 102, 241, 0.5)',
                         boxShadow: '0 0 0 4px rgba(99, 102, 241, 0.1)',
                     }
                 }}
             >
-                <SearchIcon sx={{ color: '#6366F1', mr: { xs: 1.5, md: 2 }, fontSize: { xs: 20, md: 22 } }} />
+                <SearchIcon sx={{ color: 'var(--primary)', mr: { xs: 1.5, md: 2 }, fontSize: { xs: 20, md: 22 } }} />
                 <InputBase
                     placeholder="Search through meeting content..."
-                    sx={{ color: '#E2E8F0', width: '100%', fontSize: { xs: '0.9rem', md: '1rem' } }}
+                    sx={{ color: 'var(--text-secondary)', width: '100%', fontSize: { xs: '0.9rem', md: '1rem' } }}
                 />
             </Box>
 
@@ -66,11 +66,11 @@ export default function FilterBar() {
                     sx={chipStyle}
                 />
 
-                <Box sx={{ height: { xs: '0px', sm: '24px' }, width: { xs: '0px', sm: '1px' }, bgcolor: 'rgba(255,255,255,0.1)', mx: 1 }} />
+                <Box sx={{ height: { xs: '0px', sm: '24px' }, width: { xs: '0px', sm: '1px' }, bgcolor: 'var(--border-main)', mx: 1 }} />
 
                 <Button
                     sx={{
-                        color: '#6366F1',
+                        color: 'var(--primary)',
                         textTransform: 'none',
                         fontWeight: 600,
                         fontSize: '0.875rem',
@@ -86,13 +86,13 @@ export default function FilterBar() {
 }
 
 const chipStyle = {
-    bgcolor: 'rgba(34, 43, 61, 0.6)',
-    color: '#E2E8F0',
+    bgcolor: 'var(--overlay-medium)',
+    color: 'var(--text-secondary)',
     borderRadius: '12px',
     height: '40px',
-    border: '1px solid rgba(255, 255, 255, 0.05)',
+    border: '1px solid var(--border-light)',
     px: 1,
-    '& .MuiChip-icon': { color: '#6366F1' },
-    '& .MuiChip-deleteIcon': { color: '#94A3B8', fontSize: '18px' },
-    '&:hover': { bgcolor: 'rgba(34, 43, 61, 0.9)', borderColor: 'rgba(255, 255, 255, 0.1)' }
+    '& .MuiChip-icon': { color: 'var(--primary)' },
+    '& .MuiChip-deleteIcon': { color: 'var(--text-secondary)', fontSize: '18px' },
+    '&:hover': { bgcolor: 'var(--overlay-dark)', borderColor: 'var(--border-main)' }
 };

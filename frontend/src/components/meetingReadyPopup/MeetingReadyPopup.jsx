@@ -67,12 +67,12 @@ const MeetingReadyPopup = ({ meetingUrl, username, onClose }) => {
     };
 
     return (
-        <div className="absolute bottom-[100px] left-6 w-[360px] max-h-[500px] flex flex-col rounded-xl z-[100] bg-[#1C2230] border border-white/10 shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300 ease-out">
+        <div className="absolute bottom-[100px] left-6 w-[360px] max-h-[500px] flex flex-col rounded-xl z-[100] bg-[var(--bg-card)] border border-[var(--border-main)] shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300 ease-out">
             
-            <div className="p-6 border-b border-white/5">
+            <div className="p-6 border-b border-[var(--border-light)]">
                 <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-lg font-medium text-white">Your meeting's ready</h2>
-                    <IconButton size="small" onClick={onClose} sx={{ color: '#9CA3AF' }}>
+                    <h2 className="text-lg font-medium text-[var(--text-primary)]">Your meeting's ready</h2>
+                    <IconButton size="small" onClick={onClose} sx={{ color: 'var(--text-secondary)' }}>
                         <CloseIcon fontSize="small" />
                     </IconButton>
                 </div>
@@ -91,15 +91,15 @@ const MeetingReadyPopup = ({ meetingUrl, username, onClose }) => {
 
                 {!showFriends && (
                     <>
-                        <p className="text-gray-400 text-sm mb-4 leading-relaxed">
+                        <p className="text-[var(--text-secondary)] text-sm mb-4 leading-relaxed">
                             Or share this meeting link with others you want in the meeting
                         </p>
 
-                        <div className="flex items-center bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 mb-2">
-                            <span className="flex-1 text-gray-300 text-sm overflow-hidden text-ellipsis whitespace-nowrap">
+                        <div className="flex items-center bg-[var(--bg-dark)] border border-[var(--border-main)] rounded-lg px-3 py-2.5 mb-2">
+                            <span className="flex-1 text-[var(--text-primary)] text-sm overflow-hidden text-ellipsis whitespace-nowrap">
                                 {meetingUrl}
                             </span>
-                            <IconButton size="small" onClick={handleCopy} sx={{ color: '#9CA3AF', padding: '4px' }}>
+                            <IconButton size="small" onClick={handleCopy} sx={{ color: 'var(--text-secondary)', padding: '4px' }}>
                                 <ContentCopyIcon fontSize="small" />
                             </IconButton>
                         </div>
@@ -108,8 +108,8 @@ const MeetingReadyPopup = ({ meetingUrl, username, onClose }) => {
             </div>
 
             {showFriends && (
-                <div className="flex-1 overflow-y-auto p-4 bg-black/20 min-h-[150px] max-h-[300px]">
-                    <Typography variant="caption" className="text-gray-500 mb-3 block px-2">INVITE YOUR FRIENDS</Typography>
+                <div className="flex-1 overflow-y-auto p-4 bg-[var(--bg-dark)] min-h-[150px] max-h-[300px]">
+                    <Typography variant="caption" className="text-[var(--text-secondary)] mb-3 block px-2">INVITE YOUR FRIENDS</Typography>
                     
                     {loadingFriends ? (
                         <div className="flex justify-center py-6">
@@ -118,14 +118,14 @@ const MeetingReadyPopup = ({ meetingUrl, username, onClose }) => {
                     ) : friends.length > 0 ? (
                         <div className="flex flex-col gap-2">
                             {friends.map((friend) => (
-                                <div key={friend.username} className="flex items-center justify-between p-2 rounded-lg hover:bg-white/5 transition-colors group">
+                                <div key={friend.username} className="flex items-center justify-between p-2 rounded-lg hover:bg-[var(--bg-card-alt)] transition-colors group">
                                     <div className="flex items-center gap-3">
-                                        <Avatar sx={{ width: 32, height: 32, bgcolor: '#4F46E5', fontSize: '0.9rem' }}>
+                                        <Avatar sx={{ width: 32, height: 32, bgcolor: 'var(--primary-hover)', fontSize: '0.9rem' }}>
                                             {friend.name[0]}
                                         </Avatar>
                                         <div className="overflow-hidden">
-                                            <p className="text-white text-sm font-medium truncate w-[140px]">{friend.name}</p>
-                                            <p className="text-gray-500 text-[10px] truncate w-[140px]">@{friend.username}</p>
+                                            <p className="text-[var(--text-primary)] text-sm font-medium truncate w-[140px]">{friend.name}</p>
+                                            <p className="text-[var(--text-secondary)] text-[10px] truncate w-[140px]">@{friend.username}</p>
                                         </div>
                                     </div>
                                     <button 
@@ -143,11 +143,11 @@ const MeetingReadyPopup = ({ meetingUrl, username, onClose }) => {
                 </div>
             )}
 
-            <div className="p-4 px-6 border-t border-white/5">
+            <div className="p-4 px-6 border-t border-[var(--border-light)]">
                 {username && (
-                    <p className="text-gray-500 text-xs flex items-center gap-1.5">
+                    <p className="text-[var(--text-secondary)] text-xs flex items-center gap-1.5">
                         <svg width="12" height="14" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M6 6.5C7.38071 6.5 8.5 5.38071 8.5 4C8.5 2.61929 7.38071 1.5 6 1.5C4.61929 1.5 3.5 2.61929 3.5 4C3.5 5.38071 4.61929 6.5 6 6.5ZM6 8C3.99661 8 0 9.00339 0 11.0034V12.5H12V11.0034C12 9.00339 8.00339 8 6 8Z" fill="#6B7280"/>
+                            <path d="M6 6.5C7.38071 6.5 8.5 5.38071 8.5 4C8.5 2.61929 7.38071 1.5 6 1.5C4.61929 1.5 3.5 2.61929 3.5 4C3.5 5.38071 4.61929 6.5 6 6.5ZM6 8C3.99661 8 0 9.00339 0 11.0034V12.5H12V11.0034C12 9.00339 8.00339 8 6 8Z" fill="var(--text-secondary)"/>
                         </svg>
                         Joined as {username}
                     </p>
@@ -161,11 +161,11 @@ const MeetingReadyPopup = ({ meetingUrl, username, onClose }) => {
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
             >
                 <Box sx={{ 
-                    bgcolor: '#131722', 
-                    color: 'white', 
+                    bgcolor: 'var(--bg-darker)', 
+                    color: 'var(--text-primary)', 
                     px: 3, py: 1.5, 
                     borderRadius: '12px', 
-                    border: '1px solid rgba(255,255,255,0.1)',
+                    border: '1px solid var(--border-main)',
                     boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
                     fontSize: '14px',
                     fontWeight: 500,
@@ -173,7 +173,7 @@ const MeetingReadyPopup = ({ meetingUrl, username, onClose }) => {
                     alignItems: 'center',
                     gap: 1
                 }}>
-                    <ContentCopyIcon sx={{ fontSize: '18px', color: '#6366F1' }} />
+                    <ContentCopyIcon sx={{ fontSize: '18px', color: 'var(--primary)' }} />
                     Meeting link copied!
                 </Box>
             </Snackbar>
@@ -186,24 +186,24 @@ const MeetingReadyPopup = ({ meetingUrl, username, onClose }) => {
             >
                 <Box sx={{ 
                     background: inviteStatus.severity === 'success' 
-                        ? 'linear-gradient(135deg, #1C2230 0%, #131722 100%)' 
+                        ? 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-darker) 100%)' 
                         : 'rgba(28, 34, 48, 0.95)',
-                    color: 'white', 
+                    color: 'var(--text-primary)', 
                     px: 3, py: 2, 
                     borderRadius: '16px', 
-                    border: '1px solid rgba(255,255,255,0.1)',
+                    border: '1px solid var(--border-main)',
                     boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
                     minWidth: '280px'
                 }}>
                     <Typography sx={{ 
                         fontSize: '14px', 
                         fontWeight: 600,
-                        color: inviteStatus.severity === 'error' ? '#F87171' : (inviteStatus.severity === 'warning' ? '#FBBF24' : '#6366F1'),
+                        color: inviteStatus.severity === 'error' ? '#F87171' : (inviteStatus.severity === 'warning' ? '#FBBF24' : 'var(--primary)'),
                         mb: 0.5
                     }}>
                         {inviteStatus.severity === 'success' ? 'Invite Sent' : 'Notification'}
                     </Typography>
-                    <Typography sx={{ fontSize: '13px', color: '#9CA3AF' }}>
+                    <Typography sx={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
                         {inviteStatus.message}
                     </Typography>
                 </Box>

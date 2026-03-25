@@ -17,7 +17,7 @@ export default function Settings() {
     }
 
     return (
-        <div style={{ color: 'white', maxWidth: '900px', width: '100%', paddingBottom: '40px' }}>
+        <div style={{ color: 'var(--text-primary)', maxWidth: '900px', width: '100%', paddingBottom: '40px' }}>
             {/* Header */}
             <h1 style={{ 
                 fontSize: window.innerWidth < 600 ? '28px' : '36px', 
@@ -25,7 +25,7 @@ export default function Settings() {
                 margin: '0 0 8px 0', 
                 letterSpacing: '-0.5px' 
             }}>Settings</h1>
-            <p style={{ color: '#9CA3AF', fontSize: '14px', margin: '0 0 32px 0' }}>Manage your account, preferences, and meeting experience.</p>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '14px', margin: '0 0 32px 0' }}>Manage your account, preferences, and meeting experience.</p>
 
 
             {/* Content blocks */}
@@ -33,8 +33,8 @@ export default function Settings() {
 
                 {/* Compact Profile Header */}
                 <div style={{
-                    backgroundColor: '#1C2230',
-                    border: '1px solid rgba(255, 255, 255, 0.05)',
+                    backgroundColor: 'var(--bg-card)',
+                    border: '1px solid var(--border-light)',
                     borderRadius: '16px',
                     padding: '24px 32px',
                     display: 'flex',
@@ -46,7 +46,7 @@ export default function Settings() {
                         sx={{ 
                             width: 64, 
                             height: 64, 
-                            bgcolor: '#8B5CF6',
+                            bgcolor: 'var(--primary-light)',
                             fontSize: '24px',
                             fontWeight: 700,
                             boxShadow: '0 0 20px rgba(139, 92, 246, 0.3)'
@@ -55,7 +55,7 @@ export default function Settings() {
                         {!profilePic && name.split(' ').map(n => n[0]).join('').toUpperCase()}
                     </Avatar>
                     <Box sx={{ flex: 1 }}>
-                        <Typography sx={{ fontSize: '18px', fontWeight: 700, color: 'white', mb: 0.5 }}>
+                        <Typography sx={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)', mb: 0.5 }}>
                             {name}
                         </Typography>
                         <Typography 
@@ -63,7 +63,7 @@ export default function Settings() {
                             sx={{ 
                                 fontSize: '12px', 
                                 fontWeight: 700, 
-                                color: '#6366F1', 
+                                color: 'var(--primary)', 
                                 cursor: 'pointer',
                                 letterSpacing: '0.5px',
                                 '&:hover': { textDecoration: 'underline' }

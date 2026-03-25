@@ -152,26 +152,26 @@ const ScheduleMeetingModal = ({ open, onClose, onSchedule, onDelete, initialData
                 BackdropProps={{
                     timeout: 500,
                     sx: {
-                        backgroundColor: 'rgba(15, 23, 42, 0.4)',
-                        backdropFilter: 'blur(12px)',
+                        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                        backdropFilter: 'blur(8px)',
                     }
                 }}
                 PaperProps={{
                     sx: {
-                        bgcolor: 'rgba(30, 41, 59, 0.95)',
+                        bgcolor: 'var(--bg-card)',
                         backgroundImage: 'none',
                         borderRadius: isMobile ? 0 : '24px',
-                        border: isMobile ? 'none' : '1px solid rgba(255, 255, 255, 0.08)',
-                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+                        border: isMobile ? 'none' : '1px solid var(--border-light)',
+                        boxShadow: '0 25px 50px -12px var(--shadow-strong)',
                         p: isMobile ? 1 : 2
                     }
                 }}
             >
                 <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
-                    <Typography variant="h5" fontWeight="700" color="#F8FAFC">
+                    <Typography variant="h5" fontWeight="700" color="var(--text-primary)">
                         {initialData ? 'Edit Meeting' : 'Schedule New Meeting'}
                     </Typography>
-                    <IconButton onClick={onClose} sx={{ color: '#94A3B8', '&:hover': { color: '#F8FAFC', bgcolor: 'rgba(255,255,255,0.05)' } }}>
+                    <IconButton onClick={onClose} sx={{ color: 'var(--text-secondary)', '&:hover': { color: 'var(--text-primary)', bgcolor: 'var(--border-light)' } }}>
                         <CloseIcon />
                     </IconButton>
                 </DialogTitle>
@@ -192,7 +192,7 @@ const ScheduleMeetingModal = ({ open, onClose, onSchedule, onDelete, initialData
                             InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">
-                                        <TitleIcon sx={{ color: errors.title ? '#EF4444' : '#6366F1' }} />
+                                        <TitleIcon sx={{ color: errors.title ? '#EF4444' : 'var(--primary)' }} />
                                     </InputAdornment>
                                 ),
                             }}
@@ -213,7 +213,7 @@ const ScheduleMeetingModal = ({ open, onClose, onSchedule, onDelete, initialData
                             InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">
-                                        <EventIcon sx={{ color: errors.date ? '#EF4444' : '#6366F1' }} />
+                                        <EventIcon sx={{ color: errors.date ? '#EF4444' : 'var(--primary)' }} />
                                     </InputAdornment>
                                 ),
                             }}
@@ -235,7 +235,7 @@ const ScheduleMeetingModal = ({ open, onClose, onSchedule, onDelete, initialData
                                 InputProps={{
                                     startAdornment: (
                                         <InputAdornment position="start">
-                                            <AccessTimeIcon sx={{ color: errors.startTime ? '#EF4444' : '#6366F1' }} />
+                                            <AccessTimeIcon sx={{ color: errors.startTime ? '#EF4444' : 'var(--primary)' }} />
                                         </InputAdornment>
                                     ),
                                 }}
@@ -255,7 +255,7 @@ const ScheduleMeetingModal = ({ open, onClose, onSchedule, onDelete, initialData
                                 InputProps={{
                                     startAdornment: (
                                         <InputAdornment position="start">
-                                            <AccessTimeIcon sx={{ color: errors.endTime ? '#EF4444' : '#6366F1' }} />
+                                            <AccessTimeIcon sx={{ color: errors.endTime ? '#EF4444' : 'var(--primary)' }} />
                                         </InputAdornment>
                                     ),
                                 }}
@@ -278,7 +278,7 @@ const ScheduleMeetingModal = ({ open, onClose, onSchedule, onDelete, initialData
                             InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start" sx={{ alignSelf: 'flex-start', mt: 1 }}>
-                                        <DescriptionIcon sx={{ color: errors.description ? '#EF4444' : '#6366F1' }} />
+                                        <DescriptionIcon sx={{ color: errors.description ? '#EF4444' : 'var(--primary)' }} />
                                     </InputAdornment>
                                 ),
                             }}
@@ -332,10 +332,10 @@ const ScheduleMeetingModal = ({ open, onClose, onSchedule, onDelete, initialData
                                     bgcolor: 'transparent !important'
                                 }}>
                                     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                                        <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC' }}>{option.name}</Typography>
-                                        <Typography variant="caption" sx={{ color: '#94A3B8' }}>{option.email}</Typography>
+                                        <Typography variant="body2" sx={{ fontWeight: 600, color: 'var(--text-primary)' }}>{option.name}</Typography>
+                                        <Typography variant="caption" sx={{ color: 'var(--text-secondary)' }}>{option.email}</Typography>
                                     </Box>
-                                    <AddIcon sx={{ color: '#6366F1', fontSize: 20 }} />
+                                    <AddIcon sx={{ color: 'var(--primary)', fontSize: 20 }} />
                                 </Box>
                             )}
                             renderTags={(value, getTagProps) =>
@@ -347,7 +347,7 @@ const ScheduleMeetingModal = ({ open, onClose, onSchedule, onDelete, initialData
                                             variant="outlined"
                                             label={tagLabel}
                                             {...getTagProps({ index })}
-                                            sx={{ borderColor: '#8B5CF6', color: '#E2E8F0', bgcolor: 'rgba(139, 92, 246, 0.1)' }}
+                                            sx={{ borderColor: 'var(--primary-light)', color: 'var(--text-secondary)', bgcolor: 'rgba(139, 92, 246, 0.1)' }}
                                         />
                                     );
                                 })
@@ -366,7 +366,7 @@ const ScheduleMeetingModal = ({ open, onClose, onSchedule, onDelete, initialData
                                         startAdornment: (
                                             <>
                                                 <InputAdornment position="start" sx={{ pl: 1 }}>
-                                                    <GroupIcon sx={{ color: errors.participants ? '#EF4444' : '#6366F1' }} />
+                                                    <GroupIcon sx={{ color: errors.participants ? '#EF4444' : 'var(--primary)' }} />
                                                 </InputAdornment>
                                                 {params.InputProps.startAdornment}
                                             </>
@@ -377,29 +377,29 @@ const ScheduleMeetingModal = ({ open, onClose, onSchedule, onDelete, initialData
                             )}
                             PaperProps={{
                                 style: {
-                                    background: '#1E293B',
-                                    backgroundColor: '#1E293B',
+                                    background: 'var(--bg-card-alt)',
+                                    backgroundColor: 'var(--bg-card-alt)',
                                     backgroundImage: 'none',
-                                    border: '1px solid rgba(255,255,255,0.12)',
+                                    border: '1px solid var(--border-main)',
                                     borderRadius: '12px',
-                                    boxShadow: '0 10px 30px rgba(0,0,0,0.6)',
+                                    boxShadow: '0 10px 30px var(--shadow-strong)',
                                     marginTop: '4px',
-                                    color: '#E2E8F0',
+                                    color: 'var(--text-secondary)',
                                 }
                             }}
                             componentsProps={{
                                 paper: {
                                     style: {
-                                        background: '#1E293B',
-                                        backgroundColor: '#1E293B',
-                                        color: '#E2E8F0',
+                                        background: 'var(--bg-card-alt)',
+                                        backgroundColor: 'var(--bg-card-alt)',
+                                        color: 'var(--text-secondary)',
                                     }
                                 }
                             }}
                             ListboxProps={{
                                 style: {
-                                    background: '#1E293B',
-                                    backgroundColor: '#1E293B',
+                                    background: 'var(--bg-card-alt)',
+                                    backgroundColor: 'var(--bg-card-alt)',
                                     padding: '8px',
                                 }
                             }}
@@ -434,7 +434,7 @@ const ScheduleMeetingModal = ({ open, onClose, onSchedule, onDelete, initialData
                     <Box sx={{ display: 'flex', gap: 1.5, width: isMobile ? '100%' : 'auto' }}>
                         <Button
                             onClick={onClose}
-                            sx={{ color: '#94A3B8', textTransform: 'none', fontWeight: 600, flex: isMobile ? 1 : 'none' }}
+                            sx={{ color: 'var(--text-secondary)', textTransform: 'none', fontWeight: 600, flex: isMobile ? 1 : 'none' }}
                         >
                             Cancel
                         </Button>
@@ -443,7 +443,7 @@ const ScheduleMeetingModal = ({ open, onClose, onSchedule, onDelete, initialData
                             variant="contained"
                             fullWidth={isMobile}
                             sx={{
-                                background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)',
+                                background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)',
                                 borderRadius: '12px',
                                 textTransform: 'none',
                                 fontWeight: 600,
@@ -452,7 +452,7 @@ const ScheduleMeetingModal = ({ open, onClose, onSchedule, onDelete, initialData
                                 flex: isMobile ? 2 : 'none',
                                 boxShadow: '0 4px 14px 0 rgba(99, 102, 241, 0.3)',
                                 '&:hover': {
-                                    background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)',
+                                    background: 'linear-gradient(135deg, var(--primary-hover) 0%, var(--primary-dark) 100%)',
                                     boxShadow: '0 6px 20px rgba(99, 102, 241, 0.5)',
                                 }
                             }}
@@ -469,26 +469,26 @@ const ScheduleMeetingModal = ({ open, onClose, onSchedule, onDelete, initialData
                 onClose={() => setShowDeleteConfirm(false)}
                 PaperProps={{
                     sx: {
-                        bgcolor: 'rgba(30, 41, 59, 1)',
+                        bgcolor: 'var(--bg-card)',
                         borderRadius: '16px',
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        border: '1px solid var(--border-main)',
                         p: 1,
                         maxWidth: '400px'
                     }
                 }}
             >
-                <DialogTitle sx={{ color: '#F8FAFC', fontWeight: 700 }}>
+                <DialogTitle sx={{ color: 'var(--text-primary)', fontWeight: 700 }}>
                     Confirm Deletion
                 </DialogTitle>
                 <DialogContent>
-                    <Typography sx={{ color: '#94A3B8' }}>
+                    <Typography sx={{ color: 'var(--text-secondary)' }}>
                         Are you sure you want to delete this meeting? This action cannot be undone.
                     </Typography>
                 </DialogContent>
                 <DialogActions sx={{ p: 2, gap: 1 }}>
                     <Button
                         onClick={() => setShowDeleteConfirm(false)}
-                        sx={{ color: '#94A3B8', textTransform: 'none', fontWeight: 600 }}
+                        sx={{ color: 'var(--text-secondary)', textTransform: 'none', fontWeight: 600 }}
                     >
                         Cancel
                     </Button>
@@ -513,14 +513,14 @@ const ScheduleMeetingModal = ({ open, onClose, onSchedule, onDelete, initialData
 
 const textFieldStyle = {
     '& .MuiOutlinedInput-root': {
-        color: '#E2E8F0',
+        color: 'var(--text-secondary)',
         borderRadius: '12px',
-        bgcolor: 'rgba(15, 23, 42, 0.3)',
-        '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.08)' },
-        '&:hover fieldset': { borderColor: 'rgba(255, 255, 255, 0.15)' },
-        '&.Mui-focused fieldset': { borderColor: '#6366F1' },
+        bgcolor: 'var(--bg-dark)',
+        '& fieldset': { borderColor: 'var(--border-main)' },
+        '&:hover fieldset': { borderColor: 'var(--border-strong)' },
+        '&.Mui-focused fieldset': { borderColor: 'var(--primary)' },
         '& input[type="date"], & input[type="time"]': {
-            colorScheme: 'dark', // This makes the native picker dark
+            colorScheme: 'var(--color-scheme)', // Dynamic Native pickers
             cursor: 'pointer',
         },
         '& input::-webkit-calendar-picker-indicator': {
@@ -532,9 +532,9 @@ const textFieldStyle = {
             }
         }
     },
-    '& .MuiInputLabel-root': { color: '#94A3B8' },
-    '& .MuiInputLabel-root.Mui-focused': { color: '#6366F1' },
-    '& .MuiOutlinedInput-input::placeholder': { color: '#64748B', opacity: 1 },
+    '& .MuiInputLabel-root': { color: 'var(--text-secondary)' },
+    '& .MuiInputLabel-root.Mui-focused': { color: 'var(--primary)' },
+    '& .MuiOutlinedInput-input::placeholder': { color: 'var(--text-secondary)', opacity: 1 },
 };
 
 export default ScheduleMeetingModal;

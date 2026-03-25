@@ -104,7 +104,7 @@ export default function VideoMeetComponent() {
             });
         }, 10000);
 
-        let localUsername = localStorage.getItem('username') || localStorage.getItem('name') || ('User_' + Math.floor(Math.random() * 1000));
+        let localUsername = localStorage.getItem('name') || localStorage.getItem('username') || ('User_' + Math.floor(Math.random() * 1000));
         let localProfilePic = localStorage.getItem('profile_picture') || null;
         setUsername(localUsername);
         setProfilePicture(localProfilePic);
@@ -515,7 +515,7 @@ export default function VideoMeetComponent() {
                 localStorage.setItem('clientID', currentClientId);
             }
 
-            const currentUsername = username || localStorage.getItem('username') || localStorage.getItem('name') || "Guest";
+            const currentUsername = username || localStorage.getItem('name') || localStorage.getItem('username') || "Guest";
             const currentProfilePic = profilePicture || localStorage.getItem('profile_picture') || null;
             socketRef.current.emit('join-call', roomID, currentUsername, currentClientId, currentProfilePic)
             socketIdRef.current = socketRef.current.id
@@ -764,7 +764,7 @@ export default function VideoMeetComponent() {
         // Re-join the call to trigger new handshakes
         if (socketRef.current) {
             const currentClientId = localStorage.getItem('clientID');
-            const currentUsername = username || localStorage.getItem('username') || "Guest";
+            const currentUsername = username || localStorage.getItem('name') || localStorage.getItem('username') || "Guest";
             socketRef.current.emit('join-call', roomID, currentUsername, currentClientId);
         }
     }
@@ -962,8 +962,8 @@ export default function VideoMeetComponent() {
         <div>
 
             {globalError && (
-                <div className="flex flex-col items-center justify-center h-screen w-screen bg-[#0B0F19] text-white p-10 z-[300]">
-                    <div className="bg-[#1C2230] border border-white/10 p-8 rounded-2xl shadow-2xl max-w-lg w-full text-center">
+                <div className="flex flex-col items-center justify-center h-screen w-screen bg-[var(--bg-root)] text-white p-10 z-[300]">
+                    <div className="bg-[var(--bg-card)] border border-white/10 p-8 rounded-2xl shadow-2xl max-w-lg w-full text-center">
                         <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
                             <CloseIcon sx={{ color: '#F87171', fontSize: '32px' }} />
                         </div>
@@ -981,11 +981,11 @@ export default function VideoMeetComponent() {
             )}
 
             {isConnecting ? (
-                <div className="flex flex-col items-center justify-center h-screen w-screen bg-[#0B0F19] text-white z-[200]">
+                <div className="flex flex-col items-center justify-center h-screen w-screen bg-[var(--bg-root)] text-white z-[200]">
                     <div className="relative">
                         <div className="w-20 h-20 border-4 border-white/5 border-t-indigo-500 rounded-full animate-spin"></div>
                         <div className="absolute inset-0 flex items-center justify-center">
-                            <VideocamIcon sx={{ color: '#6366F1', fontSize: '24px' }} />
+                            <VideocamIcon sx={{ color: 'var(--primary)', fontSize: '24px' }} />
                         </div>
                     </div>
                     <div className="mt-8 text-center">
@@ -995,7 +995,7 @@ export default function VideoMeetComponent() {
                 </div>
             ) : (
 
-                <div className="relative w-screen h-screen bg-[#0B0F19] overflow-hidden flex flex-col">
+                <div className="relative w-screen h-screen bg-[var(--bg-root)] overflow-hidden flex flex-col">
 
                     {/* Hidden video element to keep localVideoref pipeline alive */}
                     <video ref={localVideoref} autoPlay playsInline muted className="hidden" />
@@ -1038,7 +1038,7 @@ export default function VideoMeetComponent() {
                                 // --- PINNED LAYOUT (Main Area + Sidebar) ---
                                 <>
                                     {/* Main Pinned Video Area */}
-                                    <div className="flex-1 h-full rounded-2xl overflow-hidden transition-all duration-500 ease-in-out bg-[#131722] border border-white/5 shadow-2xl">
+                                    <div className="flex-1 h-full rounded-2xl overflow-hidden transition-all duration-500 ease-in-out bg-[var(--bg-darker)] border border-white/5 shadow-2xl">
                                         <VideoTile
                                             videoObj={pinnedTile}
                                             isLocal={pinnedTile.isLocal || false}
@@ -1055,7 +1055,7 @@ export default function VideoMeetComponent() {
                                             {unpinnedTiles.map((vid) => (
                                                 <div
                                                     key={vid.socketId}
-                                                    className="h-full md:h-auto aspect-video md:w-full shrink-0 rounded-xl overflow-hidden transition-all duration-300 ease-in-out bg-[#131722] border border-white/5"
+                                                    className="h-full md:h-auto aspect-video md:w-full shrink-0 rounded-xl overflow-hidden transition-all duration-300 ease-in-out bg-[var(--bg-darker)] border border-white/5"
                                                 >
                                                     <VideoTile
                                                         videoObj={vid}
@@ -1083,7 +1083,7 @@ export default function VideoMeetComponent() {
                                     {unpinnedTiles.map((vid) => (
                                         <div
                                             key={vid.socketId}
-                                            className="w-full h-full rounded-2xl overflow-hidden transition-all duration-500 ease-in-out bg-[#131722] border border-white/5 shadow-lg"
+                                            className="w-full h-full rounded-2xl overflow-hidden transition-all duration-500 ease-in-out bg-[var(--bg-darker)] border border-white/5 shadow-lg"
                                         >
                                             <VideoTile
                                                 videoObj={vid}
@@ -1134,7 +1134,7 @@ export default function VideoMeetComponent() {
                 <Alert
                     onClose={() => setNotification({ ...notification, open: false })}
                     severity={notification.severity}
-                    sx={{ borderRadius: '12px', bgcolor: notification.severity === 'success' ? '#10B981' : (notification.severity === 'info' ? '#6366F1' : '#EF4444'), color: 'white' }}
+                    sx={{ borderRadius: '12px', bgcolor: notification.severity === 'success' ? '#10B981' : (notification.severity === 'info' ? 'var(--primary)' : '#EF4444'), color: 'var(--text-primary)' }}
                 >
                     {notification.message}
                 </Alert>

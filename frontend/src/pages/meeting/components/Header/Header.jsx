@@ -70,25 +70,25 @@ export default function Header({ onSchedule, onUpdate, onDelete, onRefresh, edit
                 sx={{
                     display: 'flex',
                     alignItems: 'center',
-                    bgcolor: 'rgba(34, 43, 61, 0.4)',
+                    bgcolor: 'var(--overlay-light)',
                     borderRadius: '12px',
                     px: 2,
                     py: 1,
                     width: { xs: '100%', md: '400px' },
-                    border: '1px solid rgba(255, 255, 255, 0.05)',
+                    border: '1px solid var(--border-light)',
                     transition: 'all 0.3s ease',
                     flexGrow: { xs: 1, md: 0 },
                     '&:focus-within': {
-                        bgcolor: 'rgba(34, 43, 61, 0.8)',
+                        bgcolor: 'var(--overlay-strong)',
                         borderColor: 'rgba(99, 102, 241, 0.5)',
                         boxShadow: '0 0 0 2px rgba(99, 102, 241, 0.2)',
                     }
                 }}
             >
-                <SearchIcon sx={{ color: '#94A3B8', mr: 1, fontSize: 20 }} />
+                <SearchIcon sx={{ color: 'var(--text-secondary)', mr: 1, fontSize: 20 }} />
                 <InputBase
                     placeholder="Search meetings, participants..."
-                    sx={{ color: '#E2E8F0', width: '100%', fontSize: '0.95rem' }}
+                    sx={{ color: 'var(--text-secondary)', width: '100%', fontSize: '0.95rem' }}
                 />
             </Box>
 
@@ -97,12 +97,12 @@ export default function Header({ onSchedule, onUpdate, onDelete, onRefresh, edit
                 <IconButton
                     onClick={handleOpenNotifications}
                     sx={{
-                        bgcolor: 'rgba(34, 43, 61, 0.6)',
-                        color: notifications.length > 0 ? '#6366F1' : '#94A3B8',
-                        border: '1px solid rgba(255, 255, 255, 0.05)',
+                        bgcolor: 'var(--overlay-medium)',
+                        color: notifications.length > 0 ? 'var(--primary)' : 'var(--text-secondary)',
+                        border: '1px solid var(--border-light)',
                         '&:hover': {
-                            bgcolor: 'rgba(34, 43, 61, 0.9)',
-                            color: '#E2E8F0',
+                            bgcolor: 'var(--overlay-dark)',
+                            color: 'var(--text-secondary)',
                             transform: 'translateY(-2px)',
                         },
                         transition: 'all 0.3s ease',
@@ -114,7 +114,7 @@ export default function Header({ onSchedule, onUpdate, onDelete, onRefresh, edit
                         sx={{
                             '& .MuiBadge-badge': {
                                 bgcolor: '#EF4444',
-                                color: 'white',
+                                color: 'var(--text-primary)',
                                 fontWeight: 700,
                                 fontSize: '0.65rem',
                                 minWidth: '16px',
@@ -142,8 +142,8 @@ export default function Header({ onSchedule, onUpdate, onDelete, onRefresh, edit
                     startIcon={<AddIcon />}
                     onClick={handleOpenCreateModal}
                     sx={{
-                        background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)',
-                        color: '#FFFFFF',
+                        background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)',
+                        color: 'var(--text-primary)',
                         borderRadius: '12px',
                         textTransform: 'none',
                         fontWeight: 600,
@@ -153,7 +153,7 @@ export default function Header({ onSchedule, onUpdate, onDelete, onRefresh, edit
                         boxShadow: '0 4px 14px 0 rgba(99, 102, 241, 0.3)',
                         transition: 'all 0.3s ease',
                         '&:hover': {
-                            background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)',
+                            background: 'linear-gradient(135deg, var(--primary-hover) 0%, var(--primary-dark) 100%)',
                             boxShadow: '0 6px 20px rgba(99, 102, 241, 0.5)',
                             transform: 'translateY(-2px)',
                         }

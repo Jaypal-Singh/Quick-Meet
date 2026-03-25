@@ -57,7 +57,7 @@ export default function MeetingHistory() {
     if (loading) {
         return (
             <Box sx={{ p: 4, display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                <Typography variant="h6" color="#94A3B8">Loading History...</Typography>
+                <Typography variant="h6" color="var(--text-secondary)">Loading History...</Typography>
             </Box>
         );
     }
@@ -69,18 +69,18 @@ export default function MeetingHistory() {
                 <IconButton
                     onClick={handleBack}
                     sx={{
-                        color: '#94A3B8',
-                        bgcolor: 'rgba(255,255,255,0.05)',
-                        '&:hover': { bgcolor: 'rgba(255,255,255,0.1)', color: '#F8FAFC' }
+                        color: 'var(--text-secondary)',
+                        bgcolor: 'var(--border-light)',
+                        '&:hover': { bgcolor: 'var(--border-main)', color: 'var(--text-primary)' }
                     }}
                 >
                     <ArrowBackIcon />
                 </IconButton>
                 <Box>
-                    <Typography variant="h4" sx={{ fontWeight: 800, color: '#F8FAFC', letterSpacing: '-0.5px' }}>
+                    <Typography variant="h4" sx={{ fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>
                         Meeting History
                     </Typography>
-                    <Typography variant="body2" sx={{ color: '#6366F1', fontWeight: 600 }}>
+                    <Typography variant="body2" sx={{ color: 'var(--primary)', fontWeight: 600 }}>
                         Review your past collaborations
                     </Typography>
                 </Box>
@@ -95,9 +95,9 @@ export default function MeetingHistory() {
                         justifyContent: 'center',
                         mt: 8,
                         p: 4,
-                        bgcolor: 'rgba(34, 43, 61, 0.4)',
+                        bgcolor: 'var(--overlay-light)',
                         borderRadius: '24px',
-                        border: '1px solid rgba(255, 255, 255, 0.05)'
+                        border: '1px solid var(--border-light)'
                     }}
                 >
                     <Box sx={{
@@ -111,12 +111,12 @@ export default function MeetingHistory() {
                         mb: 3,
                         border: '1px solid rgba(99, 102, 241, 0.2)'
                     }}>
-                        <HistoryIcon sx={{ color: '#6366F1', fontSize: 40 }} />
+                        <HistoryIcon sx={{ color: 'var(--primary)', fontSize: 40 }} />
                     </Box>
-                    <Typography variant="h5" sx={{ color: '#F8FAFC', fontWeight: 700, mb: 1 }}>
+                    <Typography variant="h5" sx={{ color: 'var(--text-primary)', fontWeight: 700, mb: 1 }}>
                         No Meetings Attended Yet
                     </Typography>
-                    <Typography variant="body1" sx={{ color: '#94A3B8', textAlign: 'center', maxWidth: '400px', lineHeight: 1.6 }}>
+                    <Typography variant="body1" sx={{ color: 'var(--text-secondary)', textAlign: 'center', maxWidth: '400px', lineHeight: 1.6 }}>
                         You haven't participated in any recorded meetings yet. Once you complete a meeting, it will appear here for your records.
                     </Typography>
 
@@ -128,8 +128,8 @@ export default function MeetingHistory() {
                             key={meeting.id}
                             sx={{
                                 p: 3,
-                                bgcolor: 'rgba(34, 43, 61, 0.4)',
-                                border: '1px solid rgba(255, 255, 255, 0.05)',
+                                bgcolor: 'var(--overlay-light)',
+                                border: '1px solid var(--border-light)',
                                 borderRadius: '20px',
                                 display: 'flex',
                                 flexWrap: 'wrap',
@@ -137,7 +137,7 @@ export default function MeetingHistory() {
                                 gap: { xs: 2, md: 4 },
                                 transition: 'all 0.3s ease',
                                 '&:hover': {
-                                    bgcolor: 'rgba(34, 43, 61, 0.6)',
+                                    bgcolor: 'var(--overlay-medium)',
                                     transform: 'translateX(8px)',
                                     borderColor: 'rgba(99, 102, 241, 0.3)'
                                 }
@@ -148,7 +148,7 @@ export default function MeetingHistory() {
                                 height: 56,
                                 borderRadius: '16px',
                                 bgcolor: 'rgba(99, 102, 241, 0.1)',
-                                color: '#6366F1',
+                                color: 'var(--primary)',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center'
@@ -157,33 +157,33 @@ export default function MeetingHistory() {
                             </Box>
 
                             <Box sx={{ flexGrow: 1, minWidth: '200px' }}>
-                                <Typography variant="h6" sx={{ color: '#F8FAFC', fontWeight: 700, mb: 0.5 }}>
+                                <Typography variant="h6" sx={{ color: 'var(--text-primary)', fontWeight: 700, mb: 0.5 }}>
                                     {meeting.title}
                                 </Typography>
-                                <Typography variant="body2" sx={{ color: '#94A3B8', display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    <span style={{ color: '#6366F1' }}>#{meeting.meetingCode}</span> • {meeting.description}
+                                <Typography variant="body2" sx={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <span style={{ color: 'var(--primary)' }}>#{meeting.meetingCode}</span> • {meeting.description}
                                 </Typography>
                             </Box>
 
                             <Box sx={{ display: 'flex', gap: 3, alignItems: 'center' }}>
                                 <Box sx={{ textAlign: 'center' }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: '#E2E8F0', mb: 0.5 }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: 'var(--text-secondary)', mb: 0.5 }}>
                                         <CalendarTodayIcon sx={{ fontSize: 16 }} />
                                         <Typography variant="caption" sx={{ fontWeight: 700 }}>{meeting.date}</Typography>
                                     </Box>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: '#94A3B8' }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: 'var(--text-secondary)' }}>
                                         <AccessTimeIcon sx={{ fontSize: 16 }} />
                                         <Typography variant="caption">{meeting.time} ({meeting.duration})</Typography>
                                     </Box>
                                 </Box>
 
                                 <Chip
-                                    icon={<GroupIcon sx={{ fontSize: '1rem !important', color: '#6366F1 !important' }} />}
+                                    icon={<GroupIcon sx={{ fontSize: '1rem !important', color: 'var(--primary) !important' }} />}
                                     label={`${meeting.participantCount} Attended`}
                                     size="small"
                                     sx={{
                                         bgcolor: 'rgba(99, 102, 241, 0.1)',
-                                        color: '#6366F1',
+                                        color: 'var(--primary)',
                                         fontWeight: 800,
                                         borderRadius: '8px',
                                         px: 1
