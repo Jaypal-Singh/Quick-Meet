@@ -24,7 +24,7 @@ export default function Meetings() {
             const formattedMeetings = data.map(m => {
                 const start = new Date(m.startTime);
                 const end = new Date(m.endTime);
-                
+
                 // Safety check for invalid dates
                 if (isNaN(start.getTime()) || isNaN(end.getTime())) {
                     console.error('Invalid date found in meeting:', m);
@@ -38,14 +38,14 @@ export default function Meetings() {
 
                 return {
                     ...m,
-                    id: m.meetingCode, 
+                    id: m.meetingCode,
                     date: date,
                     startTime: startTime,
                     endTime: endTime,
-                    participants: Array.isArray(m.participants) 
+                    participants: Array.isArray(m.participants)
                         ? m.participants.map(p => typeof p === 'object' ? p : { name: p, username: p, status: 'pending' })
-                        : (m.participants && typeof m.participants === 'string' 
-                            ? m.participants.split(',').map(p => ({ name: p.trim(), username: p.trim(), status: 'pending' })) 
+                        : (m.participants && typeof m.participants === 'string'
+                            ? m.participants.split(',').map(p => ({ name: p.trim(), username: p.trim(), status: 'pending' }))
                             : []),
                     participantCount: m.participantCount || (Array.isArray(m.participants) ? m.participants.length : 0),
                     isHost: m.user_id === currentUserEmail,
@@ -198,9 +198,9 @@ export default function Meetings() {
                     autoOpenCreate={openSchedule}
                 />
 
-                <Calendar 
-                    meetings={meetings} 
-                    onEdit={handleOpenEditModal} 
+                <Calendar
+                    meetings={meetings}
+                    onEdit={handleOpenEditModal}
                     onAccept={handleAcceptMeeting}
                     onReject={handleRejectMeeting}
                 />

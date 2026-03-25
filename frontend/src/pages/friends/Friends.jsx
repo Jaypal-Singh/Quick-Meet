@@ -13,6 +13,7 @@ import {
     Snackbar,
     Alert,
     Tooltip,
+    Badge,
     useTheme,
     useMediaQuery
 } from '@mui/material';
@@ -23,8 +24,11 @@ import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import axiosInstance from '../../utils/axiosInstance';
-const server = import.meta.env.VITE_API_URL;
 import TopHeader from '../dashboard/TopHeader';
+import ChatDrawer from '../../components/chat/ChatDrawer';
+import { useSocket } from '../../context/SocketContext';
+
+const server = import.meta.env.VITE_API_URL;
 
 export default function Friends() {
     const [searchQuery, setSearchQuery] = useState("");
@@ -38,18 +42,78 @@ export default function Friends() {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const navigate = useNavigate();
+    const socket = useSocket();
+    
+    const [chatOpen, setChatOpen] = useState(false);
+    const [activeChatFriend, setActiveChatFriend] = useState(null);
+    const [unreadCounts, setUnreadCounts] = useState({});
 
     const token = localStorage.getItem("token");
+    const currentUsername = localStorage.getItem('username');
 
     useEffect(() => {
         fetchFriends();
+        fetchUnreadCounts();
         
         const handleRefresh = () => {
             fetchFriends();
+            fetchUnreadCounts();
         };
         window.addEventListener('refreshFriends', handleRefresh);
         return () => window.removeEventListener('refreshFriends', handleRefresh);
     }, []);
+
+    useEffect(() => {
+        if (!socket) return;
+
+        const handleReceiveMessage = (data) => {
+            if (data.receiver_username === currentUsername) {
+                const isChatOpenForSender = activeChatFriend && activeChatFriend.username === data.sender_username && chatOpen;
+                
+                if (isChatOpenForSender) {
+                    // Chat is currently open, mark as read immediately behind the scenes
+                    axiosInstance.post(`/api/v1/chat/read/${data.sender_username}`)
+                        .then(() => window.dispatchEvent(new Event('chat-read')))
+                        .catch(err => console.error(err));
+                } else {
+                    // Chat is closed, increment the local badge
+                    setUnreadCounts(prev => ({ ...prev, [data.sender_username]: (prev[data.sender_username] || 0) + 1 }));
+                }
+            }
+        };
+
+        socket.on('receive-chat-message', handleReceiveMessage);
+
+        return () => {
+            socket.off('receive-chat-message', handleReceiveMessage);
+        };
+    }, [socket, chatOpen, activeChatFriend, currentUsername]);
+
+    const fetchUnreadCounts = async () => {
+        try {
+            const res = await axiosInstance.get('/api/v1/chat/unread');
+            setUnreadCounts(res.data);
+        } catch (error) {
+            console.error("Error fetching unread counts:", error);
+        }
+    };
+
+    const handleOpenChat = async (friend) => {
+        setActiveChatFriend(friend); 
+        setChatOpen(true);
+        
+        // Mark as read in local state immediately
+        if (unreadCounts[friend.username]) {
+            setUnreadCounts(prev => ({ ...prev, [friend.username]: 0 }));
+            // Mark as read backend
+            try {
+                await axiosInstance.post(`/api/v1/chat/read/${friend.username}`);
+                window.dispatchEvent(new Event('chat-read'));
+            } catch (err) {
+                console.error("Failed to mark messages as read");
+            }
+        }
+    };
 
     const handleMeet = async (friendUsername) => {
         const meetingCode = Math.random().toString(36).substring(2, 10);
@@ -404,6 +468,7 @@ export default function Friends() {
                                         </Button>
                                         <Box sx={{ display: 'flex', gap: 1 }}>
                                             <IconButton 
+                                                onClick={() => handleOpenChat(friend)}
                                                 sx={{ 
                                                     bgcolor: 'rgba(255,255,255,0.03)', 
                                                     borderRadius: '10px',
@@ -411,7 +476,9 @@ export default function Friends() {
                                                     '&:hover': { color: 'white', bgcolor: 'rgba(99, 102, 241, 0.15)' }
                                                 }}
                                             >
-                                                <ChatBubbleOutlineIcon fontSize="small" />
+                                                <Badge badgeContent={unreadCounts[friend.username] || 0} color="error" max={99}>
+                                                    <ChatBubbleOutlineIcon fontSize="small" />
+                                                </Badge>
                                             </IconButton>
                                             <IconButton size="small" sx={{ color: '#475569' }}>
                                                 <MoreVertIcon fontSize="small" />
@@ -451,6 +518,13 @@ export default function Friends() {
                     {notification.message}
                 </Alert>
             </Snackbar>
+
+            {/* Chat Drawer */}
+            <ChatDrawer 
+                open={chatOpen} 
+                onClose={() => setChatOpen(false)} 
+                friend={activeChatFriend} 
+            />
         </Box>
     );
 }

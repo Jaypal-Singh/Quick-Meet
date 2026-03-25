@@ -1,46 +1,55 @@
-import React, { createContext, useContext, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
+import axiosInstance from '../utils/axiosInstance';
 
 const SocketContext = createContext();
 
 const server_url = import.meta.env.VITE_API_URL;
 
 export const SocketProvider = ({ children }) => {
-    const socket = useRef();
+    const [socket, setSocket] = useState(null);
 
     useEffect(() => {
-        const username = localStorage.getItem('username');
         const token = localStorage.getItem('token');
+        let newSocket;
 
-        if (token && username) {
-            socket.current = io(server_url);
+        if (token) {
+            // Re-sync username from strict auth to fix any stale localStorage bugs
+            axiosInstance.get('/api/v1/users/check_auth').then(res => {
+                const correctUsername = res.data.user?.username || res.data.username;
+                if (correctUsername) localStorage.setItem('username', correctUsername);
+                
+                newSocket = io(server_url);
 
-            socket.current.on('connect', () => {
-                console.log('Global socket connected:', socket.current.id);
-                socket.current.emit('join-personal-room', username);
-            });
+                newSocket.on('connect', () => {
+                    console.log('Global socket connected:', newSocket.id);
+                    newSocket.emit('join-personal-room', correctUsername);
+                });
 
-            socket.current.on('meeting-update', (data) => {
-                console.log('Meeting update received:', data);
-                // Dispatch a custom event to notify components to refresh
-                window.dispatchEvent(new CustomEvent('refreshMeetings', { detail: data }));
-            });
+                newSocket.on('meeting-update', (data) => {
+                    console.log('Meeting update received:', data);
+                    window.dispatchEvent(new CustomEvent('refreshMeetings', { detail: data }));
+                });
 
-            socket.current.on('disconnect', () => {
-                console.log('Global socket disconnected');
-            });
+                newSocket.on('disconnect', () => {
+                    console.log('Global socket disconnected');
+                });
+                
+                setSocket(newSocket);
+            }).catch(e => console.error("Could not sync username for socket", e));
         }
 
         return () => {
-            if (socket.current) {
-                socket.current.disconnect();
+            if (newSocket) {
+                newSocket.disconnect();
             }
         };
     }, []);
 
     return (
-        <SocketContext.Provider value={socket.current}>
+        <SocketContext.Provider value={socket}>
             {children}
+
         </SocketContext.Provider>
     );
 };
