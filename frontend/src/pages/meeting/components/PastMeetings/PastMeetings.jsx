@@ -47,12 +47,12 @@ export default function PastMeetings({ meetings = [] }) {
             </Box>
 
             {pastMeetings.length === 0 ? (
-                <Box 
-                    sx={{ 
-                        display: 'flex', 
-                        flexDirection: 'column', 
-                        alignItems: 'center', 
-                        justifyContent: 'center', 
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
                         p: 4,
                         bgcolor: 'var(--overlay-light)',
                         borderRadius: '24px',
@@ -60,13 +60,13 @@ export default function PastMeetings({ meetings = [] }) {
                         textAlign: 'center'
                     }}
                 >
-                    <Box sx={{ 
-                        width: 56, 
-                        height: 56, 
-                        borderRadius: '16px', 
-                        bgcolor: 'rgba(99, 102, 241, 0.05)', 
-                        display: 'flex', 
-                        alignItems: 'center', 
+                    <Box sx={{
+                        width: 56,
+                        height: 56,
+                        borderRadius: '16px',
+                        bgcolor: 'rgba(99, 102, 241, 0.05)',
+                        display: 'flex',
+                        alignItems: 'center',
                         justifyContent: 'center',
                         mb: 2,
                         border: '1px solid rgba(99, 102, 241, 0.1)'

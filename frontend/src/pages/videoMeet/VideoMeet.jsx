@@ -161,7 +161,7 @@ export default function VideoMeetComponent() {
             getUserMedia(); // Switch back to camera
         }
     }
-    
+
     let resetLocalPin = () => {
         setPinnedSocketId(prev => prev === 'local' ? null : prev);
     }
@@ -180,7 +180,7 @@ export default function VideoMeetComponent() {
         if (didInitialSetup.current && window.localStream) {
             const hasLiveVideo = window.localStream.getVideoTracks().some(t => t.readyState === 'live');
             const hasLiveAudio = window.localStream.getAudioTracks().some(t => t.readyState === 'live');
-            
+
             if (hasLiveVideo || hasLiveAudio) {
                 console.log('[Init] Skipping: stream already has live tracks. Syncing states.');
                 setLocalStream(window.localStream);
@@ -202,7 +202,7 @@ export default function VideoMeetComponent() {
         const isScreenSharingSupported = !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia);
         console.log('[Init] Screen Sharing Supported:', isScreenSharingSupported);
         // Force available on mobile for visibility, handler will check support and try video-only
-        setScreenAvailable(isScreenSharingSupported || window.innerWidth < 1024); 
+        setScreenAvailable(isScreenSharingSupported || window.innerWidth < 1024);
 
         try {
             // 1. Identify what hardware is actually present
@@ -233,14 +233,14 @@ export default function VideoMeetComponent() {
                 } catch (err) {
                     attempts++;
                     console.warn(`[Init] Capture attempt ${attempts} failed:`, err.name, err.message);
-                    
+
                     if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
                         // Hardware lock - wait 1s and retry
                         console.log('[Init] Hardware lock detected, waiting 1s before retry...');
                         await new Promise(resolve => setTimeout(resolve, 1000));
                         continue;
                     }
-                    
+
                     // Not a lock - try fallback if first attempt failed for other reasons
                     if (attempts === 1 && hasVideo && hasAudio) {
                         try {
@@ -255,7 +255,7 @@ export default function VideoMeetComponent() {
                             break;
                         }
                     }
-                    
+
                     if (attempts >= maxAttempts) throw err;
                 }
             }
@@ -479,7 +479,7 @@ export default function VideoMeetComponent() {
             return;
         }
 
-        socketRef.current = io.connect(server_url, { 
+        socketRef.current = io.connect(server_url, {
             secure: server_url.startsWith('https'),
             transports: ['websocket', 'polling'] // Allow fallback
         })
@@ -532,7 +532,7 @@ export default function VideoMeetComponent() {
 
         socketRef.current.on('video-toggle', (socketId, state) => {
             console.log('[Socket] video-toggle from', socketId, 'state:', state);
-            setVideos(prevVideos => prevVideos.map(vid => 
+            setVideos(prevVideos => prevVideos.map(vid =>
                 vid.socketId === socketId ? { ...vid, videoEnabled: state } : vid
             ));
         })
@@ -545,7 +545,7 @@ export default function VideoMeetComponent() {
                 setPinnedSocketId(prev => prev === socketId ? null : prev);
             }
             // Also update the video state if needed (though stream might already handle it)
-            setVideos(prevVideos => prevVideos.map(vid => 
+            setVideos(prevVideos => prevVideos.map(vid =>
                 vid.socketId === socketId ? { ...vid, isScreenShare: state } : vid
             ));
         })
@@ -568,7 +568,7 @@ export default function VideoMeetComponent() {
             }
 
             console.log('[Socket] user-joined event:', { id, clients, roomUsers });
-            
+
             if (!id || !clients) {
                 console.warn('[Socket] Malformed user-joined data:', { id, clients, roomUsers });
                 return;
@@ -611,7 +611,7 @@ export default function VideoMeetComponent() {
                 }
 
                 connections[socketListId] = new RTCPeerConnection(peerConfigConnections)
-                
+
                 connections[socketListId].onconnectionstatechange = (event) => {
                     console.log(`[WebRTC] Connection state with ${socketListId}:`, connections[socketListId].connectionState);
                 };
@@ -638,11 +638,11 @@ export default function VideoMeetComponent() {
                         if (videoExists) {
                             console.log(`[WebRTC] Updating existing stream for: ${socketListId}`);
                             return prevVideos.map(video =>
-                                video.socketId === socketListId ? { 
-                                    ...video, 
+                                video.socketId === socketListId ? {
+                                    ...video,
                                     stream: new MediaStream(remoteStream.getTracks()), // Force new reference to trigger rendering
-                                    username: roomUsers && roomUsers[socketListId] ? roomUsers[socketListId].name : video.username, 
-                                    videoEnabled: roomUsers && roomUsers[socketListId] ? roomUsers[socketListId].video : video.videoEnabled 
+                                    username: roomUsers && roomUsers[socketListId] ? roomUsers[socketListId].name : video.username,
+                                    videoEnabled: roomUsers && roomUsers[socketListId] ? roomUsers[socketListId].video : video.videoEnabled
                                 } : video
                             );
                         } else {
@@ -718,7 +718,7 @@ export default function VideoMeetComponent() {
             getPermissions();
             return;
         }
-        
+
         const newState = !video;
         setVideo(newState);
         if (socketRef.current) {
@@ -737,16 +737,16 @@ export default function VideoMeetComponent() {
     }, [screen])
     let handleScreen = () => {
         if (screen === undefined || screen === false) {
-             // Check for actual support before trying to start
-             const supported = !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia);
-             if (!supported && !isMobile) {
-                 setNotification({ 
-                     open: true, 
-                     message: "Screen sharing is not supported on this browser/device. Try a desktop browser for full support.", 
-                     severity: "error" 
-                 });
-                 return;
-             }
+            // Check for actual support before trying to start
+            const supported = !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia);
+            if (!supported) {
+                setNotification({
+                    open: true,
+                    message: "Screen sharing is not supported by your mobile browser (Apple/Google restriction).",
+                    severity: "error"
+                });
+                return;
+            }
         }
         setScreen(!screen);
     }
@@ -772,7 +772,7 @@ export default function VideoMeetComponent() {
     let handleCaptions = () => {
         setCaptions(!captions);
     }
-    
+
     let toggleMeetingInfo = () => {
         setShowMeetingReady(!showMeetingReady);
     }
@@ -969,8 +969,8 @@ export default function VideoMeetComponent() {
                         </div>
                         <h1 className="text-2xl font-bold mb-4">Meeting Error</h1>
                         <p className="text-gray-400 mb-8 leading-relaxed">{globalError}</p>
-                        <button 
-                            onClick={() => window.location.reload()} 
+                        <button
+                            onClick={() => window.location.reload()}
                             className="w-full py-3 bg-white text-black rounded-xl font-bold hover:bg-gray-200 transition-colors"
                         >
                             Reload Application
@@ -1031,9 +1031,8 @@ export default function VideoMeetComponent() {
                     <div className="flex-1 flex overflow-hidden">
 
                         {/* Video Area */}
-                        <div className={`flex-1 relative p-2 md:p-4 pb-24 transition-all duration-350 ease-[cubic-bezier(0.4,0,0.2,1)] flex flex-col md:flex-row gap-2 md:gap-4 ${
-                            !isMobile && showModal ? 'pr-[360px]' : 'pr-0'
-                        }`}>
+                        <div className={`flex-1 relative p-2 md:p-4 pb-24 transition-all duration-350 ease-[cubic-bezier(0.4,0,0.2,1)] flex flex-col md:flex-row gap-2 md:gap-4 ${!isMobile && showModal ? 'pr-[360px]' : 'pr-0'
+                            }`}>
 
                             {pinnedTile ? (
                                 // --- PINNED LAYOUT (Main Area + Sidebar) ---
@@ -1063,7 +1062,7 @@ export default function VideoMeetComponent() {
                                                         isLocal={vid.isLocal || false}
                                                         videoEnabled={vid.isLocal ? video : vid.videoEnabled !== false}
                                                         isPinned={false}
-                                                isScreenShare={vid.isLocal ? screen : vid.isScreenShare}
+                                                        isScreenShare={vid.isLocal ? screen : vid.isScreenShare}
                                                         onPin={() => setPinnedSocketId(vid.socketId)}
                                                     />
                                                 </div>

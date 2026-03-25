@@ -39,11 +39,11 @@ export default function RecentMeetings() {
 
     return (
         <Box sx={{ mb: 4 }}>
-            <Box sx={{ 
-                display: 'flex', 
+            <Box sx={{
+                display: 'flex',
                 flexDirection: { xs: 'column', sm: 'row' },
-                justifyContent: 'space-between', 
-                alignItems: { xs: 'flex-start', sm: 'center' }, 
+                justifyContent: 'space-between',
+                alignItems: { xs: 'flex-start', sm: 'center' },
                 mb: 2,
                 gap: { xs: 1, sm: 2 }
             }}>
