@@ -92,14 +92,14 @@ export default function ScheduleSidebar({ meetings = [], onEdit }) {
         return (
             <Box sx={{
                 height: '100%',
-                bgcolor: 'rgba(23, 28, 40, 0.4)',
+                bgcolor: 'var(--bg-card)',
                 borderRadius: '24px',
                 p: 3,
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                border: '1px solid rgba(255, 255, 255, 0.05)',
+                border: '1px solid var(--border-light)',
                 position: 'relative',
                 overflow: 'hidden'
             }}>
@@ -128,14 +128,14 @@ export default function ScheduleSidebar({ meetings = [], onEdit }) {
                     position: 'relative',
                     zIndex: 1
                 }}>
-                    <EventIcon sx={{ color: '#6366F1', fontSize: 32 }} />
+                    <EventIcon sx={{ color: 'var(--primary)', fontSize: 32 }} />
                 </Box>
 
-                <Typography variant="h6" sx={{ color: '#F8FAFC', fontWeight: 700, mb: 1, textAlign: 'center', position: 'relative', zIndex: 1 }}>
+                <Typography variant="h6" sx={{ color: 'var(--text-primary)', fontWeight: 700, mb: 1, textAlign: 'center', position: 'relative', zIndex: 1 }}>
                     All Clear for Now
                 </Typography>
 
-                <Typography variant="body2" sx={{ color: '#94A3B8', textAlign: 'center', lineHeight: 1.6, maxWidth: '200px', position: 'relative', zIndex: 1 }}>
+                <Typography variant="body2" sx={{ color: 'var(--text-secondary)', textAlign: 'center', lineHeight: 1.6, maxWidth: '200px', position: 'relative', zIndex: 1 }}>
                     You don't have any upcoming meetings scheduled.
                 </Typography>
             </Box>
@@ -146,8 +146,8 @@ export default function ScheduleSidebar({ meetings = [], onEdit }) {
         <Box
             sx={{
                 height: '100%',
-                bgcolor: 'rgba(23, 28, 40, 0.4)',
-                border: '1px solid rgba(255, 255, 255, 0.05)',
+                bgcolor: 'var(--bg-card)',
+                border: '1px solid var(--border-light)',
                 borderRadius: '24px',
                 p: { xs: 2, md: 3 },
                 display: 'flex',
@@ -160,7 +160,7 @@ export default function ScheduleSidebar({ meetings = [], onEdit }) {
                     size="small"
                     sx={{
                         bgcolor: 'rgba(99, 102, 241, 0.15)',
-                        color: '#6366F1',
+                        color: 'var(--primary)',
                         fontWeight: 800,
                         fontSize: '0.7rem',
                         letterSpacing: 1,
@@ -169,31 +169,31 @@ export default function ScheduleSidebar({ meetings = [], onEdit }) {
                 />
             </Box>
 
-            <Typography variant="h5" sx={{ color: '#F8FAFC', fontWeight: 800, letterSpacing: '-0.5px', mb: 1 }}>
+            <Typography variant="h5" sx={{ color: 'var(--text-primary)', fontWeight: 800, letterSpacing: '-0.5px', mb: 1 }}>
                 {nextMeeting.title}
             </Typography>
 
-            <Typography variant="body2" sx={{ color: '#94A3B8', lineHeight: 1.6, mb: 3 }}>
+            <Typography variant="body2" sx={{ color: 'var(--text-secondary)', lineHeight: 1.6, mb: 3 }}>
                 {nextMeeting.description}
             </Typography>
 
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, mb: 3 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                    <AccessTimeIcon sx={{ color: '#6366F1', fontSize: 20 }} />
-                    <Typography variant="body2" sx={{ color: '#E2E8F0', fontWeight: 600 }}>
+                    <AccessTimeIcon sx={{ color: 'var(--primary)', fontSize: 20 }} />
+                    <Typography variant="body2" sx={{ color: 'var(--text-secondary)', fontWeight: 600 }}>
                         {nextMeeting.isToday ? 'Today' : nextMeeting.date}, {nextMeeting.startTime} - {nextMeeting.endTime}
                     </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                    <LinkIcon sx={{ color: '#6366F1', fontSize: 20 }} />
+                    <LinkIcon sx={{ color: 'var(--primary)', fontSize: 20 }} />
                     <Typography
                         variant="body2"
                         sx={{
-                            color: '#6366F1',
+                            color: 'var(--primary)',
                             fontWeight: 600,
                             textDecoration: 'underline',
                             cursor: 'pointer',
-                            '&:hover': { color: '#8B5CF6' }
+                            '&:hover': { color: 'var(--primary-light)' }
                         }}
                     >
                         {`${window.location.origin}/video-meet?roomID=${nextMeeting.meetingCode}`}
@@ -202,7 +202,7 @@ export default function ScheduleSidebar({ meetings = [], onEdit }) {
             </Box>
 
             {/* Participants */}
-            <Typography variant="caption" sx={{ color: '#6366F1', fontWeight: 800, letterSpacing: 1.5, mb: 1.5, display: 'block' }}>
+            <Typography variant="caption" sx={{ color: 'var(--primary)', fontWeight: 800, letterSpacing: 1.5, mb: 1.5, display: 'block' }}>
                 PARTICIPANTS ({participantList.length})
             </Typography>
 
@@ -216,18 +216,18 @@ export default function ScheduleSidebar({ meetings = [], onEdit }) {
                 pr: 0.5,
                 '&::-webkit-scrollbar': { width: '4px' },
                 '&::-webkit-scrollbar-track': { background: 'transparent' },
-                '&::-webkit-scrollbar-thumb': { background: 'rgba(255,255,255,0.1)', borderRadius: '4px' },
+                '&::-webkit-scrollbar-thumb': { background: 'var(--border-main)', borderRadius: '4px' },
             }}>
                 {participantList.map((p, idx) => (
                     <Box key={idx} sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <Avatar sx={{ bgcolor: 'rgba(255,255,255,0.1)', color: '#E2E8F0', width: 36, height: 36, fontSize: '0.85rem', fontWeight: 700 }}>
+                        <Avatar sx={{ bgcolor: 'var(--border-main)', color: 'var(--text-secondary)', width: 36, height: 36, fontSize: '0.85rem', fontWeight: 700 }}>
                             {p.id}
                         </Avatar>
                         <Box sx={{ flexGrow: 1 }}>
-                            <Typography variant="body2" sx={{ color: '#F8FAFC', fontWeight: 700, lineHeight: 1.2 }}>
-                                {p.name} {p.isHost && <span style={{ color: '#6366F1', fontSize: '0.65rem', marginLeft: '4px' }}>(Host)</span>}
+                            <Typography variant="body2" sx={{ color: 'var(--text-primary)', fontWeight: 700, lineHeight: 1.2 }}>
+                                {p.name} {p.isHost && <span style={{ color: 'var(--primary)', fontSize: '0.65rem', marginLeft: '4px' }}>(Host)</span>}
                             </Typography>
-                            <Typography variant="caption" sx={{ color: '#94A3B8', fontSize: '0.7rem' }}>
+                            <Typography variant="caption" sx={{ color: 'var(--text-secondary)', fontSize: '0.7rem' }}>
                                 @{p.email}
                             </Typography>
                         </Box>
@@ -255,13 +255,13 @@ export default function ScheduleSidebar({ meetings = [], onEdit }) {
             {/* Pagination Controls */}
             {upcomingMeetings.length > 1 && (
                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 2, gap: 2 }}>
-                    <IconButton size="small" onClick={handlePrev} disabled={currentIndex === 0} sx={{ color: '#94A3B8', '&.Mui-disabled': { color: 'rgba(255,255,255,0.1)' } }}>
+                    <IconButton size="small" onClick={handlePrev} disabled={currentIndex === 0} sx={{ color: 'var(--text-secondary)', '&.Mui-disabled': { color: 'var(--border-main)' } }}>
                         <ChevronLeftIcon />
                     </IconButton>
-                    <Typography variant="caption" sx={{ color: '#94A3B8', fontWeight: 600 }}>
+                    <Typography variant="caption" sx={{ color: 'var(--text-secondary)', fontWeight: 600 }}>
                         {currentIndex + 1} of {upcomingMeetings.length}
                     </Typography>
-                    <IconButton size="small" onClick={handleNext} disabled={currentIndex === upcomingMeetings.length - 1} sx={{ color: '#94A3B8', '&.Mui-disabled': { color: 'rgba(255,255,255,0.1)' } }}>
+                    <IconButton size="small" onClick={handleNext} disabled={currentIndex === upcomingMeetings.length - 1} sx={{ color: 'var(--text-secondary)', '&.Mui-disabled': { color: 'var(--border-main)' } }}>
                         <ChevronRightIcon />
                     </IconButton>
                 </Box>
@@ -306,8 +306,8 @@ export default function ScheduleSidebar({ meetings = [], onEdit }) {
                             variant="contained"
                             onClick={() => navigate(`/${nextMeeting.meetingCode || nextMeeting.id}`)}
                             sx={{
-                                bgcolor: '#6366F1',
-                                color: '#FFFFFF',
+                                bgcolor: 'var(--primary)',
+                                color: 'var(--text-primary)',
                                 borderRadius: '12px',
                                 textTransform: 'none',
                                 fontWeight: 700,
@@ -316,7 +316,7 @@ export default function ScheduleSidebar({ meetings = [], onEdit }) {
                                 boxShadow: '0 4px 14px 0 rgba(99, 102, 241, 0.4)',
                                 transition: 'all 0.3s ease',
                                 '&:hover': {
-                                    bgcolor: '#4F46E5',
+                                    bgcolor: 'var(--primary-hover)',
                                     boxShadow: '0 6px 20px rgba(99, 102, 241, 0.6)',
                                     transform: 'translateY(-2px)',
                                 }
@@ -331,8 +331,8 @@ export default function ScheduleSidebar({ meetings = [], onEdit }) {
                         variant="outlined"
                         onClick={() => onEdit && onEdit(nextMeeting)}
                         sx={{
-                            borderColor: 'rgba(255, 255, 255, 0.1)',
-                            color: '#E2E8F0',
+                            borderColor: 'var(--border-main)',
+                            color: 'var(--text-secondary)',
                             borderRadius: '12px',
                             textTransform: 'none',
                             fontWeight: 600,
@@ -340,8 +340,8 @@ export default function ScheduleSidebar({ meetings = [], onEdit }) {
                             py: 1.5,
                             transition: 'all 0.3s ease',
                             '&:hover': {
-                                borderColor: 'rgba(255, 255, 255, 0.2)',
-                                bgcolor: 'rgba(255, 255, 255, 0.05)',
+                                borderColor: 'var(--border-strong)',
+                                bgcolor: 'var(--border-light)',
                             }
                         }}
                     >

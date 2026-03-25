@@ -8,8 +8,8 @@ export default function Root() {
         <Box sx={{ 
             display: 'flex', 
             flexDirection: { xs: 'column', md: 'row' }, 
-            height: '100vh', 
-            bgcolor: '#0B0F19', 
+            height: 'calc(100vh / var(--app-zoom, 1))', 
+            bgcolor: 'var(--bg-root)', 
             overflow: 'hidden' 
         }}>
             <SideBar />

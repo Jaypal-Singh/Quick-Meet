@@ -50,8 +50,8 @@ export default function Meetings() {
                     participantCount: m.participantCount || (Array.isArray(m.participants) ? m.participants.length : 0),
                     isHost: m.user_id === currentUserEmail,
                     color: 'rgba(99, 102, 241, 0.2)',
-                    border: '#6366F1',
-                    text: '#8B5CF6'
+                    border: 'var(--primary)',
+                    text: 'var(--primary-light)'
                 };
             }).filter(m => {
                 if (!m) return false;
@@ -170,7 +170,7 @@ export default function Meetings() {
             sx={{
                 display: 'flex',
                 flexDirection: { xs: 'column', md: 'row' },
-                height: { xs: 'auto', md: 'calc(100vh - 64px)' },
+                height: { xs: 'auto', md: 'calc((100vh / var(--app-zoom, 1)) - 64px)' },
                 gap: { xs: 3, md: 4 }
             }}
         >
@@ -184,7 +184,7 @@ export default function Meetings() {
                     pr: { xs: 0, md: 1 },
                     '&::-webkit-scrollbar': { width: '4px' },
                     '&::-webkit-scrollbar-track': { background: 'transparent' },
-                    '&::-webkit-scrollbar-thumb': { background: 'rgba(255,255,255,0.1)', borderRadius: '4px' },
+                    '&::-webkit-scrollbar-thumb': { background: 'var(--border-main)', borderRadius: '4px' },
                 }}
             >
                 <Header

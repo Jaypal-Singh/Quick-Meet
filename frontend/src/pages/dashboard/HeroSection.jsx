@@ -40,7 +40,7 @@ const HeroSection = () => {
     return (
         <Box sx={{
             position: 'relative', overflow: 'hidden', borderRadius: '16px',
-            background: 'linear-gradient(180deg, #1C2230 0%, #131722 100%)', border: '1px solid rgba(255, 255, 255, 0.05)',
+            background: 'linear-gradient(180deg, var(--bg-card) 0%, var(--bg-darker) 100%)', border: '1px solid var(--border-light)',
             minHeight: { xs: 'auto', md: '260px' }, display: 'flex', flexDirection: { xs: 'column', md: 'row' }
         }}>
             {/* Left Content */}
@@ -49,12 +49,12 @@ const HeroSection = () => {
                 justifyContent: 'center', p: { xs: 3, md: 5 }, position: 'relative', zIndex: 10
             }}>
                 <Typography variant="h1" sx={{
-                    fontSize: { xs: '32px', sm: '40px', md: '46px' }, fontWeight: 800, color: 'white',
+                    fontSize: { xs: '32px', sm: '40px', md: '46px' }, fontWeight: 800, color: 'var(--text-primary)',
                     lineHeight: 1.1, mb: 2, letterSpacing: '-0.5px'
                 }}>
                     Connect{' '}
                     <Box component="span" sx={{
-                        background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)',
+                        background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)',
                         WebkitBackgroundClip: 'text',
                         backgroundClip: 'text',
                         WebkitTextFillColor: 'transparent',
@@ -64,7 +64,7 @@ const HeroSection = () => {
                 </Typography>
 
                 <Typography sx={{
-                    color: '#9CA3AF', fontSize: { xs: '13px', md: '14px' }, lineHeight: 1.7,
+                    color: 'var(--text-secondary)', fontSize: { xs: '13px', md: '14px' }, lineHeight: 1.7,
                     mb: 4, maxWidth: '420px'
                 }}>
                     Experience ultra-low latency, AI-enhanced audio, and seamless collaborative tools in one powerful meeting space.
@@ -74,10 +74,10 @@ const HeroSection = () => {
                     {/* Enter meet link */}
                     <Box sx={{
                         display: 'flex', alignItems: 'center', backgroundColor: 'rgba(255, 255, 255, 0.04)',
-                        border: '1px solid rgba(255, 255, 255, 0.05)', borderRadius: '999px',
+                        border: '1px solid var(--border-light)', borderRadius: '999px',
                         px: 2, height: '44px', gap: 1, flexGrow: { xs: 1, sm: 0 }
                     }}>
-                        <LinkIcon fontSize="small" sx={{ color: '#6B7280' }} />
+                        <LinkIcon fontSize="small" sx={{ color: 'var(--text-secondary)' }} />
                         <Box
                             component="input"
                             type="text"
@@ -86,7 +86,7 @@ const HeroSection = () => {
                             onChange={(e) => setMeetingCode(e.target.value)}
                             sx={{
                                 background: 'transparent', outline: 'none', border: 'none',
-                                fontSize: '14px', color: 'white', width: '100%', minWidth: '90px'
+                                fontSize: '14px', color: 'var(--text-primary)', width: '100%', minWidth: '90px'
                             }}
                         />
                     </Box>
@@ -95,10 +95,10 @@ const HeroSection = () => {
                     <Button 
                         onClick={() => meetingCode && navigate(`/${meetingCode}`)}
                         sx={{
-                        background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)', color: '#FFFFFF', fontWeight: 700,
+                        background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)', color: 'var(--text-primary)', fontWeight: 700,
                         px: 3, height: '44px', borderRadius: '999px',
                         fontSize: '14px', border: 'none', cursor: 'pointer', boxShadow: '0 4px 14px 0 rgba(99, 102, 241, 0.4)', textTransform: 'none', flexGrow: { xs: 1, sm: 0 },
-                        '&:hover': { background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)', boxShadow: '0 6px 20px rgba(99, 102, 241, 0.6)' }
+                        '&:hover': { background: 'linear-gradient(135deg, var(--primary-hover) 0%, var(--primary-dark) 100%)', boxShadow: '0 6px 20px rgba(99, 102, 241, 0.6)' }
                     }}>
                         Join Call
                     </Button>
@@ -109,10 +109,10 @@ const HeroSection = () => {
                         endIcon={<KeyboardArrowDownIcon />}
                         sx={{
                         display: 'flex', alignItems: 'center', gap: 1,
-                        backgroundColor: 'transparent', border: '1px solid rgba(255, 255, 255, 0.1)',
-                        color: 'white', fontWeight: 600, px: 2.5,
+                        backgroundColor: 'transparent', border: '1px solid var(--border-main)',
+                        color: 'var(--text-primary)', fontWeight: 600, px: 2.5,
                         height: '44px', borderRadius: '999px', fontSize: '14px', cursor: 'pointer', textTransform: 'none', flexGrow: { xs: 1, sm: 0 },
-                        '&:hover': { backgroundColor: 'rgba(255,255,255,0.05)' }
+                        '&:hover': { backgroundColor: 'var(--border-light)' }
                     }}>
                         <AddIcon fontSize="small" />
                         New Meeting
@@ -123,16 +123,16 @@ const HeroSection = () => {
                         onClose={handleClose}
                         PaperProps={{
                             sx: {
-                                bgcolor: '#1C2230',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                bgcolor: 'var(--bg-card)',
+                                border: '1px solid var(--border-main)',
                                 mt: 1,
                                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
                                 '& .MuiMenuItem-root': {
-                                    color: 'white',
+                                    color: 'var(--text-primary)',
                                     fontSize: '14px',
                                     py: 1.5,
                                     '&:hover': {
-                                        bgcolor: 'rgba(255, 255, 255, 0.05)',
+                                        bgcolor: 'var(--border-light)',
                                     },
                                 },
                             },
@@ -140,13 +140,13 @@ const HeroSection = () => {
                     >
                         <MenuItem onClick={handleInstantMeeting}>
                             <ListItemIcon>
-                                <FlashOnIcon fontSize="small" sx={{ color: '#6366F1' }} />
+                                <FlashOnIcon fontSize="small" sx={{ color: 'var(--primary)' }} />
                             </ListItemIcon>
                             <ListItemText primary="Start an instant meeting" />
                         </MenuItem>
                         <MenuItem onClick={handleScheduleMeeting}>
                             <ListItemIcon>
-                                <CalendarMonthIcon fontSize="small" sx={{ color: '#8B5CF6' }} />
+                                <CalendarMonthIcon fontSize="small" sx={{ color: 'var(--primary-light)' }} />
                             </ListItemIcon>
                             <ListItemText primary="Schedule for later" />
                         </MenuItem>
@@ -164,9 +164,11 @@ const HeroSection = () => {
                     alt="Team meeting"
                     style={{
                         width: '100%', height: '100%', objectFit: 'cover',
-                        borderRadius: isMobile ? '0 0 16px 16px' : '0 16px 16px 0', opacity: 0.6,
-                        WebkitMaskImage: isMobile ? 'linear-gradient(to bottom, transparent 0%, black 100%)' : 'linear-gradient(to right, transparent 0%, black 40%)',
-                        maskImage: isMobile ? 'linear-gradient(to bottom, transparent 0%, black 100%)' : 'linear-gradient(to right, transparent 0%, black 40%)'
+                        borderRadius: isMobile ? '0 0 16px 16px' : '0 16px 16px 0', 
+                        opacity: 0.85,
+                        filter: 'contrast(1.05) saturate(1.1)',
+                        WebkitMaskImage: isMobile ? 'linear-gradient(to bottom, transparent 0%, black 100%)' : 'linear-gradient(to right, transparent 0%, black 70%)',
+                        maskImage: isMobile ? 'linear-gradient(to bottom, transparent 0%, black 100%)' : 'linear-gradient(to right, transparent 0%, black 70%)'
                     }}
                 />
             </Box>

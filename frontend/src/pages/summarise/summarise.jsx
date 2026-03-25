@@ -15,7 +15,7 @@ export default function Summarise() {
                     position: 'sticky',
                     top: { xs: '-20px', md: '-28px' }, // Matches Root.jsx p: { xs: '20px 16px', md: '28px 32px' }
                     zIndex: 10,
-                    bgcolor: '#0B0F19',
+                    bgcolor: 'var(--bg-root)',
                     pt: { xs: '20px', md: '28px' },
                     mt: '-8px', // Prevent gap
                     pb: 1,

@@ -6,7 +6,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 export default function Pagination() {
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 1, mt: 4, pb: 4 }}>
-            <IconButton size="small" sx={{ bgcolor: 'rgba(34, 43, 61, 0.6)', color: '#94A3B8', '&:hover': { bgcolor: 'rgba(34, 43, 61, 0.9)', color: '#E2E8F0' } }}>
+            <IconButton size="small" sx={{ bgcolor: 'var(--overlay-medium)', color: 'var(--text-secondary)', '&:hover': { bgcolor: 'var(--overlay-dark)', color: 'var(--text-secondary)' } }}>
                 <ChevronLeftIcon fontSize="small" />
             </IconButton>
 
@@ -14,8 +14,8 @@ export default function Pagination() {
                 width: 32,
                 height: 32,
                 borderRadius: '50%',
-                bgcolor: '#6366F1',
-                color: '#FFFFFF',
+                bgcolor: 'var(--primary)',
+                color: 'var(--text-primary)',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
@@ -32,12 +32,12 @@ export default function Pagination() {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                color: '#94A3B8',
+                color: 'var(--text-secondary)',
                 cursor: 'pointer',
                 fontWeight: 600,
                 fontSize: '0.85rem',
                 borderRadius: '50%',
-                '&:hover': { bgcolor: 'rgba(255,255,255,0.05)', color: '#E2E8F0' }
+                '&:hover': { bgcolor: 'var(--border-light)', color: 'var(--text-secondary)' }
             }}>
                 2
             </Typography>
@@ -48,17 +48,17 @@ export default function Pagination() {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                color: '#94A3B8',
+                color: 'var(--text-secondary)',
                 cursor: 'pointer',
                 fontWeight: 600,
                 fontSize: '0.85rem',
                 borderRadius: '50%',
-                '&:hover': { bgcolor: 'rgba(255,255,255,0.05)', color: '#E2E8F0' }
+                '&:hover': { bgcolor: 'var(--border-light)', color: 'var(--text-secondary)' }
             }}>
                 3
             </Typography>
 
-            <IconButton size="small" sx={{ bgcolor: 'rgba(34, 43, 61, 0.6)', color: '#94A3B8', '&:hover': { bgcolor: 'rgba(34, 43, 61, 0.9)', color: '#E2E8F0' } }}>
+            <IconButton size="small" sx={{ bgcolor: 'var(--overlay-medium)', color: 'var(--text-secondary)', '&:hover': { bgcolor: 'var(--overlay-dark)', color: 'var(--text-secondary)' } }}>
                 <ChevronRightIcon fontSize="small" />
             </IconButton>
         </Box>

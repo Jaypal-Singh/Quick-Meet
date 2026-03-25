@@ -217,15 +217,15 @@ export default function Friends() {
     };
 
     return (
-        <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 4, color: 'white', maxWidth: '1200px', mx: 'auto', p: { xs: 2, md: 0 } }}>
+        <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 4, color: 'var(--text-primary)', maxWidth: '1200px', mx: 'auto', p: { xs: 2, md: 0 } }}>
             <TopHeader />
 
             {/* Header Section */}
             <Box sx={{ mb: 2 }}>
-                <Typography variant="h4" sx={{ fontWeight: 800, mb: 1, background: 'linear-gradient(135deg, #FFFFFF 0%, #94A3B8 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                <Typography variant="h4" sx={{ fontWeight: 800, mb: 1, background: 'linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                     Friends Network
                 </Typography>
-                <Typography variant="body1" sx={{ color: '#94A3B8' }}>
+                <Typography variant="body1" sx={{ color: 'var(--text-secondary)' }}>
                     Connect with your teammates and start instant meetings.
                 </Typography>
             </Box>
@@ -241,17 +241,17 @@ export default function Friends() {
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
-                                <SearchIcon sx={{ color: '#6366F1' }} />
+                                <SearchIcon sx={{ color: 'var(--primary)' }} />
                             </InputAdornment>
                         ),
                         sx: {
-                            bgcolor: 'rgba(30, 41, 59, 0.5)',
+                            bgcolor: 'var(--overlay-light)',
                             borderRadius: '16px',
-                            color: 'white',
-                            border: '1px solid rgba(255, 255, 255, 0.05)',
+                            color: 'var(--text-primary)',
+                            border: '1px solid var(--border-light)',
                             backdropFilter: 'blur(10px)',
                             '& fieldset': { border: 'none' },
-                            '&:hover': { bgcolor: 'rgba(30, 41, 59, 0.8)' },
+                            '&:hover': { bgcolor: 'var(--overlay-strong)' },
                         }
                     }}
                 />
@@ -265,20 +265,20 @@ export default function Friends() {
                             left: 0, 
                             right: 0, 
                             mt: 1, 
-                            bgcolor: '#1E293B', 
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                            bgcolor: 'var(--bg-card-alt)', 
+                            border: '1px solid var(--border-main)',
                             borderRadius: '16px',
                             maxHeight: '300px',
                             overflowY: 'auto',
                             boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
-                            color: 'white',
+                            color: 'var(--text-primary)',
                             zIndex: 100,
                             p: 1
                         }}
                     >
                         {searching ? (
                             <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
-                                <CircularProgress size={24} sx={{ color: '#6366F1' }} />
+                                <CircularProgress size={24} sx={{ color: 'var(--primary)' }} />
                             </Box>
                         ) : searchResults.length > 0 ? (
                             searchResults.map((user) => (
@@ -294,10 +294,10 @@ export default function Friends() {
                                     }}
                                 >
                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                        <Avatar sx={{ bgcolor: '#6366F1' }}>{user.name[0]}</Avatar>
+                                        <Avatar sx={{ bgcolor: 'var(--primary)' }}>{user.name[0]}</Avatar>
                                         <Box>
                                             <Typography variant="body1" sx={{ fontWeight: 600 }}>{user.name}</Typography>
-                                            <Typography variant="caption" sx={{ color: '#94A3B8' }}>@{user.username}</Typography>
+                                            <Typography variant="caption" sx={{ color: 'var(--text-secondary)' }}>@{user.username}</Typography>
                                         </Box>
                                     </Box>
                                     <Button 
@@ -309,9 +309,9 @@ export default function Friends() {
                                         sx={{ 
                                             borderRadius: '8px', 
                                             textTransform: 'none',
-                                            bgcolor: '#6366F1',
+                                            bgcolor: 'var(--primary)',
                                             minWidth: isMobile ? '80px' : 'auto',
-                                            '&:hover': { bgcolor: '#4F46E5' }
+                                            '&:hover': { bgcolor: 'var(--primary-hover)' }
                                         }}
                                     >
                                         {friends.some(f => f.username === user.username) ? 'Friend' : 
@@ -321,7 +321,7 @@ export default function Friends() {
                                 </Box>
                             ))
                         ) : (
-                            <Box sx={{ p: 3, textAlign: 'center', color: '#94A3B8' }}>
+                            <Box sx={{ p: 3, textAlign: 'center', color: 'var(--text-secondary)' }}>
                                 No users found
                             </Box>
                         )}
@@ -340,7 +340,7 @@ export default function Friends() {
                         {pendingRequests.map((req, index) => (
                             <Fade in={true} key={req.username}>
                                 <Paper sx={{ 
-                                    bgcolor: 'rgba(30, 41, 59, 0.4)', 
+                                    bgcolor: 'var(--bg-card)', 
                                     border: '1px solid rgba(234, 179, 8, 0.2)',
                                     borderRadius: '16px',
                                     p: 2,
@@ -355,7 +355,7 @@ export default function Friends() {
                                         <Avatar sx={{ width: 48, height: 48, bgcolor: 'rgba(234, 179, 8, 0.1)', color: '#EAB308', fontWeight: 700 }}>{req.name[0]}</Avatar>
                                         <Box>
                                             <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>{req.name}</Typography>
-                                            <Typography variant="body2" sx={{ color: '#94A3B8' }}>@{req.username}</Typography>
+                                            <Typography variant="body2" sx={{ color: 'var(--text-secondary)' }}>@{req.username}</Typography>
                                         </Box>
                                     </Box>
                                     
@@ -394,15 +394,15 @@ export default function Friends() {
 
                 {loading ? (
                     <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
-                        <CircularProgress sx={{ color: '#6366F1' }} />
+                        <CircularProgress sx={{ color: 'var(--primary)' }} />
                     </Box>
                 ) : friends.length > 0 ? (
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                         {friends.map((friend, index) => (
                             <Fade in={true} timeout={300 + index * 50} key={friend.username}>
                                 <Paper sx={{ 
-                                    bgcolor: 'rgba(30, 41, 59, 0.4)', 
-                                    border: '1px solid rgba(255, 255, 255, 0.05)',
+                                    bgcolor: 'var(--bg-card)', 
+                                    border: '1px solid var(--border-light)',
                                     borderRadius: '16px',
                                     p: isMobile ? 1.5 : 2,
                                     display: 'flex',
@@ -413,7 +413,7 @@ export default function Friends() {
                                     transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                                     backdropFilter: 'blur(10px)',
                                     '&:hover': {
-                                        bgcolor: 'rgba(30, 41, 59, 0.6)',
+                                        bgcolor: 'var(--overlay-medium)',
                                         borderColor: 'rgba(99, 102, 241, 0.4)',
                                         boxShadow: '0 0 25px rgba(99, 102, 241, 0.15)',
                                         '& .friend-avatar': {
@@ -428,7 +428,7 @@ export default function Friends() {
                                             sx={{ 
                                                 width: 48, 
                                                 height: 48, 
-                                                background: `linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)`,
+                                                background: `linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)`,
                                                 fontSize: '1.2rem',
                                                 fontWeight: 700,
                                                 boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)',
@@ -439,7 +439,7 @@ export default function Friends() {
                                         </Avatar>
                                         <Box>
                                             <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 0.2 }}>{friend.name}</Typography>
-                                            <Typography variant="body2" sx={{ color: '#94A3B8' }}>@{friend.username}</Typography>
+                                            <Typography variant="body2" sx={{ color: 'var(--text-secondary)' }}>@{friend.username}</Typography>
                                         </Box>
                                     </Box>
 
@@ -458,8 +458,8 @@ export default function Friends() {
                                                 px: 2.5,
                                                 border: '1px solid rgba(99, 102, 241, 0.2)',
                                                 '&:hover': { 
-                                                    background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)',
-                                                    color: 'white',
+                                                    background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)',
+                                                    color: 'var(--text-primary)',
                                                     borderColor: 'transparent'
                                                 }
                                             }}
@@ -472,15 +472,15 @@ export default function Friends() {
                                                 sx={{ 
                                                     bgcolor: 'rgba(255,255,255,0.03)', 
                                                     borderRadius: '10px',
-                                                    color: '#94A3B8',
-                                                    '&:hover': { color: 'white', bgcolor: 'rgba(99, 102, 241, 0.15)' }
+                                                    color: 'var(--text-secondary)',
+                                                    '&:hover': { color: 'var(--text-primary)', bgcolor: 'rgba(99, 102, 241, 0.15)' }
                                                 }}
                                             >
                                                 <Badge badgeContent={unreadCounts[friend.username] || 0} color="error" max={99}>
                                                     <ChatBubbleOutlineIcon fontSize="small" />
                                                 </Badge>
                                             </IconButton>
-                                            <IconButton size="small" sx={{ color: '#475569' }}>
+                                            <IconButton size="small" sx={{ color: 'var(--text-secondary)' }}>
                                                 <MoreVertIcon fontSize="small" />
                                             </IconButton>
                                         </Box>
@@ -493,12 +493,12 @@ export default function Friends() {
                     <Box sx={{ 
                         textAlign: 'center', 
                         py: 12, 
-                        bgcolor: 'rgba(30, 41, 59, 0.2)', 
+                        bgcolor: 'var(--bg-dark)', 
                         borderRadius: '24px',
-                        border: '1px dashed rgba(255,255,255,0.1)'
+                        border: '1px dashed var(--border-main)'
                     }}>
-                        <Typography variant="h6" sx={{ color: '#94A3B8', mb: 2 }}>You haven't added any friends yet</Typography>
-                        <Typography variant="body2" sx={{ color: '#64748B', mb: 3 }}>Use the search bar above to find and connect with people.</Typography>
+                        <Typography variant="h6" sx={{ color: 'var(--text-secondary)', mb: 2 }}>You haven't added any friends yet</Typography>
+                        <Typography variant="body2" sx={{ color: 'var(--text-secondary)', mb: 3 }}>Use the search bar above to find and connect with people.</Typography>
                     </Box>
                 )}
             </Box>
@@ -513,7 +513,7 @@ export default function Friends() {
                 <Alert 
                     onClose={() => setNotification({ ...notification, open: false })} 
                     severity={notification.severity}
-                    sx={{ borderRadius: '12px', bgcolor: notification.severity === 'success' ? '#10B981' : '#EF4444', color: 'white' }}
+                    sx={{ borderRadius: '12px', bgcolor: notification.severity === 'success' ? '#10B981' : '#EF4444', color: 'var(--text-primary)' }}
                 >
                     {notification.message}
                 </Alert>

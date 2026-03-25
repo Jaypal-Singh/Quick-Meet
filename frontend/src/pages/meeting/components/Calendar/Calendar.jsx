@@ -59,8 +59,8 @@ export default function Calendar({ meetings = [], onEdit, onAccept, onReject }) 
                 time: m.startTime,
                 title: m.title,
                 color: 'rgba(139, 92, 246, 0.15)', // Purple theme
-                border: '#8B5CF6',
-                text: '#A78BFA',
+                border: 'var(--primary-light)',
+                text: 'var(--primary-light)',
                 raw: m // Keep the original data for details
             }));
 
@@ -147,10 +147,10 @@ export default function Calendar({ meetings = [], onEdit, onAccept, onReject }) 
                                 sx={{
                                     fontSize: { xs: '1.5rem', md: '2.125rem' },
                                     fontWeight: 800,
-                                    color: '#F8FAFC',
+                                    color: 'var(--text-primary)',
                                     letterSpacing: '-0.5px',
                                     cursor: 'pointer',
-                                    '&:hover': { color: '#8B5CF6' },
+                                    '&:hover': { color: 'var(--primary-light)' },
                                     transition: 'color 0.2s'
                                 }}
                             >
@@ -162,8 +162,8 @@ export default function Calendar({ meetings = [], onEdit, onAccept, onReject }) 
                                 onClose={handleMonthClose}
                                 PaperProps={{
                                     sx: {
-                                        bgcolor: '#171C28',
-                                        border: '1px solid rgba(255, 255, 255, 0.05)',
+                                        bgcolor: 'var(--bg-card)',
+                                        border: '1px solid var(--border-light)',
                                         boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
                                         mt: 1,
                                         maxHeight: 300,
@@ -181,11 +181,11 @@ export default function Calendar({ meetings = [], onEdit, onAccept, onReject }) 
                                             background: 'rgba(148, 163, 184, 0.4)',
                                         },
                                         '& .MuiMenuItem-root': {
-                                            color: '#E2E8F0',
+                                            color: 'var(--text-secondary)',
                                             fontSize: '0.9rem',
                                             fontWeight: 500,
-                                            '&:hover': { bgcolor: 'rgba(99, 102, 241, 0.15)', color: '#6366F1' },
-                                            '&.Mui-selected': { bgcolor: 'rgba(99, 102, 241, 0.25)', color: '#6366F1', fontWeight: 700 },
+                                            '&:hover': { bgcolor: 'rgba(99, 102, 241, 0.15)', color: 'var(--primary)' },
+                                            '&.Mui-selected': { bgcolor: 'rgba(99, 102, 241, 0.25)', color: 'var(--primary)', fontWeight: 700 },
                                             '&.Mui-selected:hover': { bgcolor: 'rgba(99, 102, 241, 0.35)' }
                                         }
                                     }
@@ -210,10 +210,10 @@ export default function Calendar({ meetings = [], onEdit, onAccept, onReject }) 
                                 sx={{
                                     fontSize: { xs: '1.5rem', md: '2.125rem' },
                                     fontWeight: 800,
-                                    color: '#F8FAFC',
+                                    color: 'var(--text-primary)',
                                     letterSpacing: '-0.5px',
                                     cursor: 'pointer',
-                                    '&:hover': { color: '#8B5CF6' },
+                                    '&:hover': { color: 'var(--primary-light)' },
                                     transition: 'color 0.2s'
                                 }}
                             >
@@ -225,8 +225,8 @@ export default function Calendar({ meetings = [], onEdit, onAccept, onReject }) 
                                 onClose={handleYearClose}
                                 PaperProps={{
                                     sx: {
-                                        bgcolor: '#171C28',
-                                        border: '1px solid rgba(255, 255, 255, 0.05)',
+                                        bgcolor: 'var(--bg-card)',
+                                        border: '1px solid var(--border-light)',
                                         boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
                                         mt: 1,
                                         maxHeight: 300,
@@ -244,11 +244,11 @@ export default function Calendar({ meetings = [], onEdit, onAccept, onReject }) 
                                             background: 'rgba(148, 163, 184, 0.4)',
                                         },
                                         '& .MuiMenuItem-root': {
-                                            color: '#E2E8F0',
+                                            color: 'var(--text-secondary)',
                                             fontSize: '0.9rem',
                                             fontWeight: 500,
-                                            '&:hover': { bgcolor: 'rgba(99, 102, 241, 0.15)', color: '#6366F1' },
-                                            '&.Mui-selected': { bgcolor: 'rgba(99, 102, 241, 0.25)', color: '#6366F1', fontWeight: 700 },
+                                            '&:hover': { bgcolor: 'rgba(99, 102, 241, 0.15)', color: 'var(--primary)' },
+                                            '&.Mui-selected': { bgcolor: 'rgba(99, 102, 241, 0.25)', color: 'var(--primary)', fontWeight: 700 },
                                             '&.Mui-selected:hover': { bgcolor: 'rgba(99, 102, 241, 0.35)' }
                                         }
                                     }
@@ -267,10 +267,10 @@ export default function Calendar({ meetings = [], onEdit, onAccept, onReject }) 
                         </Box>
 
                         <Box sx={{ display: 'flex', alignItems: 'center', ml: 1 }}>
-                            <IconButton size="small" onClick={handlePrevMonth} sx={{ color: '#94A3B8', '&:hover': { color: '#E2E8F0' } }}>
+                            <IconButton size="small" onClick={handlePrevMonth} sx={{ color: 'var(--text-secondary)', '&:hover': { color: 'var(--text-secondary)' } }}>
                                 <ChevronLeftIcon fontSize="small" />
                             </IconButton>
-                            <IconButton size="small" onClick={handleNextMonth} sx={{ color: '#94A3B8', '&:hover': { color: '#E2E8F0' } }}>
+                            <IconButton size="small" onClick={handleNextMonth} sx={{ color: 'var(--text-secondary)', '&:hover': { color: 'var(--text-secondary)' } }}>
                                 <ChevronRightIcon fontSize="small" />
                             </IconButton>
                         </Box>
@@ -279,7 +279,7 @@ export default function Calendar({ meetings = [], onEdit, onAccept, onReject }) 
                         const todayStr = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD format
                         const todayMeetingsCount = meetings.filter(m => m.date === todayStr).length;
                         return (
-                            <Typography variant="body2" sx={{ color: '#8B5CF6', fontWeight: 600, mt: 0.5 }}>
+                            <Typography variant="body2" sx={{ color: 'var(--primary-light)', fontWeight: 600, mt: 0.5 }}>
                                 {todayMeetingsCount === 0
                                     ? "You have no meetings today"
                                     : `You have ${todayMeetingsCount} meeting${todayMeetingsCount > 1 ? 's' : ''} today`}
@@ -292,17 +292,17 @@ export default function Calendar({ meetings = [], onEdit, onAccept, onReject }) 
 
             {/* Calendar Grid */}
             <Box sx={{
-                border: '1px solid rgba(255, 255, 255, 0.05)',
+                border: '1px solid var(--border-light)',
                 borderRadius: '16px',
                 overflow: 'hidden',
-                bgcolor: 'rgba(23, 28, 40, 0.4)',
+                bgcolor: 'var(--bg-card)',
                 backdropFilter: 'blur(10px)'
             }}>
                 {/* Days Header */}
-                <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', borderBottom: '1px solid var(--border-light)' }}>
                     {daysOfWeek.map((day, i) => (
-                        <Box key={day} sx={{ py: 1.5, textAlign: 'center', borderRight: '1px solid rgba(255, 255, 255, 0.05)', '&:nth-of-type(7n)': { borderRight: 'none' } }}>
-                            <Typography variant="caption" sx={{ color: '#6366F1', fontWeight: 700, fontSize: '0.75rem', letterSpacing: 1 }}>
+                        <Box key={day} sx={{ py: 1.5, textAlign: 'center', borderRight: '1px solid var(--border-light)', '&:nth-of-type(7n)': { borderRight: 'none' } }}>
+                            <Typography variant="caption" sx={{ color: 'var(--primary)', fontWeight: 700, fontSize: '0.75rem', letterSpacing: 1 }}>
                                 {day}
                             </Typography>
                         </Box>
@@ -316,12 +316,12 @@ export default function Calendar({ meetings = [], onEdit, onAccept, onReject }) 
                             key={idx}
                             sx={{
                                 p: { xs: 0.5, md: 1.5 },
-                                borderRight: '1px solid rgba(255, 255, 255, 0.05)',
-                                borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+                                borderRight: '1px solid var(--border-light)',
+                                borderBottom: '1px solid var(--border-light)',
                                 '&:nth-of-type(7n)': { borderRight: 'none' }, // Remove right border for last column
-                                opacity: item.disabled ? 0.3 : 1,
+                                opacity: item.disabled ? 0.5 : 1,
                                 bgcolor: item.active ? 'rgba(99, 102, 241, 0.05)' : 'transparent',
-                                border: item.active ? '1px solid #6366F1' : '1px solid transparent',
+                                border: item.active ? '1px solid var(--primary)' : '1px solid transparent',
                                 position: 'relative',
                                 transition: 'all 0.2s',
                                 ...(item.active && { zIndex: 2, borderRadius: '8px' }),
@@ -334,7 +334,7 @@ export default function Calendar({ meetings = [], onEdit, onAccept, onReject }) 
                                 <Typography
                                     variant="body2"
                                     sx={{
-                                        color: item.active ? '#FFFFFF' : item.isToday ? '#6366F1' : '#E2E8F0',
+                                        color: item.active ? 'var(--text-primary)' : item.isToday ? 'var(--primary)' : 'var(--text-secondary)',
                                         fontWeight: item.active || item.isToday ? 800 : 500,
                                         width: '28px',
                                         height: '28px',

@@ -16,7 +16,7 @@ export default function Dashboard() {
     }, []);
 
     return (
-        <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: { xs: 2.5, md: 3 }, color: 'white', maxWidth: '1200px', mx: 'auto' }}>
+        <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: { xs: 2.5, md: 3 }, color: 'var(--text-primary)', maxWidth: '1200px', mx: 'auto' }}>
             {/* Top Header */}
             <TopHeader />
 

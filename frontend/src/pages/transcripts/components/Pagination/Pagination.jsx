@@ -12,9 +12,9 @@ export default function Pagination() {
             <IconButton
                 size="small"
                 sx={{
-                    color: '#94A3B8',
-                    bgcolor: 'rgba(34, 43, 61, 0.6)',
-                    '&:hover': { bgcolor: 'rgba(34, 43, 61, 0.9)', color: 'white' }
+                    color: 'var(--text-secondary)',
+                    bgcolor: 'var(--overlay-medium)',
+                    '&:hover': { bgcolor: 'var(--overlay-dark)', color: 'var(--text-primary)' }
                 }}
             >
                 <KeyboardArrowLeftIcon fontSize="small" />
@@ -35,11 +35,11 @@ export default function Pagination() {
                             fontSize: '0.875rem',
                             fontWeight: 700,
                             transition: 'all 0.2s',
-                            bgcolor: activePage === page ? '#6366F1' : 'transparent',
-                            color: activePage === page ? 'white' : '#94A3B8',
+                            bgcolor: activePage === page ? 'var(--primary)' : 'transparent',
+                            color: activePage === page ? 'var(--text-primary)' : 'var(--text-secondary)',
                             '&:hover': {
-                                bgcolor: activePage === page ? '#4F46E5' : 'rgba(255, 255, 255, 0.05)',
-                                color: activePage === page ? 'white' : '#E2E8F0',
+                                bgcolor: activePage === page ? 'var(--primary-hover)' : 'var(--border-light)',
+                                color: activePage === page ? 'var(--text-primary)' : 'var(--text-secondary)',
                             }
                         }}
                     >
@@ -51,9 +51,9 @@ export default function Pagination() {
             <IconButton
                 size="small"
                 sx={{
-                    color: '#94A3B8',
-                    bgcolor: 'rgba(34, 43, 61, 0.6)',
-                    '&:hover': { bgcolor: 'rgba(34, 43, 61, 0.9)', color: 'white' }
+                    color: 'var(--text-secondary)',
+                    bgcolor: 'var(--overlay-medium)',
+                    '&:hover': { bgcolor: 'var(--overlay-dark)', color: 'var(--text-primary)' }
                 }}
             >
                 <KeyboardArrowRightIcon fontSize="small" />

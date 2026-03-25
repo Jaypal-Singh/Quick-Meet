@@ -57,26 +57,26 @@ const MeetingDetailsModal = ({ open, onClose, meeting, onEdit, onAccept, onRejec
             BackdropProps={{
                 timeout: 500,
                 sx: {
-                    backgroundColor: 'rgba(15, 23, 42, 0.4)',
-                    backdropFilter: 'blur(12px)',
+                    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                    backdropFilter: 'blur(8px)',
                 }
             }}
             PaperProps={{
                 sx: {
-                    bgcolor: 'rgba(30, 41, 59, 0.95)',
+                    bgcolor: 'var(--bg-card)',
                     backgroundImage: 'none',
                     borderRadius: '24px',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+                    border: '1px solid var(--border-light)',
+                    boxShadow: '0 25px 50px -12px var(--shadow-strong)',
                     p: 1
                 }
             }}
         >
             <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
-                <Typography variant="h6" fontWeight="700" color="#F8FAFC">
+                <Typography variant="h6" fontWeight="700" color="var(--text-primary)">
                     Meeting Details
                 </Typography>
-                <IconButton onClick={onClose} sx={{ color: '#94A3B8', '&:hover': { color: '#F8FAFC', bgcolor: 'rgba(255,255,255,0.05)' } }}>
+                <IconButton onClick={onClose} sx={{ color: 'var(--text-secondary)', '&:hover': { color: 'var(--text-primary)', bgcolor: 'var(--border-light)' } }}>
                     <CloseIcon />
                 </IconButton>
             </DialogTitle>
@@ -85,19 +85,19 @@ const MeetingDetailsModal = ({ open, onClose, meeting, onEdit, onAccept, onRejec
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5, mt: 1 }}>
                     {/* Title */}
                     <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
-                        <TitleIcon sx={{ color: '#6366F1', mt: 0.3 }} />
+                        <TitleIcon sx={{ color: 'var(--primary)', mt: 0.3 }} />
                         <Box>
-                            <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 0.5 }}>Title</Typography>
-                            <Typography variant="body1" sx={{ color: '#F8FAFC', fontWeight: 600 }}>{meeting.title}</Typography>
+                            <Typography variant="caption" sx={{ color: 'var(--text-secondary)', display: 'block', mb: 0.5 }}>Title</Typography>
+                            <Typography variant="body1" sx={{ color: 'var(--text-primary)', fontWeight: 600 }}>{meeting.title}</Typography>
                         </Box>
                     </Box>
 
                     {/* Date & Time */}
                     <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
-                        <EventIcon sx={{ color: '#6366F1', mt: 0.3 }} />
+                        <EventIcon sx={{ color: 'var(--primary)', mt: 0.3 }} />
                         <Box>
-                            <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 0.5 }}>Date & Time</Typography>
-                            <Typography variant="body1" sx={{ color: '#F8FAFC', fontWeight: 600 }}>
+                            <Typography variant="caption" sx={{ color: 'var(--text-secondary)', display: 'block', mb: 0.5 }}>Date & Time</Typography>
+                            <Typography variant="body1" sx={{ color: 'var(--text-primary)', fontWeight: 600 }}>
                                 {meeting.date} • {meeting.startTime} - {meeting.endTime}
                             </Typography>
                         </Box>
@@ -106,10 +106,10 @@ const MeetingDetailsModal = ({ open, onClose, meeting, onEdit, onAccept, onRejec
                     {/* Agenda */}
                     {meeting.description && (
                         <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
-                            <DescriptionIcon sx={{ color: '#6366F1', mt: 0.3 }} />
+                            <DescriptionIcon sx={{ color: 'var(--primary)', mt: 0.3 }} />
                             <Box>
-                                <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 0.5 }}>Agenda</Typography>
-                                <Typography variant="body2" sx={{ color: '#CBD5E1', lineHeight: 1.6 }}>
+                                <Typography variant="caption" sx={{ color: 'var(--text-secondary)', display: 'block', mb: 0.5 }}>Agenda</Typography>
+                                <Typography variant="body2" sx={{ color: 'var(--text-light)', lineHeight: 1.6 }}>
                                     {meeting.description}
                                 </Typography>
                             </Box>
@@ -119,9 +119,9 @@ const MeetingDetailsModal = ({ open, onClose, meeting, onEdit, onAccept, onRejec
                     {/* Participants */}
                     {meeting.participants && (
                         <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
-                            <GroupIcon sx={{ color: '#6366F1', mt: 0.3 }} />
+                            <GroupIcon sx={{ color: 'var(--primary)', mt: 0.3 }} />
                             <Box>
-                                <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 1 }}>Participants</Typography>
+                                <Typography variant="caption" sx={{ color: 'var(--text-secondary)', display: 'block', mb: 1 }}>Participants</Typography>
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                                     {Array.isArray(meeting.participants) ? meeting.participants.map((p, i) => (
                                         <Chip 
@@ -130,7 +130,7 @@ const MeetingDetailsModal = ({ open, onClose, meeting, onEdit, onAccept, onRejec
                                             size="small" 
                                             sx={{ 
                                                 bgcolor: 'rgba(99, 102, 241, 0.1)', 
-                                                color: '#8B5CF6',
+                                                color: 'var(--primary-light)',
                                                 border: '1px solid rgba(139, 92, 246, 0.2)',
                                                 fontWeight: 500,
                                                 fontSize: '0.75rem'
@@ -143,7 +143,7 @@ const MeetingDetailsModal = ({ open, onClose, meeting, onEdit, onAccept, onRejec
                                             size="small" 
                                             sx={{ 
                                                 bgcolor: 'rgba(99, 102, 241, 0.1)', 
-                                                color: '#8B5CF6',
+                                                color: 'var(--primary-light)',
                                                 border: '1px solid rgba(139, 92, 246, 0.2)',
                                                 fontWeight: 500,
                                                 fontSize: '0.75rem'
@@ -167,14 +167,14 @@ const MeetingDetailsModal = ({ open, onClose, meeting, onEdit, onAccept, onRejec
                         }}
                         variant="contained"
                         sx={{
-                            background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)',
+                            background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)',
                             borderRadius: '12px',
                             textTransform: 'none',
                             fontWeight: 600,
                             py: 1.2,
                             boxShadow: '0 4px 14px 0 rgba(99, 102, 241, 0.3)',
                             '&:hover': {
-                                background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)',
+                                background: 'linear-gradient(135deg, var(--primary-hover) 0%, var(--primary-dark) 100%)',
                                 boxShadow: '0 6px 20px rgba(99, 102, 241, 0.5)',
                             }
                         }}

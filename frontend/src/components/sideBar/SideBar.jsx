@@ -115,7 +115,7 @@ export default function SideBar() {
             sx={{
                 width: { xs: '100%', md: 260 },
                 minWidth: { md: 260 },
-                height: { xs: 'auto', md: '100vh' },
+                height: { xs: 'auto', md: 'calc(100vh / var(--app-zoom, 1))' },
                 position: { xs: 'fixed', md: 'relative' },
                 bottom: { xs: 0, md: 'auto' },
                 left: { xs: 0, md: 'auto' },
@@ -126,11 +126,11 @@ export default function SideBar() {
                 bgcolor: { xs: '#10131B', md: 'transparent' }, // Solid dark color for mobile
                 background: {
                     xs: '#10131B', // Solid opaque color
-                    md: 'linear-gradient(180deg, #1C2230 0%, #131722 100%)'
+                    md: 'linear-gradient(180deg, var(--bg-card) 0%, var(--bg-darker) 100%)'
                 },
                 borderRight: { xs: 'none', md: '1px solid rgba(255, 255, 255, 0.03)' },
                 borderTop: { xs: '1px solid rgba(255, 255, 255, 0.06)', md: 'none' },
-                color: 'white',
+                color: 'var(--text-primary)',
                 display: 'flex',
                 flexDirection: { xs: 'row', md: 'column' },
                 justifyContent: { xs: 'space-between', md: 'flex-start' },
@@ -143,12 +143,12 @@ export default function SideBar() {
             {/* User / Logo Section - Desktop Only */}
             {!isMobile && (
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 5, cursor: 'pointer', '&:hover .logo-icon': { transform: 'rotate(-10deg) scale(1.1)' } }}>
-                    <Box className="logo-icon" sx={{ width: 36, height: 36, background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', mr: 2.5, color: '#FFFFFF', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>
+                    <Box className="logo-icon" sx={{ width: 36, height: 36, background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', mr: 2.5, color: 'var(--text-primary)', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>
                         <VideocamIcon fontSize="small" />
                     </Box>
                     <Box>
                         <Typography variant="h6" sx={{ fontSize: '1.2rem', fontWeight: 800, lineHeight: 1.2, letterSpacing: '-0.5px' }}>MeetNext</Typography>
-                        <Typography variant="caption" sx={{ color: '#8B5CF6', letterSpacing: 1.5, fontSize: '0.65rem', fontWeight: 700 }}>PRO SUITE</Typography>
+                        <Typography variant="caption" sx={{ color: 'var(--primary-light)', letterSpacing: 1.5, fontSize: '0.65rem', fontWeight: 700 }}>PRO SUITE</Typography>
                     </Box>
                 </Box>
             )}
@@ -178,7 +178,7 @@ export default function SideBar() {
                                 alignItems: 'center',
                                 justifyContent: { xs: 'center', md: 'flex-start' },
                                 textDecoration: 'none',
-                                color: '#94A3B8',
+                                color: 'var(--text-secondary)',
                                 padding: { xs: '12px 0px 10px', md: '12px 18px' }, // Tweaked padding for exact look
                                 borderRadius: { xs: '0px', md: '12px' }, // Square on mobile, rounded on md
                                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -187,11 +187,11 @@ export default function SideBar() {
                                 overflow: 'visible', // Changed from hidden so the top bar shows fully on mobile edge
                                 flex: { xs: 1, md: 'none' }, // Even distribution on mobile
                                 '&.active': {
-                                    color: '#FFFFFF',
+                                    color: 'var(--text-primary)',
                                     backgroundColor: { xs: 'transparent', md: 'rgba(99, 102, 241, 0.15)' },
                                     fontWeight: 600,
                                     '& .nav-icon': {
-                                        color: { xs: '#8B5CF6', md: '#8B5CF6' },
+                                        color: { xs: 'var(--primary-light)', md: 'var(--primary-light)' },
                                     },
                                     '&::before': {
                                         content: '""',
@@ -201,7 +201,7 @@ export default function SideBar() {
                                         transform: { xs: 'translateX(-50%)', md: 'none' },
                                         height: { xs: '3px', md: '70%' },
                                         width: { xs: '32px', md: '4px' },
-                                        backgroundColor: '#8B5CF6',
+                                        backgroundColor: 'var(--primary-light)',
                                         borderRadius: { xs: '0 0 4px 4px', md: '0 4px 4px 0' },
                                         display: 'block'
                                     }
@@ -243,18 +243,18 @@ export default function SideBar() {
                             alignItems: 'center',
                             justifyContent: 'center',
                             textDecoration: 'none',
-                            color: '#94A3B8',
+                            color: 'var(--text-secondary)',
                             padding: '12px 0px 10px', // Matches 12px padding of the rest
                             borderRadius: '0px',
                             flex: 1,
                             cursor: 'pointer',
                             position: 'relative',
                             '&.active': {
-                                color: '#FFFFFF',
+                                color: 'var(--text-primary)',
                                 fontWeight: 600,
                                 '& .profile-avatar': {
-                                    borderColor: '#8B5CF6',
-                                    color: '#FFFFFF'
+                                    borderColor: 'var(--primary-light)',
+                                    color: 'var(--text-primary)'
                                 },
                                 '&::before': {
                                     content: '""',
@@ -264,7 +264,7 @@ export default function SideBar() {
                                     transform: 'translateX(-50%)',
                                     height: '3px',
                                     width: '32px',
-                                    backgroundColor: '#8B5CF6',
+                                    backgroundColor: 'var(--primary-light)',
                                     borderRadius: '0 0 4px 4px',
                                 }
                             }
@@ -274,7 +274,7 @@ export default function SideBar() {
                             width: 24,
                             height: 24,
                             borderRadius: '50%',
-                            border: '1px solid rgba(255,255,255,0.2)',
+                            border: '1px solid var(--border-strong)',
                             bgcolor: 'transparent',
                             display: 'flex',
                             alignItems: 'center',
@@ -300,7 +300,7 @@ export default function SideBar() {
                         startIcon={<AddCircleOutlineIcon />}
                         endIcon={<KeyboardArrowUpIcon />}
                         onClick={handleClick}
-                        sx={{ background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)', color: '#FFFFFF', borderRadius: '24px', textTransform: 'none', fontWeight: 600, fontSize: '0.95rem', py: 1.5, boxShadow: '0 4px 14px 0 rgba(99, 102, 241, 0.4)', transition: 'all 0.3s ease', '&:hover': { background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)', boxShadow: '0 6px 20px rgba(99, 102, 241, 0.6)', transform: 'translateY(-2px)' } }}>
+                        sx={{ background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)', color: 'var(--text-primary)', borderRadius: '24px', textTransform: 'none', fontWeight: 600, fontSize: '0.95rem', py: 1.5, boxShadow: '0 4px 14px 0 rgba(99, 102, 241, 0.4)', transition: 'all 0.3s ease', '&:hover': { background: 'linear-gradient(135deg, var(--primary-hover) 0%, var(--primary-dark) 100%)', boxShadow: '0 6px 20px rgba(99, 102, 241, 0.6)', transform: 'translateY(-2px)' } }}>
                         New Meeting
                     </Button>
                     <Menu
@@ -311,17 +311,17 @@ export default function SideBar() {
                         transformOrigin={{ vertical: 'bottom', horizontal: 'center' }}
                         PaperProps={{
                             sx: {
-                                bgcolor: '#1C2230',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                bgcolor: 'var(--bg-card)',
+                                border: '1px solid var(--border-main)',
                                 mb: 1,
                                 width: '220px',
                                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
                                 '& .MuiMenuItem-root': {
-                                    color: 'white',
+                                    color: 'var(--text-primary)',
                                     fontSize: '14px',
                                     py: 1.5,
                                     '&:hover': {
-                                        bgcolor: 'rgba(255, 255, 255, 0.05)',
+                                        bgcolor: 'var(--border-light)',
                                     },
                                 },
                             },
@@ -329,34 +329,34 @@ export default function SideBar() {
                     >
                         <MenuItem onClick={handleInstantMeeting}>
                             <ListItemIcon>
-                                <FlashOnIcon fontSize="small" sx={{ color: '#6366F1' }} />
+                                <FlashOnIcon fontSize="small" sx={{ color: 'var(--primary)' }} />
                             </ListItemIcon>
                             <ListItemText primary="Start instant meeting" />
                         </MenuItem>
                         <MenuItem onClick={handleScheduleMeeting}>
                             <ListItemIcon>
-                                <CalendarMonthIcon fontSize="small" sx={{ color: '#8B5CF6' }} />
+                                <CalendarMonthIcon fontSize="small" sx={{ color: 'var(--primary-light)' }} />
                             </ListItemIcon>
                             <ListItemText primary="Schedule for later" />
                         </MenuItem>
                     </Menu>
-                    <Box sx={{ bgcolor: 'rgba(34, 43, 61, 0.6)', border: '1px solid rgba(255, 255, 255, 0.05)', backdropFilter: 'blur(10px)', borderRadius: '16px', p: 1.5, display: 'flex', alignItems: 'center', gap: 1.5, transition: 'all 0.3s ease', cursor: 'pointer', '&:hover': { bgcolor: 'rgba(34, 43, 61, 0.9)', borderColor: 'rgba(255, 255, 255, 0.1)', transform: 'translateY(-2px)', boxShadow: '0 8px 24px rgba(0,0,0,0.2)', '& .profile-icon': { color: '#FFFFFF', bgcolor: '#6366F1' } } }}>
-                        <Box className="profile-icon" sx={{ bgcolor: '#171C28', borderRadius: '12px', width: 38, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s ease', overflow: 'hidden', flexShrink: 0 }}>
+                    <Box sx={{ bgcolor: 'var(--border-light)', border: '1px solid var(--border-strong)', backdropFilter: 'blur(10px)', borderRadius: '16px', p: 1.5, display: 'flex', alignItems: 'center', gap: 1.5, transition: 'all 0.3s ease', cursor: 'pointer', '&:hover': { bgcolor: 'var(--border-main)', borderColor: 'var(--primary)', transform: 'translateY(-2px)', boxShadow: '0 8px 24px var(--shadow-light)', '& .profile-icon': { color: 'var(--bg-card)', bgcolor: 'var(--primary)' } } }}>
+                        <Box className="profile-icon" sx={{ bgcolor: 'var(--bg-dark)', borderRadius: '12px', width: 38, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s ease', overflow: 'hidden', flexShrink: 0 }}>
                             {profilePic ? (
                                 <img src={profilePic} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px' }} />
                             ) : (
-                                <Typography sx={{ fontSize: '13px', fontWeight: 700, color: '#94A3B8' }}>
+                                <Typography sx={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-secondary)' }}>
                                     {fullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
                                 </Typography>
                             )}
                         </Box>
                         <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-                            <Typography variant="body2" sx={{ fontWeight: 600, color: 'white', lineHeight: 1.2 }}>
+                            <Typography variant="body2" sx={{ fontWeight: 600, color: 'var(--text-primary)', lineHeight: 1.2 }}>
                                 {fullName.length > 20 ? fullName.substring(0, 20) + '...' : fullName}
                             </Typography>
-                            <Typography variant="caption" sx={{ color: '#8B5CF6', fontSize: '0.75rem', fontWeight: 500 }}>Pro Plan</Typography>
+                            <Typography variant="caption" sx={{ color: 'var(--primary-light)', fontSize: '0.75rem', fontWeight: 500 }}>Pro Plan</Typography>
                         </Box>
-                        <IconButton onClick={handleLogout} size="small" sx={{ color: '#94A3B8', transition: 'all 0.3s ease', '&:hover': { color: '#EF4444', bgcolor: 'rgba(239, 68, 68, 0.1)', transform: 'scale(1.1)' } }}>
+                        <IconButton onClick={handleLogout} size="small" sx={{ color: 'var(--text-secondary)', transition: 'all 0.3s ease', '&:hover': { color: '#EF4444', bgcolor: 'rgba(239, 68, 68, 0.1)', transform: 'scale(1.1)' } }}>
                             <LogoutIcon fontSize="small" />
                         </IconButton>
                     </Box>

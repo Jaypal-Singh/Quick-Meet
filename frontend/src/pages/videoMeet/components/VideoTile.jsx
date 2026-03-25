@@ -60,7 +60,7 @@ const VideoTile = ({ videoObj, isLocal, videoEnabled, isPinned, onPin, isScreenS
     return (
         <div 
             onClick={onPin}
-            className={`relative w-full h-full flex items-center justify-center overflow-hidden rounded-xl bg-[#1C2230] hover:ring-2 hover:ring-purple-500/50 transition-all cursor-pointer ${isPinned ? 'ring-2 ring-purple-500' : ''}`}
+            className={`relative w-full h-full flex items-center justify-center overflow-hidden rounded-xl bg-[var(--bg-card)] hover:ring-2 hover:ring-purple-500/50 transition-all cursor-pointer ${isPinned ? 'ring-2 ring-purple-500' : ''}`}
         >
             
             {hasActiveVideo ? (
@@ -75,13 +75,13 @@ const VideoTile = ({ videoObj, isLocal, videoEnabled, isPinned, onPin, isScreenS
             ) : (
                 <div 
                     className="w-full h-full flex items-center justify-center transition-all duration-500"
-                    style={{ background: `linear-gradient(135deg, ${bgColor} 0%, #0B0F19 100%)` }}
+                    style={{ background: `linear-gradient(135deg, ${bgColor} 0%, var(--bg-darker) 100%)` }}
                 >
                     <div className="relative group">
                         {/* Glow effect */}
-                        <div className="absolute -inset-1 bg-white/10 rounded-full blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+                        <div className="absolute -inset-1 bg-[var(--border-main)] rounded-full blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
                         
-                        <div className="relative w-20 h-20 md:w-32 md:h-32 rounded-full border-2 border-white/10 bg-[#1C2230] shadow-2xl flex items-center justify-center overflow-hidden">
+                        <div className="relative w-20 h-20 md:w-32 md:h-32 rounded-full border-2 border-[var(--border-light)] bg-[var(--bg-card)] shadow-2xl flex items-center justify-center overflow-hidden">
                             {profilePic ? (
                                 <img 
                                     src={profilePic} 
@@ -91,8 +91,8 @@ const VideoTile = ({ videoObj, isLocal, videoEnabled, isPinned, onPin, isScreenS
                                 />
                             ) : null}
                             <div 
-                                className={`w-full h-full items-center justify-center text-white font-bold text-4xl md:text-5xl lg:text-6xl ${profilePic ? 'hidden' : 'flex'}`}
-                                style={{ textShadow: '0 2px 10px rgba(0,0,0,0.3)' }}
+                                className={`w-full h-full items-center justify-center text-[var(--text-primary)] font-bold text-4xl md:text-5xl lg:text-6xl ${profilePic ? 'hidden' : 'flex'}`}
+                                style={{ textShadow: '0 2px 10px var(--shadow-medium)' }}
                             >
                                 {initial}
                             </div>
@@ -102,9 +102,9 @@ const VideoTile = ({ videoObj, isLocal, videoEnabled, isPinned, onPin, isScreenS
             )}
 
             {/* Username overlay */}
-            <div className="absolute bottom-4 left-4 flex items-center gap-2 bg-[#1C2230] px-3 py-1.5 rounded-lg border border-white/5 shadow-md">
+            <div className="absolute bottom-4 left-4 flex items-center gap-2 bg-[var(--bg-card)] px-3 py-1.5 rounded-lg border border-[var(--border-light)] shadow-md">
                 <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                <span className="text-white text-xs font-medium tracking-wide">
+                <span className="text-[var(--text-primary)] text-xs font-medium tracking-wide">
                     {username}{isLocal ? ' (You)' : ''}{isScreenShare && isLocal ? ' (Presenting)' : ''}
                 </span>
             </div>

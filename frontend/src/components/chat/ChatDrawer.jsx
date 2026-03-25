@@ -116,11 +116,11 @@ export default function ChatDrawer({ open, onClose, friend }) {
             PaperProps={{
                 sx: {
                     width: isMobile ? '100%' : 400,
-                    bgcolor: '#0F172A',
-                    borderLeft: '1px solid rgba(255,255,255,0.05)',
+                    bgcolor: 'var(--bg-drawer)',
+                    borderLeft: '1px solid var(--border-light)',
                     display: 'flex',
                     flexDirection: 'column',
-                    color: 'white'
+                    color: 'var(--text-primary)'
                 }
             }}
         >
@@ -132,14 +132,14 @@ export default function ChatDrawer({ open, onClose, friend }) {
                         display: 'flex', 
                         alignItems: 'center', 
                         justifyContent: 'space-between',
-                        borderBottom: '1px solid rgba(255,255,255,0.05)',
-                        bgcolor: 'rgba(30, 41, 59, 0.5)',
+                        borderBottom: '1px solid var(--border-light)',
+                        bgcolor: 'var(--overlay-light)',
                         backdropFilter: 'blur(10px)'
                     }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Avatar sx={{ 
-                                bgcolor: '#6366F1',
-                                background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)',
+                                bgcolor: 'var(--primary)',
+                                background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)',
                                 boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)'
                             }}>
                                 {friend.name ? friend.name[0] : friend.username[0].toUpperCase()}
@@ -155,14 +155,14 @@ export default function ChatDrawer({ open, onClose, friend }) {
                                 onClick={handleClearChat}
                                 title="Clear Chat History"
                                 sx={{ 
-                                    color: '#94A3B8', 
+                                    color: 'var(--text-secondary)', 
                                     mr: 1,
                                     '&:hover': { color: '#EF4444', bgcolor: 'rgba(239, 68, 68, 0.1)' } 
                                 }}
                             >
                                 <DeleteOutlineIcon />
                             </IconButton>
-                            <IconButton onClick={onClose} sx={{ color: '#94A3B8', '&:hover': { color: 'white', bgcolor: 'rgba(255,255,255,0.05)' } }}>
+                            <IconButton onClick={onClose} sx={{ color: 'var(--text-secondary)', '&:hover': { color: 'var(--text-primary)', bgcolor: 'var(--border-light)' } }}>
                                 <CloseIcon />
                             </IconButton>
                         </Box>
@@ -176,14 +176,14 @@ export default function ChatDrawer({ open, onClose, friend }) {
                         display: 'flex', 
                         flexDirection: 'column', 
                         gap: 1.5,
-                        bgcolor: '#0B1121'
+                        bgcolor: 'var(--bg-root)'
                     }}>
                         {loading ? (
                             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-                                <CircularProgress sx={{ color: '#6366F1' }} size={30} />
+                                <CircularProgress sx={{ color: 'var(--primary)' }} size={30} />
                             </Box>
                         ) : messages.length === 0 ? (
-                            <Box sx={{ textAlign: 'center', mt: 10, color: '#64748B' }}>
+                            <Box sx={{ textAlign: 'center', mt: 10, color: 'var(--text-secondary)' }}>
                                 <Typography variant="body2">No messages yet. Say hi!</Typography>
                             </Box>
                         ) : (
@@ -195,8 +195,8 @@ export default function ChatDrawer({ open, onClose, friend }) {
                                         <Box sx={{ 
                                             maxWidth: '75%', 
                                             alignSelf: isMe ? 'flex-end' : 'flex-start',
-                                            bgcolor: isMe ? '#6366F1' : 'rgba(30, 41, 59, 0.8)',
-                                            color: 'white',
+                                            bgcolor: isMe ? 'var(--primary)' : 'var(--overlay-strong)',
+                                            color: 'var(--text-primary)',
                                             p: 1.5,
                                             px: 2,
                                             borderRadius: isMe ? '20px 20px 4px 20px' : '20px 20px 20px 4px',
@@ -209,7 +209,7 @@ export default function ChatDrawer({ open, onClose, friend }) {
                                                 display: 'block', 
                                                 textAlign: isMe ? 'right' : 'left', 
                                                 mt: 0.5, 
-                                                color: isMe ? 'rgba(255,255,255,0.7)' : '#94A3B8',
+                                                color: isMe ? 'rgba(255,255,255,0.7)' : 'var(--text-secondary)',
                                                 fontSize: '0.65rem'
                                             }}>
                                                 {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -225,8 +225,8 @@ export default function ChatDrawer({ open, onClose, friend }) {
                     {/* Input Area */}
                     <Box component="form" onSubmit={handleSendMessage} sx={{ 
                         p: 2, 
-                        bgcolor: '#0F172A',
-                        borderTop: '1px solid rgba(255,255,255,0.05)',
+                        bgcolor: 'var(--bg-drawer)',
+                        borderTop: '1px solid var(--border-light)',
                         display: 'flex',
                         gap: 1.5,
                         alignItems: 'center'
@@ -239,9 +239,9 @@ export default function ChatDrawer({ open, onClose, friend }) {
                             onChange={(e) => setNewMessage(e.target.value)}
                             sx={{
                                 '& .MuiOutlinedInput-root': {
-                                    bgcolor: 'rgba(30, 41, 59, 0.6)',
+                                    bgcolor: 'var(--overlay-medium)',
                                     borderRadius: '24px',
-                                    color: 'white',
+                                    color: 'var(--text-primary)',
                                     fontSize: '0.9rem',
                                     '& fieldset': { border: 'none' },
                                     '&:hover fieldset': { border: 'none' },
@@ -256,12 +256,12 @@ export default function ChatDrawer({ open, onClose, friend }) {
                             type="submit" 
                             disabled={!newMessage.trim()}
                             sx={{ 
-                                bgcolor: newMessage.trim() ? '#6366F1' : 'rgba(255,255,255,0.05)', 
-                                color: 'white',
+                                bgcolor: newMessage.trim() ? 'var(--primary)' : 'var(--border-light)', 
+                                color: 'var(--text-primary)',
                                 borderRadius: '50%',
                                 p: 1.2,
-                                '&:hover': { bgcolor: newMessage.trim() ? '#4F46E5' : 'rgba(255,255,255,0.1)' },
-                                '&.Mui-disabled': { color: 'rgba(255,255,255,0.3)' }
+                                '&:hover': { bgcolor: newMessage.trim() ? 'var(--primary-hover)' : 'var(--border-main)' },
+                                '&.Mui-disabled': { color: 'var(--border-extra)' }
                             }}
                         >
                             <SendIcon fontSize="small" sx={{ ml: 0.3 }} />

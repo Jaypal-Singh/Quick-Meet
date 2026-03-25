@@ -12,25 +12,25 @@ export default function SummariseHeader() {
                 sx={{
                     display: 'flex',
                     alignItems: 'center',
-                    bgcolor: 'rgba(34, 43, 61, 0.4)',
+                    bgcolor: 'var(--overlay-light)',
                     borderRadius: '12px',
                     px: { xs: 1.5, md: 2 },
                     py: { xs: 1, md: 1.5 },
                     flexGrow: 1,
                     maxWidth: { xs: 'calc(100% - 100px)', md: '500px' },
-                    border: '1px solid rgba(255, 255, 255, 0.05)',
+                    border: '1px solid var(--border-light)',
                     transition: 'all 0.3s ease',
                     '&:focus-within': {
-                        bgcolor: 'rgba(34, 43, 61, 0.8)',
+                        bgcolor: 'var(--overlay-strong)',
                         borderColor: 'rgba(99, 102, 241, 0.5)',
                         boxShadow: '0 0 0 2px rgba(99, 102, 241, 0.2)',
                     }
                 }}
             >
-                <SearchIcon sx={{ color: '#94A3B8', mr: 1, fontSize: 18 }} />
+                <SearchIcon sx={{ color: 'var(--text-secondary)', mr: 1, fontSize: 18 }} />
                 <InputBase
                     placeholder="Search..."
-                    sx={{ color: '#E2E8F0', width: '100%', fontSize: '0.85rem' }}
+                    sx={{ color: 'var(--text-secondary)', width: '100%', fontSize: '0.85rem' }}
                 />
             </Box>
 
@@ -38,13 +38,13 @@ export default function SummariseHeader() {
             <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, md: 2 } }}>
                 <IconButton
                     sx={{
-                        bgcolor: 'rgba(34, 43, 61, 0.6)',
-                        color: '#94A3B8',
-                        border: '1px solid rgba(255, 255, 255, 0.05)',
+                        bgcolor: 'var(--overlay-medium)',
+                        color: 'var(--text-secondary)',
+                        border: '1px solid var(--border-light)',
                         p: { xs: 0.8, md: 1 },
                         '&:hover': {
-                            bgcolor: 'rgba(34, 43, 61, 0.9)',
-                            color: '#E2E8F0',
+                            bgcolor: 'var(--overlay-dark)',
+                            color: 'var(--text-secondary)',
                             transform: 'translateY(-2px)',
                         },
                         transition: 'all 0.3s ease',
@@ -55,13 +55,13 @@ export default function SummariseHeader() {
 
                 <IconButton
                     sx={{
-                        bgcolor: 'rgba(34, 43, 61, 0.6)',
-                        color: '#94A3B8',
-                        border: '1px solid rgba(255, 255, 255, 0.05)',
+                        bgcolor: 'var(--overlay-medium)',
+                        color: 'var(--text-secondary)',
+                        border: '1px solid var(--border-light)',
                         p: { xs: 0.8, md: 1 },
                         '&:hover': {
-                            bgcolor: 'rgba(34, 43, 61, 0.9)',
-                            color: '#E2E8F0',
+                            bgcolor: 'var(--overlay-dark)',
+                            color: 'var(--text-secondary)',
                             transform: 'translateY(-2px)',
                         },
                         transition: 'all 0.3s ease',
