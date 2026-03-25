@@ -99,7 +99,7 @@ export default function Signup() {
                     <div style={styles.logoIcon}>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                             <path d="M15 10l4.553-2.276A1 1 0 0121 8.723v6.554a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"
-                                stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                                stroke="var(--text-primary)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                     </div>
                     <span style={styles.brandName}>MeetNext</span>
@@ -119,8 +119,8 @@ export default function Signup() {
                         >
                             <span style={styles.inputIcon}>
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
-                                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="#6B7280" strokeWidth="1.8" strokeLinecap="round" />
-                                    <circle cx="12" cy="7" r="4" stroke="#6B7280" strokeWidth="1.8" />
+                                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="var(--text-secondary)" strokeWidth="1.8" strokeLinecap="round" />
+                                    <circle cx="12" cy="7" r="4" stroke="var(--text-secondary)" strokeWidth="1.8" />
                                 </svg>
                             </span>
                             <input
@@ -130,7 +130,7 @@ export default function Signup() {
                                 onChange={(e) => setName(e.target.value)}
                                 style={styles.input}
                                 onFocus={(e) => e.target.parentElement.style.borderColor = 'rgba(99,102,241,0.6)'}
-                                onBlur={(e) => e.target.parentElement.style.borderColor = 'rgba(255,255,255,0.05)'}
+                                onBlur={(e) => e.target.parentElement.style.borderColor = 'var(--border-light)'}
                                 autoFocus
                             />
                         </div>
@@ -142,8 +142,8 @@ export default function Signup() {
                         <div style={styles.inputWrapper}>
                             <span style={styles.inputIcon}>
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
-                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="#6B7280" strokeWidth="1.8" strokeLinecap="round" />
-                                    <polyline points="22,6 12,13 2,6" stroke="#6B7280" strokeWidth="1.8" strokeLinecap="round" />
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="var(--text-secondary)" strokeWidth="1.8" strokeLinecap="round" />
+                                    <polyline points="22,6 12,13 2,6" stroke="var(--text-secondary)" strokeWidth="1.8" strokeLinecap="round" />
                                 </svg>
                             </span>
                             <input
@@ -153,7 +153,7 @@ export default function Signup() {
                                 onChange={(e) => setEmail(e.target.value)}
                                 style={styles.input}
                                 onFocus={(e) => e.target.parentElement.style.borderColor = 'rgba(99,102,241,0.6)'}
-                                onBlur={(e) => e.target.parentElement.style.borderColor = 'rgba(255,255,255,0.05)'}
+                                onBlur={(e) => e.target.parentElement.style.borderColor = 'var(--border-light)'}
                             />
                         </div>
                     </div>
@@ -161,13 +161,13 @@ export default function Signup() {
                     {/* Password */}
                     <div style={styles.fieldGroup}>
                         <label style={styles.label}>
-                            Password <span style={{ color: '#8B5CF6' }}>*</span>
+                            Password <span style={{ color: 'var(--primary-light)' }}>*</span>
                         </label>
                         <div style={styles.inputWrapper}>
                             <span style={styles.inputIcon}>
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
-                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke="#6B7280" strokeWidth="1.8" />
-                                    <path d="M7 11V7a5 5 0 0110 0v4" stroke="#6B7280" strokeWidth="1.8" strokeLinecap="round" />
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke="var(--text-secondary)" strokeWidth="1.8" />
+                                    <path d="M7 11V7a5 5 0 0110 0v4" stroke="var(--text-secondary)" strokeWidth="1.8" strokeLinecap="round" />
                                 </svg>
                             </span>
                             <input
@@ -177,18 +177,18 @@ export default function Signup() {
                                 onChange={(e) => setPassword(e.target.value)}
                                 style={{ ...styles.input, paddingRight: '40px' }}
                                 onFocus={(e) => e.target.parentElement.style.borderColor = 'rgba(99,102,241,0.6)'}
-                                onBlur={(e) => e.target.parentElement.style.borderColor = 'rgba(255,255,255,0.05)'}
+                                onBlur={(e) => e.target.parentElement.style.borderColor = 'var(--border-light)'}
                             />
                             <button type="button" onClick={() => setShowPassword(!showPassword)} style={styles.eyeBtn} tabIndex={-1}>
                                 {showPassword ? (
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                        <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19M1 1l22 22" stroke="#6B7280" strokeWidth="1.8" strokeLinecap="round" />
-                                        <circle cx="12" cy="12" r="3" stroke="#6B7280" strokeWidth="1.8" />
+                                        <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19M1 1l22 22" stroke="var(--text-secondary)" strokeWidth="1.8" strokeLinecap="round" />
+                                        <circle cx="12" cy="12" r="3" stroke="var(--text-secondary)" strokeWidth="1.8" />
                                     </svg>
                                 ) : (
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="#6B7280" strokeWidth="1.8" strokeLinecap="round" />
-                                        <circle cx="12" cy="12" r="3" stroke="#6B7280" strokeWidth="1.8" />
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="var(--text-secondary)" strokeWidth="1.8" strokeLinecap="round" />
+                                        <circle cx="12" cy="12" r="3" stroke="var(--text-secondary)" strokeWidth="1.8" />
                                     </svg>
                                 )}
                             </button>
@@ -223,7 +223,7 @@ export default function Signup() {
                         onClick={handleGoogleSignup}
                         style={styles.googleBtn}
                         onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(99,102,241,0.4)'; e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.06)'; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.05)'; e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.02)'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-light)'; e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.02)'; }}
                     >
                         <svg width="18" height="18" viewBox="0 0 24 24">
                             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -253,9 +253,9 @@ export default function Signup() {
 
 const styles = {
     page: {
-        height: '100vh',
+        height: 'calc(100vh / var(--app-zoom, 1))',
         overflow: 'hidden',
-        backgroundColor: '#0B0F19',
+        backgroundColor: 'var(--bg-root)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -286,11 +286,11 @@ const styles = {
     card: {
         width: '100%',
         maxWidth: '430px',
-        background: 'linear-gradient(180deg, #1C2230 0%, #131722 100%)',
+        background: 'linear-gradient(180deg, var(--bg-card) 0%, var(--bg-darker) 100%)',
         borderRadius: '16px',
         padding: '34px 32px',
-        border: '1px solid rgba(255,255,255,0.05)',
-        boxShadow: '0 24px 60px rgba(0,0,0,0.5)',
+        border: '1px solid var(--border-light)',
+        boxShadow: '0 24px 60px var(--shadow-strong)',
         position: 'relative',
         zIndex: 1,
     },
@@ -304,7 +304,7 @@ const styles = {
         width: '34px',
         height: '34px',
         borderRadius: '10px',
-        background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)',
+        background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -314,26 +314,26 @@ const styles = {
     brandName: {
         fontSize: '16px',
         fontWeight: '800',
-        color: 'white',
+        color: 'var(--text-primary)',
         letterSpacing: '-0.3px',
     },
     proBadge: {
         fontSize: '9px',
         fontWeight: '700',
-        color: '#8B5CF6',
+        color: 'var(--primary-light)',
         letterSpacing: '1.5px',
         marginTop: '2px',
     },
     title: {
         fontSize: '24px',
         fontWeight: '800',
-        color: 'white',
+        color: 'var(--text-primary)',
         margin: '0 0 5px 0',
         letterSpacing: '-0.5px',
     },
     subtitle: {
         fontSize: '13.5px',
-        color: '#9CA3AF',
+        color: 'var(--text-secondary)',
         margin: '0 0 24px 0',
     },
     form: {
@@ -349,14 +349,14 @@ const styles = {
     label: {
         fontSize: '13px',
         fontWeight: '500',
-        color: '#E2E8F0',
+        color: 'var(--text-secondary)',
     },
     inputWrapper: {
         position: 'relative',
         display: 'flex',
         alignItems: 'center',
         backgroundColor: 'rgba(255,255,255,0.04)',
-        border: '1px solid rgba(255,255,255,0.05)',
+        border: '1px solid var(--border-light)',
         borderRadius: '10px',
         transition: 'border-color 0.2s',
         padding: '0 13px',
@@ -372,7 +372,7 @@ const styles = {
         background: 'transparent',
         border: 'none',
         outline: 'none',
-        color: 'white',
+        color: 'var(--text-primary)',
         fontSize: '14px',
         padding: '12px 0',
         fontFamily: 'inherit',
@@ -389,7 +389,7 @@ const styles = {
     },
     hint: {
         fontSize: '11.5px',
-        color: '#6B7280',
+        color: 'var(--text-secondary)',
         margin: 0,
         lineHeight: '1.5',
     },
@@ -405,10 +405,10 @@ const styles = {
     primaryBtn: {
         width: '100%',
         padding: '13px',
-        background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)',
+        background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)',
         border: 'none',
         borderRadius: '999px',
-        color: '#FFFFFF',
+        color: 'var(--text-primary)',
         fontSize: '14.5px',
         fontWeight: '700',
         cursor: 'pointer',
@@ -429,7 +429,7 @@ const styles = {
     },
     dividerText: {
         fontSize: '10.5px',
-        color: '#6B7280',
+        color: 'var(--text-secondary)',
         letterSpacing: '0.8px',
         whiteSpace: 'nowrap',
     },
@@ -437,9 +437,9 @@ const styles = {
         width: '100%',
         padding: '12px',
         backgroundColor: 'rgba(255,255,255,0.02)',
-        border: '1px solid rgba(255,255,255,0.05)',
+        border: '1px solid var(--border-light)',
         borderRadius: '999px',
-        color: 'white',
+        color: 'var(--text-primary)',
         fontSize: '14px',
         fontWeight: '500',
         cursor: 'pointer',
@@ -452,23 +452,23 @@ const styles = {
     },
     footerText: {
         fontSize: '11.5px',
-        color: '#6B7280',
+        color: 'var(--text-secondary)',
         textAlign: 'center',
         marginTop: '18px',
         lineHeight: '1.6',
     },
     footerLink: {
-        color: '#8B5CF6',
+        color: 'var(--primary-light)',
         textDecoration: 'none',
     },
     switchText: {
         fontSize: '13px',
-        color: '#9CA3AF',
+        color: 'var(--text-secondary)',
         textAlign: 'center',
         marginTop: '10px',
     },
     switchLink: {
-        color: '#8B5CF6',
+        color: 'var(--primary-light)',
         fontWeight: '600',
         textDecoration: 'none',
     },

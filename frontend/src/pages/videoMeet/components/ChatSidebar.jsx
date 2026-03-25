@@ -7,7 +7,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 const ChatSidebar = ({ showModal, setModal, messages, message, setMessage, sendMessage }) => {
     
     return (
-        <div className={`fixed inset-y-0 right-0 md:top-4 md:bottom-23 md:right-4 bg-[#1C2230] flex flex-col border-l md:border border-white/10 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] z-[100] md:shadow-2xl md:rounded-3xl overflow-hidden ${
+        <div className={`fixed inset-y-0 right-0 md:top-4 md:bottom-23 md:right-4 bg-[var(--bg-card)] flex flex-col border-l md:border border-white/10 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] z-[100] md:shadow-2xl md:rounded-3xl overflow-hidden ${
             showModal ? 'w-full md:w-[360px] translate-x-0 opacity-100' : 'w-full md:w-[360px] translate-x-full md:translate-x-[calc(100%+32px)] opacity-0'
         }`}>
             {/* Header */}
@@ -17,8 +17,8 @@ const ChatSidebar = ({ showModal, setModal, messages, message, setMessage, sendM
                     size="small" 
                     onClick={() => setModal(false)} 
                     sx={{ 
-                        color: '#9CA3AF',
-                        '&:hover': { backgroundColor: 'rgba(255,255,255,0.05)', color: '#fff' }
+                        color: 'var(--text-secondary)',
+                        '&:hover': { backgroundColor: 'var(--border-light)', color: 'var(--text-primary)' }
                     }}
                 >
                     <CloseIcon fontSize="small" />
@@ -78,12 +78,12 @@ const ChatSidebar = ({ showModal, setModal, messages, message, setMessage, sendM
                         disabled={!message.trim()}
                         sx={{ 
                             backgroundColor: message.trim() ? '#818CF8' : 'transparent',
-                            color: message.trim() ? '#fff' : '#4B5563',
+                            color: message.trim() ? 'var(--text-primary)' : '#4B5563',
                             width: '36px',
                             height: '36px',
                             Transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                             '&:hover': { 
-                                backgroundColor: message.trim() ? '#6366F1' : 'rgba(255,255,255,0.05)',
+                                backgroundColor: message.trim() ? 'var(--primary)' : 'var(--border-light)',
                                 transform: message.trim() ? 'scale(1.05)' : 'none'
                              },
                             '&:disabled': { color: '#374151' }

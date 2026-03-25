@@ -29,7 +29,7 @@ export default function RecentMeetings() {
         {
             id: 3,
             category: 'MARKETING',
-            catColor: '#8B5CF6',
+            catColor: 'var(--primary-light)',
             title: 'Monthly GTM Sync',
             date: 'Oct 20, 2023 • 41 mins',
             desc: "Marketing campaign for 'MeetNext 2.0' launch. Key dates set for social media teaser rollout and early bird webinar sessions.",
@@ -48,16 +48,16 @@ export default function RecentMeetings() {
                 gap: { xs: 1, sm: 2 }
             }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <DashboardCustomizeOutlinedIcon sx={{ color: '#E2E8F0', fontSize: 18 }} />
-                    <Typography variant="h6" sx={{ color: '#F8FAFC', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                    <DashboardCustomizeOutlinedIcon sx={{ color: 'var(--text-secondary)', fontSize: 18 }} />
+                    <Typography variant="h6" sx={{ color: 'var(--text-primary)', fontWeight: 700, whiteSpace: 'nowrap' }}>
                         Recent Meetings
                     </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: { xs: '100%', sm: 'auto' }, justifyContent: { xs: 'space-between', sm: 'flex-start' } }}>
-                    <Typography variant="caption" sx={{ color: '#94A3B8' }}>
+                    <Typography variant="caption" sx={{ color: 'var(--text-secondary)' }}>
                         Showing 24 meetings
                     </Typography>
-                    <Typography variant="caption" sx={{ color: '#E2E8F0', display: 'flex', alignItems: 'center', cursor: 'pointer', '&:hover': { color: '#6366F1' } }}>
+                    <Typography variant="caption" sx={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', cursor: 'pointer', '&:hover': { color: 'var(--primary)' } }}>
                         Sort by: Date <span style={{ marginLeft: 4 }}>↓</span>
                     </Typography>
                 </Box>
@@ -70,14 +70,14 @@ export default function RecentMeetings() {
             }}>
                 {meetings.map((meet) => (
                     <Card key={meet.id} sx={{
-                        bgcolor: 'rgba(34, 43, 61, 0.4)',
+                        bgcolor: 'var(--overlay-light)',
                         borderRadius: '16px',
-                        border: '1px solid rgba(255, 255, 255, 0.05)',
+                        border: '1px solid var(--border-light)',
                         boxShadow: 'none',
                         transition: 'transform 0.2s, box-shadow 0.2s',
                         '&:hover': {
                             transform: 'translateY(-4px)',
-                            boxShadow: '0 12px 24px rgba(0,0,0,0.2)',
+                            boxShadow: '0 12px 24px var(--shadow-light)',
                             borderColor: 'rgba(99, 102, 241, 0.3)'
                         }
                     }}>
@@ -96,34 +96,34 @@ export default function RecentMeetings() {
                                         height: '22px'
                                     }}
                                 />
-                                <IconButton size="small" sx={{ color: meet.starred ? '#FCD34D' : '#94A3B8' }}>
+                                <IconButton size="small" sx={{ color: meet.starred ? '#FCD34D' : 'var(--text-secondary)' }}>
                                     {meet.starred ? <StarIcon fontSize="small" /> : <StarBorderIcon fontSize="small" />}
                                 </IconButton>
                             </Box>
 
-                            <Typography variant="subtitle1" sx={{ color: '#F8FAFC', fontWeight: 800, lineHeight: 1.3, mb: 0.5 }}>
+                            <Typography variant="subtitle1" sx={{ color: 'var(--text-primary)', fontWeight: 800, lineHeight: 1.3, mb: 0.5 }}>
                                 {meet.title}
                             </Typography>
 
-                            <Typography variant="caption" sx={{ color: '#6366F1', fontWeight: 500, mb: 2, display: 'block' }}>
+                            <Typography variant="caption" sx={{ color: 'var(--primary)', fontWeight: 500, mb: 2, display: 'block' }}>
                                 {meet.date}
                             </Typography>
 
-                            <Typography variant="body2" sx={{ color: '#94A3B8', lineHeight: 1.6, mb: 3, flexGrow: 1 }}>
+                            <Typography variant="body2" sx={{ color: 'var(--text-secondary)', lineHeight: 1.6, mb: 3, flexGrow: 1 }}>
                                 {meet.desc}
                             </Typography>
 
                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 'auto' }}>
-                                <AvatarGroup max={3} sx={{ '& .MuiAvatar-root': { width: 28, height: 28, fontSize: '0.7rem', borderColor: '#1E293B', bgcolor: '#475569' } }}>
+                                <AvatarGroup max={3} sx={{ '& .MuiAvatar-root': { width: 28, height: 28, fontSize: '0.7rem', borderColor: 'var(--bg-card-alt)', bgcolor: 'var(--text-secondary)' } }}>
                                     <Avatar src="" />
                                     <Avatar src="" />
                                 </AvatarGroup>
 
                                 <Box sx={{ display: 'flex', gap: 1 }}>
-                                    <IconButton size="small" sx={{ bgcolor: 'rgba(255,255,255,0.05)', color: '#E2E8F0', '&:hover': { bgcolor: 'rgba(255,255,255,0.1)' } }}>
+                                    <IconButton size="small" sx={{ bgcolor: 'var(--border-light)', color: 'var(--text-secondary)', '&:hover': { bgcolor: 'var(--border-main)' } }}>
                                         <ArticleOutlinedIcon fontSize="small" />
                                     </IconButton>
-                                    <IconButton size="small" sx={{ bgcolor: 'rgba(255,255,255,0.05)', color: '#E2E8F0', '&:hover': { bgcolor: 'rgba(255,255,255,0.1)' } }}>
+                                    <IconButton size="small" sx={{ bgcolor: 'var(--border-light)', color: 'var(--text-secondary)', '&:hover': { bgcolor: 'var(--border-main)' } }}>
                                         <PlayCircleOutlineIcon fontSize="small" />
                                     </IconButton>
                                 </Box>

@@ -17,15 +17,15 @@ export default function QuickSettings() {
 
     return (
         <Box sx={{ mt: 4 }}>
-            <Typography sx={{ fontSize: '24px', fontWeight: 800, color: 'white', mb: 4 }}>
+            <Typography sx={{ fontSize: '24px', fontWeight: 800, color: 'var(--text-primary)', mb: 4 }}>
                 Quick Settings
             </Typography>
 
             <Stack spacing={3}>
                 {/* Font Size Setting */}
                 <Box sx={{
-                    backgroundColor: '#1C2230',
-                    border: '1px solid rgba(255, 255, 255, 0.05)',
+                    backgroundColor: 'var(--bg-card)',
+                    border: '1px solid var(--border-light)',
                     borderRadius: '16px',
                     padding: '24px 32px',
                     display: 'flex',
@@ -35,20 +35,20 @@ export default function QuickSettings() {
                     flexWrap: 'wrap'
                 }}>
                     <Box>
-                        <Typography sx={{ fontSize: '16px', fontWeight: 800, color: 'white', mb: 0.5, textTransform: 'uppercase' }}>
+                        <Typography sx={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)', mb: 0.5, textTransform: 'uppercase' }}>
                             Font Size
                         </Typography>
-                        <Typography sx={{ color: '#9CA3AF', fontSize: '14px' }}>
+                        <Typography sx={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
                             Customise your font size as per readability
                         </Typography>
                     </Box>
 
                     <Box sx={{ 
                         display: 'flex', 
-                        bgcolor: 'rgba(0, 0, 0, 0.2)', 
+                        bgcolor: 'var(--shadow-light)', 
                         p: 0.5, 
                         borderRadius: '12px',
-                        border: '1px solid rgba(255, 255, 255, 0.05)'
+                        border: '1px solid var(--border-light)'
                     }}>
                         {fontSizeOptions.map((size) => (
                             <Button
@@ -61,12 +61,12 @@ export default function QuickSettings() {
                                     fontSize: '13px',
                                     fontWeight: 700,
                                     textTransform: 'none',
-                                    color: fontSize === size ? 'white' : '#6B7280',
-                                    bgcolor: fontSize === size ? '#6366F1' : 'transparent',
+                                    color: fontSize === size ? 'var(--text-primary)' : 'var(--text-secondary)',
+                                    bgcolor: fontSize === size ? 'var(--primary)' : 'transparent',
                                     boxShadow: fontSize === size ? '0 4px 12px rgba(99, 102, 241, 0.3)' : 'none',
                                     '&:hover': {
-                                        bgcolor: fontSize === size ? '#4F46E5' : 'rgba(255, 255, 255, 0.05)',
-                                        color: 'white'
+                                        bgcolor: fontSize === size ? 'var(--primary-hover)' : 'var(--border-light)',
+                                        color: 'var(--text-primary)'
                                     },
                                     transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
                                 }}
@@ -79,8 +79,8 @@ export default function QuickSettings() {
 
                 {/* Appearance Setting */}
                 <Box sx={{
-                    backgroundColor: '#1C2230',
-                    border: '1px solid rgba(255, 255, 255, 0.05)',
+                    backgroundColor: 'var(--bg-card)',
+                    border: '1px solid var(--border-light)',
                     borderRadius: '16px',
                     padding: '24px 32px',
                     display: 'flex',
@@ -90,20 +90,20 @@ export default function QuickSettings() {
                     flexWrap: 'wrap'
                 }}>
                     <Box>
-                        <Typography sx={{ fontSize: '16px', fontWeight: 800, color: 'white', mb: 0.5, textTransform: 'uppercase' }}>
+                        <Typography sx={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)', mb: 0.5, textTransform: 'uppercase' }}>
                             Appearance
                         </Typography>
-                        <Typography sx={{ color: '#9CA3AF', fontSize: '14px' }}>
+                        <Typography sx={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
                             Choose your theme to look the best for your eyes
                         </Typography>
                     </Box>
 
                     <Box sx={{ 
                         display: 'flex', 
-                        bgcolor: 'rgba(0, 0, 0, 0.2)', 
+                        bgcolor: 'var(--shadow-light)', 
                         p: 0.5, 
                         borderRadius: '12px',
-                        border: '1px solid rgba(255, 255, 255, 0.05)'
+                        border: '1px solid var(--border-light)'
                     }}>
                         {appearanceOptions.map((opt) => (
                             <Button
@@ -117,12 +117,12 @@ export default function QuickSettings() {
                                     fontSize: '13px',
                                     fontWeight: 700,
                                     textTransform: 'none',
-                                    color: appearance === opt.value ? 'white' : '#6B7280',
-                                    bgcolor: appearance === opt.value ? '#6366F1' : 'transparent',
+                                    color: appearance === opt.value ? 'var(--text-primary)' : 'var(--text-secondary)',
+                                    bgcolor: appearance === opt.value ? 'var(--primary)' : 'transparent',
                                     boxShadow: appearance === opt.value ? '0 4px 12px rgba(99, 102, 241, 0.3)' : 'none',
                                     '&:hover': {
-                                        bgcolor: appearance === opt.value ? '#4F46E5' : 'rgba(255, 255, 255, 0.05)',
-                                        color: 'white'
+                                        bgcolor: appearance === opt.value ? 'var(--primary-hover)' : 'var(--border-light)',
+                                        color: 'var(--text-primary)'
                                     },
                                     transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                                     gap: 1

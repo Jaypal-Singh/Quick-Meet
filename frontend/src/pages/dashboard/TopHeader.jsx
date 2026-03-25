@@ -147,7 +147,7 @@ const TopHeader = () => {
     return (
         <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%', gap: 1 }}>
             {/* Left - Date */}
-            <Typography sx={{ color: '#9CA3AF', fontSize: { xs: '12px', md: '14px' }, fontWeight: 500, whiteSpace: 'nowrap' }}>
+            <Typography sx={{ color: 'var(--text-secondary)', fontSize: { xs: '12px', md: '14px' }, fontWeight: 500, whiteSpace: 'nowrap' }}>
                 {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
             </Typography>
 
@@ -156,12 +156,12 @@ const TopHeader = () => {
 
                 {/* Notification Bell */}
                 <Box ref={ref} sx={{ position: 'relative' }}>
-                    <IconButton onClick={() => setOpen(o => !o)} sx={{ position: 'relative', color: '#9CA3AF', p: { xs: 0.5, sm: 1 } }}>
+                    <IconButton onClick={() => setOpen(o => !o)} sx={{ position: 'relative', color: 'var(--text-secondary)', p: { xs: 0.5, sm: 1 } }}>
                         <NotificationsNoneOutlinedIcon fontSize="small" />
                         {unreadCount > 0 && (
                             <Box component="span" sx={{
                                 position: 'absolute', top: { xs: '4px', sm: '6px' }, right: { xs: '4px', sm: '6px' },
-                                width: '8px', height: '8px', backgroundColor: '#8B5CF6',
+                                width: '8px', height: '8px', backgroundColor: 'var(--primary-light)',
                                 borderRadius: '50%'
                             }} />
                         )}
@@ -175,7 +175,7 @@ const TopHeader = () => {
                             zIndex: 9999,
                             width: { xs: 'calc(100vw - 40px)', sm: '360px' },
                             maxWidth: '360px',
-                            background: 'linear-gradient(180deg, #1C2230 0%, #131722 100%)',
+                            background: 'linear-gradient(180deg, var(--bg-card) 0%, var(--bg-darker) 100%)',
                             border: '1px solid rgba(255,255,255,0.08)',
                             borderRadius: '14px',
                             boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
@@ -183,22 +183,22 @@ const TopHeader = () => {
                         }}>
                             {/* Header */}
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2.5, py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                                <Typography sx={{ color: 'white', fontWeight: 700, fontSize: '14px' }}>
-                                    Notifications {unreadCount > 0 && <Box component="span" sx={{ ml: 1, px: '6px', py: '2px', bgcolor: '#8B5CF620', color: '#8B5CF6', borderRadius: '10px', fontSize: '11px' }}>{unreadCount}</Box>}
+                                <Typography sx={{ color: 'var(--text-primary)', fontWeight: 700, fontSize: '14px' }}>
+                                    Notifications {unreadCount > 0 && <Box component="span" sx={{ ml: 1, px: '6px', py: '2px', bgcolor: 'var(--primary-light)20', color: 'var(--primary-light)', borderRadius: '10px', fontSize: '11px' }}>{unreadCount}</Box>}
                                 </Typography>
                                 {notifications.length > 0 && (
-                                    <IconButton onClick={markAllRead} size="small" title="Clear all" sx={{ color: '#6B7280', '&:hover': { color: '#8B5CF6' } }}>
+                                    <IconButton onClick={markAllRead} size="small" title="Clear all" sx={{ color: 'var(--text-secondary)', '&:hover': { color: 'var(--primary-light)' } }}>
                                         <DoneAllIcon fontSize="small" />
                                     </IconButton>
                                 )}
                             </Box>
 
                             {/* List */}
-                            <Box sx={{ maxHeight: '360px', overflowY: 'auto', '&::-webkit-scrollbar': { width: '4px' }, '&::-webkit-scrollbar-thumb': { background: 'rgba(255,255,255,0.1)', borderRadius: '4px' } }}>
+                            <Box sx={{ maxHeight: '360px', overflowY: 'auto', '&::-webkit-scrollbar': { width: '4px' }, '&::-webkit-scrollbar-thumb': { background: 'var(--border-main)', borderRadius: '4px' } }}>
                                 {notifications.length === 0 ? (
                                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', py: 5, gap: 1 }}>
                                         <NotificationsNoneOutlinedIcon sx={{ color: '#374151', fontSize: 36 }} />
-                                        <Typography sx={{ color: '#6B7280', fontSize: '13px' }}>No notifications</Typography>
+                                        <Typography sx={{ color: 'var(--text-secondary)', fontSize: '13px' }}>No notifications</Typography>
                                     </Box>
                                 ) : (
                                     notifications.map((n) => {
@@ -230,17 +230,17 @@ const TopHeader = () => {
                                                     <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
                                                         <Box sx={{
                                                             width: 48, height: 48, borderRadius: '12px',
-                                                            bgcolor: 'rgba(99,102,241,0.1)', color: '#6366F1',
+                                                            bgcolor: 'rgba(99,102,241,0.1)', color: 'var(--primary)',
                                                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                                                             flexShrink: 0
                                                         }}>
                                                             <EventIcon sx={{ fontSize: 24 }} />
                                                         </Box>
                                                         <Box sx={{ flexGrow: 1, pr: 2 }}>
-                                                            <Typography sx={{ color: 'white', fontWeight: 700, fontSize: '14px', mb: 0.5 }}>
+                                                            <Typography sx={{ color: 'var(--text-primary)', fontWeight: 700, fontSize: '14px', mb: 0.5 }}>
                                                                 {n.title}
                                                             </Typography>
-                                                            <Typography sx={{ color: '#9CA3AF', fontSize: '13px', lineHeight: 1.4 }}>
+                                                            <Typography sx={{ color: 'var(--text-secondary)', fontSize: '13px', lineHeight: 1.4 }}>
                                                                 {n.body}
                                                             </Typography>
                                                         </Box>
@@ -253,13 +253,13 @@ const TopHeader = () => {
                                                             fullWidth
                                                             onClick={() => handleRespondMeeting(id, 'accept')}
                                                             sx={{
-                                                                bgcolor: '#6366F1',
-                                                                color: 'white',
+                                                                bgcolor: 'var(--primary)',
+                                                                color: 'var(--text-primary)',
                                                                 textTransform: 'none',
                                                                 fontWeight: 700,
                                                                 borderRadius: '8px',
                                                                 boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)',
-                                                                '&:hover': { bgcolor: '#4F46E5' }
+                                                                '&:hover': { bgcolor: 'var(--primary-hover)' }
                                                             }}
                                                         >
                                                             Accept
@@ -270,12 +270,12 @@ const TopHeader = () => {
                                                             fullWidth
                                                             onClick={() => handleRespondMeeting(id, 'reject')}
                                                             sx={{
-                                                                borderColor: 'rgba(255,255,255,0.1)',
-                                                                color: '#9CA3AF',
+                                                                borderColor: 'var(--border-main)',
+                                                                color: 'var(--text-secondary)',
                                                                 textTransform: 'none',
                                                                 fontWeight: 600,
                                                                 borderRadius: '8px',
-                                                                '&:hover': { borderColor: 'rgba(255,255,255,0.3)', bgcolor: 'rgba(255,255,255,0.02)' }
+                                                                '&:hover': { borderColor: 'var(--border-extra)', bgcolor: 'rgba(255,255,255,0.02)' }
                                                             }}
                                                         >
                                                             Reject
@@ -305,14 +305,14 @@ const TopHeader = () => {
                                                     }}
                                                 >
                                                     {/* Purple dot */}
-                                                    <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: n.read ? '#374151' : '#8B5CF6', flexShrink: 0 }} />
+                                                    <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: n.read ? '#374151' : 'var(--primary-light)', flexShrink: 0 }} />
 
                                                     {/* Content */}
                                                     <Box sx={{ flex: 1, minWidth: 0 }}>
-                                                        <Typography sx={{ color: 'white', fontSize: '13px', fontWeight: n.read ? 400 : 700, lineHeight: 1.4 }}>
+                                                        <Typography sx={{ color: 'var(--text-primary)', fontSize: '13px', fontWeight: n.read ? 400 : 700, lineHeight: 1.4 }}>
                                                             {n.title}
                                                         </Typography>
-                                                        <Typography noWrap sx={{ color: '#9CA3AF', fontSize: '12px', mt: '2px', lineHeight: 1.4 }}>
+                                                        <Typography noWrap sx={{ color: 'var(--text-secondary)', fontSize: '12px', mt: '2px', lineHeight: 1.4 }}>
                                                             {n.body}
                                                         </Typography>
                                                         <Typography sx={{ color: '#4B5563', fontSize: '11px', mt: '4px' }}>
@@ -324,7 +324,7 @@ const TopHeader = () => {
                                                     <Box sx={{ position: 'relative', flexShrink: 0 }}>
                                                         <Box sx={{
                                                             width: 40, height: 40, borderRadius: '50%',
-                                                            bgcolor: 'rgba(139,92,246,0.1)', color: '#8B5CF6',
+                                                            bgcolor: 'rgba(139,92,246,0.1)', color: 'var(--primary-light)',
                                                             display: 'flex', alignItems: 'center', justifyContent: 'center'
                                                         }}>
                                                             {n.type === 'friend_request' ? <CheckCircleOutlineIcon fontSize="small" /> : <VideocamOutlinedIcon fontSize="small" />}
@@ -337,8 +337,8 @@ const TopHeader = () => {
                                                             size="small"
                                                             sx={{
                                                                 position: 'absolute', bottom: -5, right: -5,
-                                                                bgcolor: '#131722', border: '1px solid rgba(255,255,255,0.1)',
-                                                                p: 0.2, color: '#4B5563', '&:hover': { color: '#8B5CF6', bgcolor: '#1C2230' }
+                                                                bgcolor: 'var(--bg-darker)', border: '1px solid var(--border-main)',
+                                                                p: 0.2, color: '#4B5563', '&:hover': { color: 'var(--primary-light)', bgcolor: 'var(--bg-card)' }
                                                             }}
                                                         >
                                                             <CheckCircleOutlineIcon sx={{ fontSize: 12 }} />
@@ -355,10 +355,10 @@ const TopHeader = () => {
                 </Box>
 
                 {/* User */}
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 1.5 }, borderLeft: '1px solid #374151', pl: { xs: 1.5, sm: 2.5 }, cursor: 'pointer' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 1.5 }, borderLeft: '1px solid var(--border-extra)', pl: { xs: 1.5, sm: 2.5 }, cursor: 'pointer' }}>
                     <Box sx={{ textAlign: 'right' }}>
-                        <Typography sx={{ color: 'white', fontSize: { xs: '12px', md: '14px' }, fontWeight: 600, lineHeight: 1.2, margin: 0 }}>{name}</Typography>
-                        <Typography sx={{ color: '#8B5CF6', fontSize: { xs: '9px', md: '10px' }, fontWeight: 700, letterSpacing: '1px', margin: 0 }}>PREMIUM PLAN</Typography>
+                        <Typography sx={{ color: 'var(--text-primary)', fontSize: { xs: '12px', md: '14px' }, fontWeight: 600, lineHeight: 1.2, margin: 0 }}>{name}</Typography>
+                        <Typography sx={{ color: 'var(--primary-light)', fontSize: { xs: '9px', md: '10px' }, fontWeight: 700, letterSpacing: '1px', margin: 0 }}>PREMIUM PLAN</Typography>
                     </Box>
                     <Box
                         component="img"

@@ -20,7 +20,7 @@ const MOCK_TRANSCRIPTS = [
         id: 2,
         title: 'Weekly Sprint Planning',
         badge: 'RECURRING',
-        badgeColor: '#8B5CF6',
+        badgeColor: 'var(--primary-light)',
         date: 'Oct 10, 2023',
         duration: '30 min',
         participants: 8,
@@ -69,7 +69,7 @@ export default function Transcripts() {
                 alignItems: { xs: 'flex-start', sm: 'center' },
                 gap: 2
             }}>
-                <Box sx={{ color: '#94A3B8', fontSize: '0.875rem' }}>
+                <Box sx={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
                     Showing 4 of 24 transcripts
                 </Box>
                 <Pagination />

@@ -31,12 +31,12 @@ const withAuth = (WrappedComponent) => {
         if (loading) {
             return (
                 <div style={{ 
-                    height: '100vh', 
+                    height: 'calc(100vh / var(--app-zoom, 1))', 
                     display: 'flex', 
                     alignItems: 'center', 
                     justifyContent: 'center',
-                    backgroundColor: '#0B0F19',
-                    color: 'white'
+                    backgroundColor: 'var(--bg-root)',
+                    color: 'var(--text-primary)'
                 }}>
                     Loading...
                 </div>

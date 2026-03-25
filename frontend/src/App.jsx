@@ -50,18 +50,18 @@ function App() {
         sx={{ mt: 2 }}
       >
         <Box sx={{
-            background: '#1E293B',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
+            background: 'var(--bg-card-alt)',
+            border: '1px solid var(--border-main)',
             borderRadius: '16px',
             p: 2.5,
-            boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+            boxShadow: '0 20px 50px var(--shadow-strong)',
             minWidth: '340px',
             position: 'relative'
         }}>
             <IconButton 
                 size="small" 
                 onClick={() => setShowNotification(false)}
-                sx={{ position: 'absolute', top: 12, right: 12, color: '#64748B' }}
+                sx={{ position: 'absolute', top: 12, right: 12, color: 'var(--text-secondary)' }}
             >
                 <CloseIcon sx={{ fontSize: 18 }} />
             </IconButton>
@@ -78,16 +78,16 @@ function App() {
                     flexShrink: 0
                 }}>
                     {notification.data?.type === 'direct_meet' ? (
-                        <VideocamIcon sx={{ color: '#6366F1', fontSize: '24px' }} />
+                        <VideocamIcon sx={{ color: 'var(--primary)', fontSize: '24px' }} />
                     ) : (
-                        <EventIcon sx={{ color: '#6366F1', fontSize: '24px' }} />
+                        <EventIcon sx={{ color: 'var(--primary)', fontSize: '24px' }} />
                     )}
                 </Box>
                 <Box sx={{ pr: 2 }}>
-                    <Typography sx={{ color: 'white', fontWeight: 700, fontSize: '16px', mb: 0.5 }}>
+                    <Typography sx={{ color: 'var(--text-primary)', fontWeight: 700, fontSize: '16px', mb: 0.5 }}>
                         {notification.title}
                     </Typography>
-                    <Typography sx={{ color: '#94A3B8', fontSize: '13.5px', lineHeight: 1.5 }}>
+                    <Typography sx={{ color: 'var(--text-secondary)', fontSize: '13.5px', lineHeight: 1.5 }}>
                         {notification.body}
                     </Typography>
                 </Box>
@@ -99,15 +99,15 @@ function App() {
                     variant="contained"
                     onClick={handleJoin}
                     sx={{
-                        background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)',
-                        color: 'white',
+                        background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)',
+                        color: 'var(--text-primary)',
                         fontWeight: 700,
                         textTransform: 'none',
                         borderRadius: '10px',
                         py: 1,
                         boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)',
                         '&:hover': {
-                            background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)',
+                            background: 'linear-gradient(135deg, var(--primary-hover) 0%, var(--primary-dark) 100%)',
                             boxShadow: '0 6px 16px rgba(99, 102, 241, 0.5)'
                         }
                     }}
@@ -119,14 +119,14 @@ function App() {
                     variant="outlined"
                     onClick={() => setShowNotification(false)}
                     sx={{ 
-                        borderColor: 'rgba(255, 255, 255, 0.1)',
-                        color: '#94A3B8', 
+                        borderColor: 'var(--border-main)',
+                        color: 'var(--text-secondary)', 
                         fontWeight: 600,
                         textTransform: 'none', 
                         borderRadius: '10px',
                         '&:hover': { 
-                            borderColor: 'rgba(255, 255, 255, 0.3)',
-                            bgcolor: 'rgba(255, 255, 255, 0.05)'
+                            borderColor: 'var(--border-extra)',
+                            bgcolor: 'var(--border-light)'
                         }
                     }}
                 >

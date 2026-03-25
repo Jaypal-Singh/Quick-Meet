@@ -28,23 +28,23 @@ export default function FilterTabs() {
                         deleteIcon={tab.hasDropdown ? <KeyboardArrowDownIcon /> : undefined}
                         onDelete={tab.hasDropdown ? () => { } : undefined}
                         sx={{
-                            bgcolor: isActive ? '#6366F1' : 'rgba(34, 43, 61, 0.6)',
-                            color: isActive ? '#FFFFFF' : '#E2E8F0',
+                            bgcolor: isActive ? 'var(--primary)' : 'var(--overlay-medium)',
+                            color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)',
                             fontWeight: isActive ? 700 : 500,
                             borderRadius: '12px',
                             px: 1,
                             height: '40px',
-                            border: isActive ? 'none' : '1px solid rgba(255, 255, 255, 0.05)',
+                            border: isActive ? 'none' : '1px solid var(--border-light)',
                             transition: 'all 0.2s',
                             '&:hover': {
-                                bgcolor: isActive ? '#4F46E5' : 'rgba(34, 43, 61, 0.9)',
+                                bgcolor: isActive ? 'var(--primary-hover)' : 'var(--overlay-dark)',
                             },
                             '& .MuiChip-deleteIcon': {
-                                color: isActive ? '#FFFFFF' : '#94A3B8',
-                                '&:hover': { color: isActive ? '#E2E8F0' : '#FFFFFF' },
+                                color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)',
+                                '&:hover': { color: isActive ? 'var(--text-secondary)' : 'var(--text-primary)' },
                             },
                             '& .MuiChip-icon': {
-                                color: isActive && !tab.activeIcon ? '#FFFFFF' : '#FCD34D',
+                                color: isActive && !tab.activeIcon ? 'var(--text-primary)' : '#FCD34D',
                             }
                         }}
                     />
