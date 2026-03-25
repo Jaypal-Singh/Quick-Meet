@@ -70,7 +70,7 @@ const VideoTile = ({ videoObj, isLocal, videoEnabled, isPinned, onPin, isScreenS
                     autoPlay
                     playsInline
                     muted={isLocal}
-                    className={`w-full h-full ${isPinned ? 'object-contain bg-black' : 'object-cover'} ${shouldMirror ? 'scale-x-[-1]' : ''}`}
+                    className={`w-full h-full ${isScreenShare || isPinned ? 'object-contain bg-black' : 'object-cover'} ${shouldMirror ? 'scale-x-[-1]' : ''}`}
                 />
             ) : (
                 <div 

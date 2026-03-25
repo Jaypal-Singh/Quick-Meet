@@ -140,8 +140,10 @@ export default function VideoMeetComponent() {
 
     let getDislayMedia = () => {
         if (screen) {
-            if (navigator.mediaDevices.getDisplayMedia) {
-                navigator.mediaDevices.getDisplayMedia({ video: true, audio: true })
+            if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+                // On mobile, request video only to increase compatibility (many mobile browsers fail with audio:true)
+                const constraints = isMobile ? { video: true } : { video: true, audio: true };
+                navigator.mediaDevices.getDisplayMedia(constraints)
                     .then(getDislayMediaSuccess)
                     .catch((e) => {
                         console.log(e);
@@ -197,7 +199,10 @@ export default function VideoMeetComponent() {
         setIsConnecting(true);
         console.log('[Init] getPermissions started');
 
-        setScreenAvailable(!!(navigator.mediaDevices && (navigator.mediaDevices.getDisplayMedia || navigator.getDisplayMedia)));
+        const isScreenSharingSupported = !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia);
+        console.log('[Init] Screen Sharing Supported:', isScreenSharingSupported);
+        // Force available on mobile for visibility, handler will check support and try video-only
+        setScreenAvailable(isScreenSharingSupported || window.innerWidth < 1024); 
 
         try {
             // 1. Identify what hardware is actually present
@@ -731,6 +736,18 @@ export default function VideoMeetComponent() {
         }
     }, [screen])
     let handleScreen = () => {
+        if (screen === undefined || screen === false) {
+             // Check for actual support before trying to start
+             const supported = !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia);
+             if (!supported && !isMobile) {
+                 setNotification({ 
+                     open: true, 
+                     message: "Screen sharing is not supported on this browser/device. Try a desktop browser for full support.", 
+                     severity: "error" 
+                 });
+                 return;
+             }
+        }
         setScreen(!screen);
     }
 
@@ -1028,7 +1045,7 @@ export default function VideoMeetComponent() {
                                             isLocal={pinnedTile.isLocal || false}
                                             videoEnabled={pinnedTile.isLocal ? video : pinnedTile.videoEnabled}
                                             isPinned={true}
-                                            isScreenShare={pinnedTile.isLocal && screen}
+                                            isScreenShare={pinnedTile.isLocal ? screen : pinnedTile.isScreenShare}
                                             onPin={() => setPinnedSocketId(null)}
                                         />
                                     </div>
@@ -1046,7 +1063,7 @@ export default function VideoMeetComponent() {
                                                         isLocal={vid.isLocal || false}
                                                         videoEnabled={vid.isLocal ? video : vid.videoEnabled !== false}
                                                         isPinned={false}
-                                                        isScreenShare={vid.isLocal && screen}
+                                                isScreenShare={vid.isLocal ? screen : vid.isScreenShare}
                                                         onPin={() => setPinnedSocketId(vid.socketId)}
                                                     />
                                                 </div>

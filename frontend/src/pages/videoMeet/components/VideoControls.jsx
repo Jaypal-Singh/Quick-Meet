@@ -45,6 +45,7 @@ const VideoControls = ({
 
             <IconButton
                 onClick={handleEndCall}
+                size="small"
                 sx={{
                     backgroundColor: '#ef4444',
                     color: 'var(--text-primary)',
@@ -52,7 +53,7 @@ const VideoControls = ({
                     '&:hover': { backgroundColor: '#dc2626' }
                 }}
             >
-                <CallEndIcon />
+                <CallEndIcon fontSize="small" />
             </IconButton>
 
             <Badge badgeContent={newMessages} color="error" max={99}>
@@ -60,7 +61,7 @@ const VideoControls = ({
                     onClick={() => setModal(!showModal)}
                     sx={{ color: showModal ? '#818CF8' : 'var(--text-secondary)', '&:hover': { backgroundColor: 'var(--border-main)' } }}
                 >
-                    <ChatIcon />
+                    <ChatIcon fontSize="small" />
                 </IconButton>
             </Badge>
         </div>
